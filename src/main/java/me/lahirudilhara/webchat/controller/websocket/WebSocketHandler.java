@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.websocket.handlers;
+package me.lahirudilhara.webchat.controller.websocket;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
