@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.shared.models;
+package me.lahirudilhara.webchat.models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

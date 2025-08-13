@@ -1,6 +1,6 @@
 package me.lahirudilhara.webchat.jwt;
 
-import me.lahirudilhara.webchat.shared.models.User;
+import me.lahirudilhara.webchat.models.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
