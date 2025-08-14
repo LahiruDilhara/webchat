@@ -12,11 +12,13 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private String name;
+
     private boolean isPrivate;
 
-    private Instant createdAt;
+    private Instant createdAt = Instant.now();
 
-    private boolean closed;
+    private boolean closed = false;
 
     @ManyToOne
     @JoinColumn(name = "createdRooms")
@@ -33,11 +35,10 @@ public class Room {
     )
     private List<User> users = new ArrayList<>();
 
-    public Room(Integer id, boolean isPrivate, Instant createdAt, boolean closed, User createdBy) {
+    public Room(Integer id, String name, boolean isPrivate, User createdBy) {
         this.id = id;
+        this.name = name;
         this.isPrivate = isPrivate;
-        this.createdAt = createdAt;
-        this.closed = closed;
         this.createdBy = createdBy;
     }
 
@@ -49,6 +50,14 @@ public class Room {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean isPrivate() {
