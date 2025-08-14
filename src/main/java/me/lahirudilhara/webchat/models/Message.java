@@ -29,6 +29,19 @@ public class Message {
     @JoinColumn(name = "room")
     private Room room;
 
+    public Message() {
+    }
+
+    public Message(Integer id, Instant createdAt, String content, boolean deleted, Instant editedAt, User sentBy, Room room) {
+        this.id = id;
+        this.createdAt = createdAt;
+        this.content = content;
+        this.deleted = deleted;
+        this.editedAt = editedAt;
+        this.sentBy = sentBy;
+        this.room = room;
+    }
+
     public Integer getId() {
         return id;
     }

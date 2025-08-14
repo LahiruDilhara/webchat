@@ -23,7 +23,25 @@ public class Room {
     private User createdBy;
 
     @OneToMany(mappedBy = "room",cascade = CascadeType.ALL)
-    private List<Message> messages;
+    private List<Message> messages = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "connect",
+            joinColumns = @JoinColumn(name = "room_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> users = new ArrayList<>();
+
+    public Room(Integer id, boolean isPrivate, Instant createdAt, boolean closed, User createdBy) {
+        this.id = id;
+        this.isPrivate = isPrivate;
+        this.createdAt = createdAt;
+        this.closed = closed;
+        this.createdBy = createdBy;
+    }
+
+    public Room(){}
 
     public Integer getId() {
         return id;
@@ -80,12 +98,4 @@ public class Room {
     public void setUsers(List<User> users) {
         this.users = users;
     }
-
-    @ManyToMany
-    @JoinTable(
-            name = "connect",
-            joinColumns = @JoinColumn(name = "room_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<User> users = new ArrayList<>();
 }
