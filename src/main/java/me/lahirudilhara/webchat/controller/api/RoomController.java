@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/v1/rooms")
 public class RoomController {
@@ -23,8 +25,8 @@ public class RoomController {
     }
 
     @PostMapping("/")
-    public RoomResponseDTO createRoom(@Valid @RequestBody AddRoomDTO addRoomDTO){
-        Room room = roomService.createRoom(addRoomDTO);
+    public RoomResponseDTO createRoom(@Valid @RequestBody AddRoomDTO addRoomDTO, Principal principal){
+        Room room = roomService.createRoom(addRoomDTO, principal.getName());
         return roomMapper.roomDtoToRoomResponseDTO(room);
     }
 }
