@@ -37,7 +37,7 @@ public class ApiExceptionHandler {
         log.warn("Business exception: {}", ex.getMessage());
 
         ErrorResponse error = new ErrorResponse(ex.getMessage(), ex.getCode());
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(error, ex.getCode());
     }
 
     // Handle validation errors - return only first error message
@@ -181,7 +181,7 @@ public class ApiExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBadCredentialException(BadCredentialsException ex, HttpServletRequest request) {
         log.warn("Bad credentials on path: {}", request.getRequestURI());
 
-        ErrorResponse error = new ErrorResponse("Bad credentials", HttpStatus.UNAUTHORIZED);
+        ErrorResponse error = new ErrorResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED);
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
