@@ -1,8 +1,8 @@
-package me.lahirudilhara.webchat.dto;
+package me.lahirudilhara.webchat.dto.room;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class AddRoomDto {
+public class AddRoomDTO {
     private boolean isPrivate;
 
     @NotBlank(message = "The room name cannot be blank")

@@ -1,6 +1,6 @@
 package me.lahirudilhara.webchat.mappers;
 
-import me.lahirudilhara.webchat.dto.AddRoomDto;
+import me.lahirudilhara.webchat.dto.room.AddRoomDTO;
 import me.lahirudilhara.webchat.models.Room;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,5 +13,5 @@ public interface RoomMapper {
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "messages", ignore = true)
     @Mapping(target = "users",ignore = true)
-    Room addRoomDtoToRoom(AddRoomDto addRoomDto);
+    Room addRoomDtoToRoom(AddRoomDTO addRoomDto);
 }
