@@ -28,4 +28,60 @@ public class Message {
     @ManyToOne
     @JoinColumn(name = "room")
     private Room room;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public Instant getEditedAt() {
+        return editedAt;
+    }
+
+    public void setEditedAt(Instant editedAt) {
+        this.editedAt = editedAt;
+    }
+
+    public User getSentBy() {
+        return sentBy;
+    }
+
+    public void setSentBy(User sentBy) {
+        this.sentBy = sentBy;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
 }

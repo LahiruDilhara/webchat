@@ -54,4 +54,28 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
+
+    public List<Room> getCreatedRooms() {
+        return createdRooms;
+    }
+
+    public void setCreatedRooms(List<Room> createdRooms) {
+        this.createdRooms = createdRooms;
+    }
+
+    public List<Room> getRooms() {
+        return rooms;
+    }
+
+    public void setRooms(List<Room> rooms) {
+        this.rooms = rooms;
+    }
 }
