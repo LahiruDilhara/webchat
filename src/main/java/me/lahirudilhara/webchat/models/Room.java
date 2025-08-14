@@ -20,6 +20,8 @@ public class Room {
 
     private boolean closed = false;
 
+    private boolean multiUser;
+
     @ManyToOne
     @JoinColumn(name = "createdRooms")
     private User createdBy;
@@ -35,11 +37,12 @@ public class Room {
     )
     private List<User> users = new ArrayList<>();
 
-    public Room(Integer id, String name, boolean isPrivate, User createdBy) {
+    public Room(Integer id, String name, boolean isPrivate, User createdBy,boolean multiUser) {
         this.id = id;
         this.name = name;
         this.isPrivate = isPrivate;
         this.createdBy = createdBy;
+        this.multiUser = multiUser;
     }
 
     public Room(){}
@@ -60,11 +63,11 @@ public class Room {
         this.name = name;
     }
 
-    public boolean isPrivate() {
+    public boolean getIsPrivate() {
         return isPrivate;
     }
 
-    public void setPrivate(boolean aPrivate) {
+    public void setIsPrivate(boolean aPrivate) {
         isPrivate = aPrivate;
     }
 
@@ -106,5 +109,13 @@ public class Room {
 
     public void setUsers(List<User> users) {
         this.users = users;
+    }
+
+    public boolean getMultiUser() {
+        return multiUser;
+    }
+
+    public void setMultiUser(boolean multiUser) {
+        this.multiUser = multiUser;
     }
 }
