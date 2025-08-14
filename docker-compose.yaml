@@ -1,15 +1,30 @@
 services:
   db:
     image: postgres
+    container_name: postgresqlDB
     restart: always
     environment:
       POSTGRES_PASSWORD: testWebChat
       POSTGRES_DB: webchatTest
     ports:
       - "5432:5432"
+    volumes:
+      - postgresqlDB:/var/lib/postgresql/data
 
-  adminer:
-    image: adminer
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
     restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: lahiru@dilhara.com
+      PGADMIN_DEFAULT_PASSWORD: lahiru
     ports:
-      - "8040:8080"
+      - "8040:80"
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    depends_on:
+      - db
+
+volumes:
+  postgresqlDB:
+  pgadmin:

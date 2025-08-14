@@ -1,9 +1,9 @@
 package me.lahirudilhara.webchat.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "MyUser")
 public class User {
@@ -13,6 +13,15 @@ public class User {
 
     private String username;
     private String password;
+
+    @OneToMany(mappedBy = "sentBy",cascade = CascadeType.ALL)
+    private List<Message> messages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "createdBy",cascade = CascadeType.ALL)
+    private List<Room> createdRooms = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "users")
+    private List<Room> rooms = new ArrayList<>();
 
     public User(){}
 
