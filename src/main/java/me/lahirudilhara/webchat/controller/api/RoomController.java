@@ -34,7 +34,7 @@ public class RoomController {
 
     @PostMapping("/join/{roomId}")
     public ResponseEntity joinToRoom(@PathVariable int roomId, Principal principal){
-        roomService.addToRoom(principal.getName(),roomId);
+        roomService.joinToRoom(principal.getName(),roomId);
         return ResponseEntity.noContent().build();
     }
 
@@ -47,6 +47,12 @@ public class RoomController {
     @DeleteMapping("/{roomId}")
     public ResponseEntity deleteRoom(@PathVariable int roomId, Principal principal){
         roomService.deleteRoom(principal.getName(),roomId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{roomId}/add/{userId}")
+    public ResponseEntity addUserToRoom(@PathVariable int roomId,@PathVariable int userId, Principal principal){
+        roomService.addUserToRoom(userId,roomId,principal.getName());
         return ResponseEntity.noContent().build();
     }
 }
