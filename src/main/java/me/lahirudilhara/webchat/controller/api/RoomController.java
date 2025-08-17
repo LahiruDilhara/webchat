@@ -32,7 +32,7 @@ public class RoomController {
         return roomMapper.roomDtoToRoomResponseDTO(room);
     }
 
-    @PostMapping("/join/{roomId}")
+    @PostMapping("/{roomId}/join")
     public ResponseEntity joinToRoom(@PathVariable int roomId, Principal principal){
         roomService.joinToRoom(principal.getName(),roomId);
         return ResponseEntity.noContent().build();

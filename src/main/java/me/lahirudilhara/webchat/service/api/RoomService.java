@@ -98,11 +98,14 @@ public class RoomService {
             throw new BaseException("Only the owner can add user to the room",HttpStatus.CONFLICT);
         }
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        List<User> roomUsers = room.getUsers();
-        if(roomUsers.contains(user)){
+        List<User> members = room.getUsers();
+        if(members.contains(user)){
             throw new BaseException("The user already exists in the room", HttpStatus.CONFLICT);
         }
-        roomUsers.add(user);
+        if(members.size() >= 2 && !room.getMultiUser()){
+            throw new BaseException("The room is not multiuser. cannot join",HttpStatus.BAD_REQUEST);
+        }
+        members.add(user);
         roomRepository.save(room);
     }
 }
