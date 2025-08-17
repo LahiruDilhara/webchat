@@ -2,10 +2,9 @@ package me.lahirudilhara.webchat.mappers;
 
 import me.lahirudilhara.webchat.dto.room.AddRoomDTO;
 import me.lahirudilhara.webchat.dto.room.RoomResponseDTO;
+import me.lahirudilhara.webchat.dto.room.UpdateRoomDTO;
 import me.lahirudilhara.webchat.models.Room;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring",uses = UserMapper.class)
 public interface RoomMapper {
@@ -18,4 +17,7 @@ public interface RoomMapper {
 
     @Mapping(source = "users",target = "members")
     RoomResponseDTO roomDtoToRoomResponseDTO(Room room);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    Room updateRoomDtoToRoom(UpdateRoomDTO updateRoomDTO, @MappingTarget Room room);
 }

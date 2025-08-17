@@ -4,11 +4,14 @@ import me.lahirudilhara.webchat.core.exceptions.BaseException;
 import me.lahirudilhara.webchat.core.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.core.exceptions.UserNotFoundException;
 import me.lahirudilhara.webchat.dto.room.AddRoomDTO;
+import me.lahirudilhara.webchat.dto.room.UpdateRoomDTO;
 import me.lahirudilhara.webchat.mappers.RoomMapper;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.repositories.RoomRepository;
 import me.lahirudilhara.webchat.repositories.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,7 @@ import java.util.List;
 
 @Service
 public class RoomService {
+    private static final Logger log = LoggerFactory.getLogger(RoomService.class);
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
     private final RoomMapper roomMapper;
@@ -37,6 +41,10 @@ public class RoomService {
         List<User> members = new ArrayList<>();
         members.add(user);
         room.setUsers(members);
+        String error = validateRoom(room);
+        if (error != null) {
+            throw new BaseException(error,HttpStatus.BAD_REQUEST);
+        }
         return roomRepository.save(room);
     }
 
@@ -130,5 +138,35 @@ public class RoomService {
         else{
             roomRepository.save(room);
         }
+    }
+
+    public Room updateRoom(int roomId, UpdateRoomDTO updateRoomDTO, String ownerUserName){
+        User user = userRepository.findByUsername(ownerUserName);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+
+        Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
+        if(!room.getCreatedBy().getId().equals(user.getId())){
+            throw new BaseException("Only the owner can update the room",HttpStatus.BAD_REQUEST);
+        }
+
+        roomMapper.updateRoomDtoToRoom(updateRoomDTO,room);
+        String error = validateRoom(room);
+        if(error != null){
+            throw new BaseException(error,HttpStatus.BAD_REQUEST);
+        }
+        return roomRepository.save(room);
+    }
+
+    private String validateRoom(Room room){
+        int usersCount = room.getUsers().size();
+        if(!room.getMultiUser() && usersCount > 2){
+            return "Cannot create non multi user room with more than two users";
+        }
+        if(!room.getMultiUser() && !room.getIsPrivate()){
+            return "Cannot make non multi user room public";
+        }
+        return null;
     }
 }

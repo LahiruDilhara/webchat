@@ -3,6 +3,7 @@ package me.lahirudilhara.webchat.controller.api;
 import jakarta.validation.Valid;
 import me.lahirudilhara.webchat.dto.room.AddRoomDTO;
 import me.lahirudilhara.webchat.dto.room.RoomResponseDTO;
+import me.lahirudilhara.webchat.dto.room.UpdateRoomDTO;
 import me.lahirudilhara.webchat.mappers.RoomMapper;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.service.api.RoomService;
@@ -60,5 +61,11 @@ public class RoomController {
     public ResponseEntity removeUserFromRoom(@PathVariable int roomId, @PathVariable int userId, Principal principal){
         roomService.removeUserFromRoom(userId,roomId,principal.getName());
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{roomId}")
+    public RoomResponseDTO updateRoom(@PathVariable int roomId, @RequestBody UpdateRoomDTO updateRoomDTO, Principal principal){
+        Room room = roomService.updateRoom(roomId,updateRoomDTO,principal.getName());
+        return roomMapper.roomDtoToRoomResponseDTO(room);
     }
 }
