@@ -79,7 +79,7 @@ public class Room {
         this.createdAt = createdAt;
     }
 
-    public boolean isClosed() {
+    public boolean getClosed() {
         return closed;
     }
 

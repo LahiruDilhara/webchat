@@ -6,27 +6,41 @@ import me.lahirudilhara.webchat.dto.room.RoomResponseDTO;
 import me.lahirudilhara.webchat.mappers.RoomMapper;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.service.api.RoomService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import me.lahirudilhara.webchat.service.api.UserService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/rooms")
 public class RoomController {
     private final RoomMapper roomMapper;
     private final RoomService roomService;
+    private final UserService userService;
 
-    public RoomController(RoomMapper roomMapper, RoomService roomService) {
+    public RoomController(RoomMapper roomMapper, RoomService roomService, UserService userService) {
         this.roomMapper = roomMapper;
         this.roomService = roomService;
+        this.userService = userService;
     }
 
     @PostMapping("/")
     public RoomResponseDTO createRoom(@Valid @RequestBody AddRoomDTO addRoomDTO, Principal principal){
         Room room = roomService.createRoom(addRoomDTO, principal.getName());
         return roomMapper.roomDtoToRoomResponseDTO(room);
+    }
+
+    @PostMapping("/join/{roomId}")
+    public ResponseEntity joinToRoom(@PathVariable int roomId, Principal principal){
+        roomService.addToRoom(principal.getName(),roomId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/")
+    public List<RoomResponseDTO> getRooms(Principal principal){
+        List<Room> rooms = roomService.getUserRooms(principal.getName());
+        return rooms.stream().map(roomMapper::roomDtoToRoomResponseDTO).toList();
     }
 }
