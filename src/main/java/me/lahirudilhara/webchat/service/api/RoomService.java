@@ -95,7 +95,7 @@ public class RoomService {
         }
         Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
         if(!room.getCreatedBy().getId().equals(owner.getId())){
-            throw new BaseException("Only the owner can add user to the room",HttpStatus.CONFLICT);
+            throw new BaseException("Only the owner can add user to the room",HttpStatus.BAD_REQUEST);
         }
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         List<User> members = room.getUsers();
@@ -107,5 +107,28 @@ public class RoomService {
         }
         members.add(user);
         roomRepository.save(room);
+    }
+
+    public void removeUserFromRoom(int userId, int roomId,  String ownerUsername){
+        User owner = userRepository.findByUsername(ownerUsername);
+        if (owner == null) {
+            throw new UserNotFoundException();
+        }
+        Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
+        if(!room.getCreatedBy().getId().equals(owner.getId())){
+            throw new BaseException("Only the owner can remove user from the room",HttpStatus.BAD_REQUEST);
+        }
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        if(!room.getUsers().contains(user)){
+            throw new BaseException("The user is not a member of the room",HttpStatus.BAD_REQUEST);
+        }
+        List<User> members = room.getUsers();
+        members.remove(user);
+        if(members.isEmpty()){
+            roomRepository.delete(room);
+        }
+        else{
+            roomRepository.save(room);
+        }
     }
 }

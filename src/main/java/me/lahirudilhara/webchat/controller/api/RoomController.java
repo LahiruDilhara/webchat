@@ -55,4 +55,10 @@ public class RoomController {
         roomService.addUserToRoom(userId,roomId,principal.getName());
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/{roomId}/remove/{userId}")
+    public ResponseEntity removeUserFromRoom(@PathVariable int roomId, @PathVariable int userId, Principal principal){
+        roomService.removeUserFromRoom(userId,roomId,principal.getName());
+        return ResponseEntity.noContent().build();
+    }
 }
