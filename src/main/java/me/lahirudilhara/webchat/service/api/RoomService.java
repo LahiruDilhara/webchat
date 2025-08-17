@@ -72,4 +72,16 @@ public class RoomService {
 
         return roomRepository.findAll();
     }
+
+    public void deleteRoom(String username, int roomId){
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
+        if(!room.getCreatedBy().getId().equals(user.getId())){
+            throw new BaseException("Only the owner can delete the room",HttpStatus.CONFLICT);
+        }
+        roomRepository.delete(room);
+    }
 }

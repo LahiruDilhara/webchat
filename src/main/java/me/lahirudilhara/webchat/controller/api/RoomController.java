@@ -43,4 +43,10 @@ public class RoomController {
         List<Room> rooms = roomService.getUserRooms(principal.getName());
         return rooms.stream().map(roomMapper::roomDtoToRoomResponseDTO).toList();
     }
+
+    @DeleteMapping("/{roomId}")
+    public ResponseEntity deleteRoom(@PathVariable int roomId, Principal principal){
+        roomService.deleteRoom(principal.getName(),roomId);
+        return ResponseEntity.noContent().build();
+    }
 }
