@@ -105,6 +105,9 @@ public class RoomService {
         if(!room.getCreatedBy().getId().equals(owner.getId())){
             throw new BaseException("Only the owner can add user to the room",HttpStatus.BAD_REQUEST);
         }
+        if(room.getClosed()){
+            throw new BaseException("The room is closed",HttpStatus.BAD_REQUEST);
+        }
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         List<User> members = room.getUsers();
         if(members.contains(user)){

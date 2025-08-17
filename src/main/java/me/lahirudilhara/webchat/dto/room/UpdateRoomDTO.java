@@ -4,11 +4,13 @@ public class UpdateRoomDTO {
     private Boolean isPrivate;
     private String name;
     private Boolean multiUser;
+    private Boolean closed;
 
-    public UpdateRoomDTO(Boolean isPrivate, String name, Boolean multiUser) {
+    public UpdateRoomDTO(Boolean isPrivate, String name, Boolean multiUser, Boolean closed) {
         this.isPrivate = isPrivate;
         this.name = name;
         this.multiUser = multiUser;
+        this.closed = closed;
     }
 
     public UpdateRoomDTO() {
@@ -36,5 +38,13 @@ public class UpdateRoomDTO {
 
     public void setMultiUser(Boolean multiUser) {
         this.multiUser = multiUser;
+    }
+
+    public Boolean getClosed() {
+        return closed;
+    }
+
+    public void setClosed(Boolean closed) {
+        this.closed = closed;
     }
 }
