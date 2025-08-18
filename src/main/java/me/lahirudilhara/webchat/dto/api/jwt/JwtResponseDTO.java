@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.dto.jwt;
+package me.lahirudilhara.webchat.dto.api.jwt;
 
 public class JwtResponseDTO {
     private String token;

@@ -1,7 +1,7 @@
 package me.lahirudilhara.webchat.mappers;
 
-import me.lahirudilhara.webchat.dto.auth.LoginDTO;
-import me.lahirudilhara.webchat.dto.auth.SignUpDTO;
+import me.lahirudilhara.webchat.dto.api.auth.LoginDTO;
+import me.lahirudilhara.webchat.dto.api.auth.SignUpDTO;
 import me.lahirudilhara.webchat.models.User;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;

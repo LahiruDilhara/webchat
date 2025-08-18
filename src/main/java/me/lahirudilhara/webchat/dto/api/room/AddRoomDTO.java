@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.dto.room;
+package me.lahirudilhara.webchat.dto.api.room;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

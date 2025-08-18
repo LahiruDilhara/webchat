@@ -1,6 +1,6 @@
-package me.lahirudilhara.webchat.dto.room;
+package me.lahirudilhara.webchat.dto.api.room;
 
-import me.lahirudilhara.webchat.dto.user.UserResponseDTO;
+import me.lahirudilhara.webchat.dto.api.user.UserResponseDTO;
 
 import java.time.Instant;
 import java.util.List;

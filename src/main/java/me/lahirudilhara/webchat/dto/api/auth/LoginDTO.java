@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.dto.auth;
+package me.lahirudilhara.webchat.dto.api.auth;
 
 import jakarta.validation.constraints.NotBlank;
 

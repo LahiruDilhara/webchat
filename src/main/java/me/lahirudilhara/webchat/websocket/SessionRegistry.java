@@ -38,6 +38,10 @@ public class SessionRegistry {
         return  webSocketUsers;
     }
 
+    public WebSocketUser getUser(String username){
+        return  webSocketUsers.stream().filter(u -> u.getUsername().equals(username)).findFirst().orElse(null);
+    }
+
     public WebSocketUser getUsersByUsername(String username){
         return webSocketUsers.stream().filter(u->u.getUsername().equals(username)).findFirst().orElse(null);
     }

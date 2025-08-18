@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.dto.user;
+package me.lahirudilhara.webchat.dto.api.user;
 
 public class UserResponseDTO {
     private Integer id;

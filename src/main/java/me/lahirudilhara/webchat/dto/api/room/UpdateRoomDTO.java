@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.dto.room;
+package me.lahirudilhara.webchat.dto.api.room;
 
 public class UpdateRoomDTO {
     private Boolean isPrivate;

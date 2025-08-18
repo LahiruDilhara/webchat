@@ -1,6 +1,6 @@
 package me.lahirudilhara.webchat.mappers;
 
-import me.lahirudilhara.webchat.dto.user.UserResponseDTO;
+import me.lahirudilhara.webchat.dto.api.user.UserResponseDTO;
 import me.lahirudilhara.webchat.models.User;
 import org.mapstruct.Mapper;
 

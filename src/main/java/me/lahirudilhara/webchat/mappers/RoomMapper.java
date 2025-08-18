@@ -1,8 +1,8 @@
 package me.lahirudilhara.webchat.mappers;
 
-import me.lahirudilhara.webchat.dto.room.AddRoomDTO;
-import me.lahirudilhara.webchat.dto.room.RoomResponseDTO;
-import me.lahirudilhara.webchat.dto.room.UpdateRoomDTO;
+import me.lahirudilhara.webchat.dto.api.room.AddRoomDTO;
+import me.lahirudilhara.webchat.dto.api.room.RoomResponseDTO;
+import me.lahirudilhara.webchat.dto.api.room.UpdateRoomDTO;
 import me.lahirudilhara.webchat.models.Room;
 import org.mapstruct.*;
 
