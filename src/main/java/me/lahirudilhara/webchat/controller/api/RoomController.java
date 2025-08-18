@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import me.lahirudilhara.webchat.dto.api.room.AddRoomDTO;
 import me.lahirudilhara.webchat.dto.api.room.RoomResponseDTO;
 import me.lahirudilhara.webchat.dto.api.room.UpdateRoomDTO;
-import me.lahirudilhara.webchat.mappers.RoomMapper;
+import me.lahirudilhara.webchat.mappers.api.RoomMapper;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.service.api.RoomService;
 import me.lahirudilhara.webchat.service.api.UserService;

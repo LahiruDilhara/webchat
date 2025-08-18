@@ -27,7 +27,7 @@ public class WebSocketMessageService {
         sendMessageToSession(message,user.getSession());
     }
 
-    public void multicastToUsers(List<String> usernames,String message){
+    public void multicastToOnlineUsers(List<String> usernames,String message){
         List<WebSocketUser> users = sessionRegistry.findUsers(usernames);
         for (WebSocketUser user : users) {
             sendMessageToSession(message,user.getSession());

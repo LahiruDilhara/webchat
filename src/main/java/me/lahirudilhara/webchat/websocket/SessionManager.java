@@ -6,8 +6,10 @@ import org.springframework.web.socket.WebSocketSession;
 @Component
 public class SessionManager {
     private final SessionRegistry sessionRegistry;
-    public SessionManager(SessionRegistry sessionRegistry) {
+    private final WebChatController webChatController;
+    public SessionManager(SessionRegistry sessionRegistry, WebChatController webChatController) {
         this.sessionRegistry = sessionRegistry;
+        this.webChatController = webChatController;
     }
 
     public void onUserConnect(String username, WebSocketSession session){
@@ -19,6 +21,6 @@ public class SessionManager {
     }
 
     public void onUserMessage(String message, WebSocketSession session){
-
+        webChatController.onMessage(message,session.getPrincipal().getName());
     }
 }

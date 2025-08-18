@@ -16,9 +16,8 @@ public class Message {
     @Column(nullable = false)
     private String content;
 
-    private boolean deleted;
+    private boolean deleted = false;
 
-    @Column(nullable = false)
     private Instant editedAt;
 
     @ManyToOne

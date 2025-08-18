@@ -5,13 +5,11 @@ import me.lahirudilhara.webchat.core.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.core.exceptions.UserNotFoundException;
 import me.lahirudilhara.webchat.dto.api.room.AddRoomDTO;
 import me.lahirudilhara.webchat.dto.api.room.UpdateRoomDTO;
-import me.lahirudilhara.webchat.mappers.RoomMapper;
+import me.lahirudilhara.webchat.mappers.api.RoomMapper;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.repositories.RoomRepository;
 import me.lahirudilhara.webchat.repositories.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +18,6 @@ import java.util.List;
 
 @Service
 public class RoomService {
-    private static final Logger log = LoggerFactory.getLogger(RoomService.class);
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
     private final RoomMapper roomMapper;

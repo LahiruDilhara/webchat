@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.mappers;
+package me.lahirudilhara.webchat.mappers.api;
 
 import me.lahirudilhara.webchat.dto.api.user.UserResponseDTO;
 import me.lahirudilhara.webchat.models.User;

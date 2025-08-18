@@ -5,7 +5,7 @@ import me.lahirudilhara.webchat.dto.api.auth.LoginDTO;
 import me.lahirudilhara.webchat.dto.api.auth.SignUpDTO;
 import me.lahirudilhara.webchat.dto.api.jwt.JwtResponseDTO;
 import me.lahirudilhara.webchat.dto.api.user.UserResponseDTO;
-import me.lahirudilhara.webchat.mappers.UserMapper;
+import me.lahirudilhara.webchat.mappers.api.UserMapper;
 import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.service.api.AuthService;
 import org.springframework.security.authentication.BadCredentialsException;
