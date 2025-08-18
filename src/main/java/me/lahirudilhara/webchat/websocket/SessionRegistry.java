@@ -6,47 +6,51 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Component
 @Scope("singleton")
 public class SessionRegistry {
-    private List<WebSocketUser> webSocketUsers;
+
+    // Use a ConcurrentHashMap for thread-safe access
+    private final Map<String, WebSocketUser> webSocketUsers;
 
     public SessionRegistry() {
-        webSocketUsers = new ArrayList<>();
+        webSocketUsers = new ConcurrentHashMap<>();
     }
 
     public void addUser(String username, WebSocketSession session) {
-        webSocketUsers.add(new WebSocketUser(username, Instant.now(),session));
+        WebSocketUser user = new WebSocketUser(username, Instant.now(), session);
+        webSocketUsers.put(username, user);
     }
 
     public WebSocketUser findAndRemoveUser(String username) {
-        WebSocketUser user = null;
-        user = webSocketUsers.stream().filter(u -> u.getUsername().equals(username)).findFirst().orElse(null);
-        if (user != null) {
-            webSocketUsers.remove(user);
-        }
-        return user;
+        return webSocketUsers.remove(username); // remove and return if exists, null otherwise
     }
-    public boolean isUserExists(String username){
-        return webSocketUsers.stream().anyMatch(u -> u.getUsername().equals(username));
+
+    public boolean isUserExists(String username) {
+        return webSocketUsers.containsKey(username);
     }
 
     public List<WebSocketUser> getUsers() {
-        return  webSocketUsers;
+        return List.copyOf(webSocketUsers.values());
     }
 
-    public WebSocketUser getUser(String username){
-        return  webSocketUsers.stream().filter(u -> u.getUsername().equals(username)).findFirst().orElse(null);
+    public WebSocketUser getUser(String username) {
+        return webSocketUsers.get(username);
     }
 
-    public WebSocketUser getUsersByUsername(String username){
-        return webSocketUsers.stream().filter(u->u.getUsername().equals(username)).findFirst().orElse(null);
+    public WebSocketUser getUsersByUsername(String username) {
+        return webSocketUsers.get(username); // Same as getUser, consider removing this duplicate
     }
 
-    public List<WebSocketUser> findUsers(List<String> usernames){
-        return webSocketUsers.stream().filter(u->usernames.contains(u.getUsername())).toList();
+    public List<WebSocketUser> findUsers(List<String> usernames) {
+        return usernames.stream()
+                .map(webSocketUsers::get)
+                .filter(user -> user != null)
+                .collect(Collectors.toList());
     }
 }

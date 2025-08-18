@@ -7,6 +7,7 @@ import org.springframework.web.socket.WebSocketSession;
 public class SessionManager {
     private final SessionRegistry sessionRegistry;
     private final WebChatController webChatController;
+
     public SessionManager(SessionRegistry sessionRegistry, WebChatController webChatController) {
         this.sessionRegistry = sessionRegistry;
         this.webChatController = webChatController;
