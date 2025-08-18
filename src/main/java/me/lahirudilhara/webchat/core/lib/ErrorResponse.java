@@ -5,21 +5,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 
 public class ErrorResponse {
-    private String message;
+    private String error;
     private HttpStatus code;
     private static final ObjectMapper mapper = new ObjectMapper();
 
     public ErrorResponse(String message, HttpStatus code) {
-        this.message = message;
+        this.error = message;
         this.code = code;
     }
 
-    public String getMessage() {
-        return message;
+    public String getError() {
+        return error;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setError(String error) {
+        this.error = error;
     }
 
     public HttpStatus getCode() {
