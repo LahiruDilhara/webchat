@@ -1,6 +1,7 @@
 package me.lahirudilhara.webchat.service.websocket;
 
 import me.lahirudilhara.webchat.entities.WebSocketUserSession;
+import me.lahirudilhara.webchat.websocket.SessionManager;
 import me.lahirudilhara.webchat.websocket.SessionRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,25 +14,25 @@ import java.util.List;
 @Service
 public class WebSocketMessageService {
     private static final Logger log = LoggerFactory.getLogger(WebSocketMessageService.class);
-    private final SessionRegistry sessionRegistry;
+    private final SessionManager sessionManager;
 
-    public WebSocketMessageService(SessionRegistry sessionRegistry) {
-        this.sessionRegistry = sessionRegistry;
+    public WebSocketMessageService(SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
     }
 
     public void sendMessageToUser(String username,String message) {
-        WebSocketUserSession user = sessionRegistry.getUser(username);
-        if (user == null) {
-            log.error("User not found. the user name is {}", username);
-        }
-        sendMessageToSession(message,user.getSession());
+//        WebSocketUserSession user = sessionRegistry.getUser(username);
+//        if (user == null) {
+//            log.error("User not found. the user name is {}", username);
+//        }
+//        sendMessageToSession(message,user.getSession());
     }
 
     public void multicastToOnlineUsers(List<String> usernames,String message){
-        List<WebSocketUserSession> users = sessionRegistry.findUsers(usernames);
-        for (WebSocketUserSession user : users) {
-            sendMessageToSession(message,user.getSession());
-        }
+//        List<WebSocketUserSession> users = sessionRegistry.findUsers(usernames);
+//        for (WebSocketUserSession user : users) {
+//            sendMessageToSession(message,user.getSession());
+//        }
     }
 
     private void sendMessageToSession(String message, WebSocketSession session){
