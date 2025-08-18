@@ -1,5 +1,6 @@
 package me.lahirudilhara.webchat.configuration;
 
+import me.lahirudilhara.webchat.websocket.WebChatWebSocketHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -9,9 +10,9 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @Configuration
 @EnableWebSocket
 public class WebSocketConfiguration implements WebSocketConfigurer {
-    private final WebSocketHandler webSocketHandler;
+    private final WebChatWebSocketHandler webSocketHandler;
 
-    public WebSocketConfiguration(WebSocketHandler webSocketHandler) {
+    public WebSocketConfiguration(WebChatWebSocketHandler webSocketHandler) {
         this.webSocketHandler = webSocketHandler;
     }
 
