@@ -1,6 +1,6 @@
 package me.lahirudilhara.webchat.websocket;
 
-import me.lahirudilhara.webchat.entities.WebSocketUser;
+import me.lahirudilhara.webchat.entities.WebSocketUserSession;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
@@ -16,18 +16,18 @@ import java.util.stream.Collectors;
 public class SessionRegistry {
 
     // Use a ConcurrentHashMap for thread-safe access
-    private final Map<String, WebSocketUser> webSocketUsers;
+    private final Map<String, WebSocketUserSession> webSocketUsers;
 
     public SessionRegistry() {
         webSocketUsers = new ConcurrentHashMap<>();
     }
 
     public void addUser(String username, WebSocketSession session) {
-        WebSocketUser user = new WebSocketUser(username, Instant.now(), session);
+        WebSocketUserSession user = new WebSocketUserSession(username, Instant.now(), session);
         webSocketUsers.put(username, user);
     }
 
-    public WebSocketUser findAndRemoveUser(String username) {
+    public WebSocketUserSession findAndRemoveUser(String username) {
         return webSocketUsers.remove(username); // remove and return if exists, null otherwise
     }
 
@@ -35,19 +35,19 @@ public class SessionRegistry {
         return webSocketUsers.containsKey(username);
     }
 
-    public List<WebSocketUser> getUsers() {
+    public List<WebSocketUserSession> getUsers() {
         return List.copyOf(webSocketUsers.values());
     }
 
-    public WebSocketUser getUser(String username) {
+    public WebSocketUserSession getUser(String username) {
         return webSocketUsers.get(username);
     }
 
-    public WebSocketUser getUsersByUsername(String username) {
+    public WebSocketUserSession getUsersByUsername(String username) {
         return webSocketUsers.get(username); // Same as getUser, consider removing this duplicate
     }
 
-    public List<WebSocketUser> findUsers(List<String> usernames) {
+    public List<WebSocketUserSession> findUsers(List<String> usernames) {
         return usernames.stream()
                 .map(webSocketUsers::get)
                 .filter(user -> user != null)

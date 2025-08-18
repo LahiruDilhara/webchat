@@ -4,14 +4,14 @@ import org.springframework.web.socket.WebSocketSession;
 
 import java.time.Instant;
 
-public class WebSocketUser {
+public class WebSocketUserSession {
     String username;
     Instant connectedAt;
     WebSocketSession session;
 
-    public WebSocketUser(){}
+    public WebSocketUserSession(){}
 
-    public WebSocketUser(String username, Instant connectedAt, WebSocketSession session) {
+    public WebSocketUserSession(String username, Instant connectedAt, WebSocketSession session) {
         this.username = username;
         this.connectedAt = connectedAt;
         this.session = session;

@@ -11,11 +11,13 @@ import java.util.Objects;
 @Component
 public class WebChatWebSocketHandler extends TextWebSocketHandler {
     private final SessionManager sessionManager;
+    private final WebChatController webChatController;
     private final WebSocketExceptionHandler  webSocketExceptionHandler;
 
-    public WebChatWebSocketHandler(SessionManager sessionManager, WebSocketExceptionHandler webSocketExceptionHandler) {
+    public WebChatWebSocketHandler(SessionManager sessionManager, WebSocketExceptionHandler webSocketExceptionHandler,WebChatController webChatController) {
         this.sessionManager = sessionManager;
         this.webSocketExceptionHandler = webSocketExceptionHandler;
+        this.webChatController = webChatController;
     }
 
     @Override

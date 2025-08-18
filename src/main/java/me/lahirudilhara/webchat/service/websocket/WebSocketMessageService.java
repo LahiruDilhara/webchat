@@ -1,6 +1,6 @@
 package me.lahirudilhara.webchat.service.websocket;
 
-import me.lahirudilhara.webchat.entities.WebSocketUser;
+import me.lahirudilhara.webchat.entities.WebSocketUserSession;
 import me.lahirudilhara.webchat.websocket.SessionRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ public class WebSocketMessageService {
     }
 
     public void sendMessageToUser(String username,String message) {
-        WebSocketUser user = sessionRegistry.getUser(username);
+        WebSocketUserSession user = sessionRegistry.getUser(username);
         if (user == null) {
             log.error("User not found. the user name is {}", username);
         }
@@ -28,8 +28,8 @@ public class WebSocketMessageService {
     }
 
     public void multicastToOnlineUsers(List<String> usernames,String message){
-        List<WebSocketUser> users = sessionRegistry.findUsers(usernames);
-        for (WebSocketUser user : users) {
+        List<WebSocketUserSession> users = sessionRegistry.findUsers(usernames);
+        for (WebSocketUserSession user : users) {
             sendMessageToSession(message,user.getSession());
         }
     }
