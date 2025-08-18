@@ -34,7 +34,7 @@ public class WebSocketRoomService {
         if(members.stream().noneMatch(u -> u.getUsername().equals(senderUserName))) throw new  BaseWebSocketException("The user is not member of the specified room");
         Message addedMessage = messageService.addMessage(webSocketMessageMapper.SendMessageDtoToMessage(sendMessageDTO),room.getId(),senderUserName);
 
-        List<String> multiCastMembers = members.stream().map(User::getUsername).filter(username ->!username.equals(senderUserName)).toList();
+        List<String> multiCastMembers = members.stream().map(u->u.getUsername()).toList();
         webSocketMessageService.multicastDataToOnlineUsers(multiCastMembers, webSocketMessageMapper.MessageToMessageResponseDTO(addedMessage,senderUserName));
     }
 }
