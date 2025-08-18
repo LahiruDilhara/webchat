@@ -1,13 +1,12 @@
 package me.lahirudilhara.webchat.service.websocket;
 
-import me.lahirudilhara.webchat.entities.WebSocketUserSession;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import me.lahirudilhara.webchat.core.exceptions.BaseWebSocketException;
+import me.lahirudilhara.webchat.core.util.JsonUtil;
 import me.lahirudilhara.webchat.websocket.SessionManager;
-import me.lahirudilhara.webchat.websocket.SessionRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
 
 import java.util.List;
 
@@ -20,31 +19,17 @@ public class WebSocketMessageService {
         this.sessionManager = sessionManager;
     }
 
-    public void sendMessageToUser(String username,String message) {
-//        WebSocketUserSession user = sessionRegistry.getUser(username);
-//        if (user == null) {
-//            log.error("User not found. the user name is {}", username);
-//        }
-//        sendMessageToSession(message,user.getSession());
+    public void sendDataIfOnline(String username,Object data) {
+        try {
+            String jsonString = JsonUtil.objectToJson(data);
+            sessionManager.sendMessageToSession(username, jsonString);
+        } catch (JsonProcessingException e) {
+            log.error("Json processing error", e);
+            throw new BaseWebSocketException("Internal server error");
+        }
     }
 
-    public void multicastToOnlineUsers(List<String> usernames,String message){
-//        List<WebSocketUserSession> users = sessionRegistry.findUsers(usernames);
-//        for (WebSocketUserSession user : users) {
-//            sendMessageToSession(message,user.getSession());
-//        }
-    }
-
-    private void sendMessageToSession(String message, WebSocketSession session){
-        if(!session.isOpen()){
-            log.warn("The session is closed. cannot send the message {}", message);
-        }
-        TextMessage textMessage = new TextMessage(message);
-        try{
-            session.sendMessage(textMessage);
-        }
-        catch (Exception e){
-            log.error("Error while sending message to session. The message is {}", message);
-        }
+    public void multicastDataToOnlineUsers(List<String> usernames,Object data){
+        usernames.forEach(name -> sendDataIfOnline(name,data));
     }
 }

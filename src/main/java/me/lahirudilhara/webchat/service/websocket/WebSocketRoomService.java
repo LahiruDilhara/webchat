@@ -1,5 +1,6 @@
 package me.lahirudilhara.webchat.service.websocket;
 
+import me.lahirudilhara.webchat.core.exceptions.BaseWebSocketException;
 import me.lahirudilhara.webchat.dto.websocket.message.SendMessageDTO;
 import me.lahirudilhara.webchat.mappers.websocket.WebSocketMessageMapper;
 import me.lahirudilhara.webchat.models.Message;
@@ -25,19 +26,15 @@ public class WebSocketRoomService {
         this.webSocketMessageService = webSocketMessageService;
     }
 
-    public String sendMessageToRoom(SendMessageDTO sendMessageDTO,String senderUserName){
+    public void sendMessageToRoom(SendMessageDTO sendMessageDTO,String senderUserName){
         Room room = roomRepository.findByIdWithUsers(sendMessageDTO.getRoomId()).orElse(null);
-        if (room == null) {
-            return "The room not found";
-        }
+        if (room == null) throw new BaseWebSocketException("The room does not exist");
         List<User> members = room.getUsers();
-        if(members.stream().noneMatch(u -> u.getUsername().equals(senderUserName))){
-            return "The user is not member of the specified room";
-        }
-        Message message = webSocketMessageMapper.SendMessageDtoToMessage(sendMessageDTO);
-        messageService.addMessage(message,room.getId(),senderUserName);
+
+        if(members.stream().noneMatch(u -> u.getUsername().equals(senderUserName))) throw new  BaseWebSocketException("The user is not member of the specified room");
+        Message addedMessage = messageService.addMessage(webSocketMessageMapper.SendMessageDtoToMessage(sendMessageDTO),room.getId(),senderUserName);
+
         List<String> multiCastMembers = members.stream().map(User::getUsername).filter(username ->!username.equals(senderUserName)).toList();
-        webSocketMessageService.multicastToOnlineUsers(multiCastMembers,message.getContent());
-        return null;
+        webSocketMessageService.multicastDataToOnlineUsers(multiCastMembers, webSocketMessageMapper.MessageToMessageResponseDTO(addedMessage,senderUserName));
     }
 }

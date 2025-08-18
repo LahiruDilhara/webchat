@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import me.lahirudilhara.webchat.core.util.JsonUtil;
 import me.lahirudilhara.webchat.core.util.SchemaValidator;
 import me.lahirudilhara.webchat.dto.websocket.message.SendMessageDTO;
+import me.lahirudilhara.webchat.mappers.websocket.WebSocketMessageMapper;
+import me.lahirudilhara.webchat.models.Message;
 import me.lahirudilhara.webchat.service.websocket.WebSocketMessageService;
 import me.lahirudilhara.webchat.service.websocket.WebSocketRoomService;
 import org.slf4j.Logger;
@@ -13,11 +15,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class WebChatController {
     private static final Logger log = LoggerFactory.getLogger(WebChatController.class);
-    private final WebSocketMessageService webSocketMessageService;
     private final WebSocketRoomService webSocketRoomService;
 
-    public WebChatController(WebSocketMessageService webSocketMessageService, WebSocketRoomService webSocketRoomService) {
-        this.webSocketMessageService = webSocketMessageService;
+    public WebChatController( WebSocketRoomService webSocketRoomService) {
         this.webSocketRoomService = webSocketRoomService;
     }
 
@@ -26,12 +26,7 @@ public class WebChatController {
         SendMessageDTO sendMessageDTO = JsonUtil.jsonToObject(payload, SendMessageDTO.class);
         SchemaValidator.validate(sendMessageDTO);
 
-//        String error = webSocketRoomService.sendMessageToRoom(sendMessageDTO, username);
-//        if (error != null) {
-//            ErrorResponse errorResponse = new ErrorResponse(error, HttpStatus.BAD_REQUEST);
-//            webSocketMessageService.sendMessageToUser(username, errorResponse.toJson());
-//        }
-
+        webSocketRoomService.sendMessageToRoom(sendMessageDTO, username);
     }
 
 }
