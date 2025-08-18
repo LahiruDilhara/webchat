@@ -29,14 +29,4 @@ public class ErrorResponse {
     public void setCode(HttpStatus code) {
         this.code = code;
     }
-
-    public String toJson() {
-        try{
-            return mapper.writeValueAsString(this);
-        }
-        catch (JsonProcessingException e){
-            e.printStackTrace();
-        }
-        return "{\"message\":\"Internal server error\", \"code\": 500}";
-    }
 }

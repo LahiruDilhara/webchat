@@ -10,7 +10,7 @@ public class JsonUtil {
         return objectMapper.writeValueAsString(object);
     }
 
-    public static Object jsonToObject(String json) throws JsonProcessingException {
-        return objectMapper.readValue(json,Object.class);
+    public static <T> T jsonToObject(String json,Class<T> tclass) throws JsonProcessingException {
+        return objectMapper.readValue(json,tclass);
     }
 }

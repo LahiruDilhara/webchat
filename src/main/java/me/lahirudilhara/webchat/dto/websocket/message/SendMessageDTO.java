@@ -36,10 +36,4 @@ public class SendMessageDTO {
     public void setRoomId(int roomId) {
         this.roomId = roomId;
     }
-
-    public static SendMessageDTO fromJson(String json) throws JsonProcessingException {
-        SendMessageDTO dto = null;
-        dto = mapper.readValue(json,SendMessageDTO.class);
-        return dto;
-    }
 }

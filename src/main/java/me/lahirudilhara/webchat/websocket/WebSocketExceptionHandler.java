@@ -1,11 +1,17 @@
 package me.lahirudilhara.webchat.websocket;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.validation.ValidationException;
 import me.lahirudilhara.webchat.core.exceptions.BaseWebSocketException;
+import me.lahirudilhara.webchat.core.lib.WebSocketErrorResponse;
+import me.lahirudilhara.webchat.core.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
+
+import java.io.IOException;
 
 @Component
 public class WebSocketExceptionHandler {
@@ -13,21 +19,43 @@ public class WebSocketExceptionHandler {
 
     public void handleWebSocketException(Exception exception,WebSocketSession session) {
         log.warn("Exception caught in WebSocketExceptionHandler {}", exception.getMessage());
+        if(exception instanceof ValidationException){
+            handleSchemaValidationExceptions((ValidationException) exception, session);
+            return;
+        }
+        if(exception instanceof BaseWebSocketException){
+            handleBaseExceptions((BaseWebSocketException) exception, session);
+            return;
+        }
+        exception.printStackTrace();
         handleAllExceptions(session);
+    }
+
+    private void handleSchemaValidationExceptions(ValidationException ex, WebSocketSession session) {
+        WebSocketErrorResponse response = new WebSocketErrorResponse(ex.getMessage());
+        sendError(session, response);
+    }
+
+    private void handleBaseExceptions(BaseWebSocketException ex, WebSocketSession session) {
+        WebSocketErrorResponse response = new WebSocketErrorResponse(ex.getMessage());
+        sendError(session, response);
     }
 
     private void handleAllExceptions(WebSocketSession session) {
         String message = "Unexpected error occurred";
-        sendError(session, message);
+        WebSocketErrorResponse response = new WebSocketErrorResponse(message);
+        sendError(session, response);
     }
 
-    private void sendError(WebSocketSession session, String message) {
+    private void sendError(WebSocketSession session, WebSocketErrorResponse data) {
         if(!session.isOpen()) return;
         try{
-            session.sendMessage(new TextMessage(message));
-        }
-        catch(Exception ex){
-            log.error(ex.getMessage(), ex);
+            String messageData = JsonUtil.objectToJson(data);
+            session.sendMessage(new TextMessage(messageData));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
