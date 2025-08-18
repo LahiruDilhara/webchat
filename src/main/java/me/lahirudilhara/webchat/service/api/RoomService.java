@@ -6,10 +6,14 @@ import me.lahirudilhara.webchat.core.exceptions.UserNotFoundException;
 import me.lahirudilhara.webchat.dto.api.room.AddRoomDTO;
 import me.lahirudilhara.webchat.dto.api.room.UpdateRoomDTO;
 import me.lahirudilhara.webchat.mappers.api.RoomMapper;
+import me.lahirudilhara.webchat.models.Message;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.User;
+import me.lahirudilhara.webchat.repositories.MessageRepository;
 import me.lahirudilhara.webchat.repositories.RoomRepository;
 import me.lahirudilhara.webchat.repositories.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +24,14 @@ import java.util.List;
 public class RoomService {
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
+    private final MessageRepository messageRepository;
     private final RoomMapper roomMapper;
 
-    public RoomService(RoomRepository roomRepository, UserRepository userRepository, RoomMapper roomMapper) {
+    public RoomService(RoomRepository roomRepository, UserRepository userRepository, RoomMapper roomMapper,MessageRepository messageRepository) {
         this.roomRepository = roomRepository;
         this.userRepository = userRepository;
         this.roomMapper = roomMapper;
+        this.messageRepository = messageRepository;
     }
 
     public Room createRoom(AddRoomDTO addRoomDTO,String username) {
@@ -170,5 +176,10 @@ public class RoomService {
         return null;
     }
 
+    public List<Message> getRoomMessages(int roomId, Pageable pageable){
+        Page<Message> page = messageRepository.findByRoomIdOrderByCreatedAtDesc(roomId, pageable);
+        List<Message> messages = page.getContent().stream().filter(m->!m.isDeleted()).toList();
+        return messages;
+    }
 
 }

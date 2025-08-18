@@ -4,10 +4,16 @@ import jakarta.validation.Valid;
 import me.lahirudilhara.webchat.dto.api.room.AddRoomDTO;
 import me.lahirudilhara.webchat.dto.api.room.RoomResponseDTO;
 import me.lahirudilhara.webchat.dto.api.room.UpdateRoomDTO;
+import me.lahirudilhara.webchat.dto.websocket.message.MessageResponseDTO;
+import me.lahirudilhara.webchat.mappers.api.MessageMapper;
 import me.lahirudilhara.webchat.mappers.api.RoomMapper;
+import me.lahirudilhara.webchat.models.Message;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.service.api.RoomService;
 import me.lahirudilhara.webchat.service.api.UserService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,12 +25,12 @@ import java.util.List;
 public class RoomController {
     private final RoomMapper roomMapper;
     private final RoomService roomService;
-    private final UserService userService;
+    private final MessageMapper messageMapper;
 
-    public RoomController(RoomMapper roomMapper, RoomService roomService, UserService userService) {
+    public RoomController(RoomMapper roomMapper, RoomService roomService,MessageMapper messageMapper) {
         this.roomMapper = roomMapper;
         this.roomService = roomService;
-        this.userService = userService;
+        this.messageMapper = messageMapper;
     }
 
     @PostMapping("/")
@@ -67,5 +73,12 @@ public class RoomController {
     public RoomResponseDTO updateRoom(@PathVariable int roomId, @RequestBody UpdateRoomDTO updateRoomDTO, Principal principal){
         Room room = roomService.updateRoom(roomId,updateRoomDTO,principal.getName());
         return roomMapper.roomDtoToRoomResponseDTO(room);
+    }
+
+    @GetMapping("/{roomId}/messages")
+    public List<MessageResponseDTO> getMessagesOfRoom(@PathVariable int roomId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "createdAt") String sortBy, Principal principal){
+        Pageable pageable = PageRequest.of(page,size, Sort.by(sortBy).descending());
+        List<Message> messages = roomService.getRoomMessages(roomId,pageable);
+        return messages.stream().map(messageMapper::MessageToMessageResponseDTO).toList();
     }
 }
