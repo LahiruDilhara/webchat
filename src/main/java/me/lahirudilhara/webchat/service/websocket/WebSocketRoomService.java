@@ -7,7 +7,6 @@ import me.lahirudilhara.webchat.models.Message;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.repositories.RoomRepository;
-import me.lahirudilhara.webchat.service.api.MessageService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,15 +14,15 @@ import java.util.List;
 @Service
 public class WebSocketRoomService {
     private final RoomRepository roomRepository;
-    private final MessageService messageService;
-    private final WebSocketMessageMapper webSocketMessageMapper;
     private final WebSocketMessageService webSocketMessageService;
+    private final WebSocketMessageMapper webSocketMessageMapper;
+    private final WebSocketMessageHandler webSocketMessageHandler;
 
-    public WebSocketRoomService(RoomRepository roomRepository, MessageService messageService, WebSocketMessageMapper webSocketMessageMapper, WebSocketMessageService webSocketMessageService) {
+    public WebSocketRoomService(RoomRepository roomRepository, WebSocketMessageService webSocketMessageService, WebSocketMessageMapper webSocketMessageMapper, WebSocketMessageHandler webSocketMessageHandler) {
         this.roomRepository = roomRepository;
-        this.messageService = messageService;
-        this.webSocketMessageMapper = webSocketMessageMapper;
         this.webSocketMessageService = webSocketMessageService;
+        this.webSocketMessageMapper = webSocketMessageMapper;
+        this.webSocketMessageHandler = webSocketMessageHandler;
     }
 
     public void sendMessageToRoom(SendMessageDTO sendMessageDTO,String senderUserName){
@@ -32,9 +31,9 @@ public class WebSocketRoomService {
         List<User> members = room.getUsers();
 
         if(members.stream().noneMatch(u -> u.getUsername().equals(senderUserName))) throw new  BaseWebSocketException("The user is not member of the specified room");
-        Message addedMessage = messageService.addMessage(webSocketMessageMapper.SendMessageDtoToMessage(sendMessageDTO),room.getId(),senderUserName);
+        Message addedMessage = webSocketMessageService.addMessage(webSocketMessageMapper.SendMessageDtoToMessage(sendMessageDTO),room.getId(),senderUserName);
 
         List<String> multiCastMembers = members.stream().map(u->u.getUsername()).toList();
-        webSocketMessageService.multicastDataToOnlineUsers(multiCastMembers, webSocketMessageMapper.MessageToMessageResponseDTO(addedMessage,senderUserName));
+        webSocketMessageHandler.multicastDataToOnlineUsers(multiCastMembers, webSocketMessageMapper.MessageToMessageResponseDTO(addedMessage,senderUserName));
     }
 }

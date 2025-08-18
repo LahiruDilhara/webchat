@@ -1,35 +1,42 @@
 package me.lahirudilhara.webchat.service.websocket;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import me.lahirudilhara.webchat.core.exceptions.BaseWebSocketException;
-import me.lahirudilhara.webchat.core.util.JsonUtil;
-import me.lahirudilhara.webchat.websocket.SessionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import me.lahirudilhara.webchat.core.exceptions.BaseException;
+import me.lahirudilhara.webchat.models.Message;
+import me.lahirudilhara.webchat.models.Room;
+import me.lahirudilhara.webchat.models.User;
+import me.lahirudilhara.webchat.repositories.MessageRepository;
+import me.lahirudilhara.webchat.repositories.RoomRepository;
+import me.lahirudilhara.webchat.repositories.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.Instant;
 
 @Service
 public class WebSocketMessageService {
-    private static final Logger log = LoggerFactory.getLogger(WebSocketMessageService.class);
-    private final SessionManager sessionManager;
+    private final MessageRepository messageRepository;
+    private final RoomRepository roomRepository;
+    private final UserRepository userRepository;
 
-    public WebSocketMessageService(SessionManager sessionManager) {
-        this.sessionManager = sessionManager;
+    public WebSocketMessageService(MessageRepository messageRepository, RoomRepository roomRepository, UserRepository userRepository) {
+        this.messageRepository = messageRepository;
+        this.roomRepository = roomRepository;
+        this.userRepository = userRepository;
     }
 
-    public void sendDataIfOnline(String username,Object data) {
-        try {
-            String jsonString = JsonUtil.objectToJson(data);
-            sessionManager.sendMessageToSession(username, jsonString);
-        } catch (JsonProcessingException e) {
-            log.error("Json processing error", e);
-            throw new BaseWebSocketException("Internal server error");
+    public Message addMessage(Message message,int roomId, String username){
+        Room room = roomRepository.findById(roomId).orElse(null);
+        if(room == null){
+            throw new BaseException("The room not found", HttpStatus.BAD_REQUEST);
         }
-    }
-
-    public void multicastDataToOnlineUsers(List<String> usernames,Object data){
-        usernames.forEach(name -> sendDataIfOnline(name,data));
+        message.setRoom(room);
+        message.setCreatedAt(Instant.now());
+        message.setEditedAt(message.getCreatedAt());
+        User user = userRepository.findByUsername(username);
+        if(user == null){
+            throw new BaseException("The user not found", HttpStatus.BAD_REQUEST);
+        }
+        message.setSentBy(user);
+        return messageRepository.save(message);
     }
 }
