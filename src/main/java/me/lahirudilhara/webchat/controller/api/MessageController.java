@@ -7,6 +7,7 @@ import me.lahirudilhara.webchat.models.Message;
 import me.lahirudilhara.webchat.service.api.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +27,13 @@ public class MessageController {
 
     @PutMapping("/{messageId}")
     public MessageResponseDTO updateMessage(@PathVariable int messageId, @Validated @RequestBody UpdateMessageDTO updateMessageDTO, Principal principal) {
-        log.warn("The message content is {}",updateMessageDTO.getMessage());
         Message message = messageService.updateMessage(updateMessageDTO,messageId,principal.getName());
         return messageMapper.MessageToMessageResponseDTO(message);
+    }
+
+    @DeleteMapping("/{messageId}")
+    public ResponseEntity deleteMessage(@PathVariable int messageId, Principal principal){
+        messageService.deleteMessage(messageId,principal.getName());
+        return ResponseEntity.noContent().build();
     }
 }

@@ -24,16 +24,26 @@ public class MessageService {
     }
 
     public Message updateMessage(UpdateMessageDTO updateMessageDTO, int messageId, String ownerName){
+        Message message = validateAleration(messageId,ownerName);
+
+        message.setEditedAt(Instant.now());
+        message = messageMapper.updateMessageDTOToMessage(updateMessageDTO,message);
+        return messageRepository.save(message);
+    }
+
+    public void deleteMessage(int messageId, String ownerName){
+        Message message = validateAleration(messageId,ownerName);
+        message.setDeleted(true);
+        messageRepository.save(message);
+    }
+
+    private Message validateAleration(int messageId, String ownerName){
         Message message = messageRepository.findById(messageId).orElse(null);
         if (message == null) throw new BaseException("Message not found", HttpStatus.BAD_REQUEST);
         if(message.isDeleted()) throw new BaseException("Message not found", HttpStatus.BAD_REQUEST);
-        if(!message.getSentBy().getUsername().equals(ownerName)) throw new BaseException("Only the owner can update the message", HttpStatus.BAD_REQUEST);
-        if(message.getRoom().getUsers().stream().noneMatch(u->u.getUsername().equals(ownerName))) throw new BaseException("User is not a memeber of the room", HttpStatus.BAD_REQUEST);
+        if(!message.getSentBy().getUsername().equals(ownerName)) throw new BaseException("Only the owner can update or delete the message", HttpStatus.BAD_REQUEST);
+        if(message.getRoom().getUsers().stream().noneMatch(u->u.getUsername().equals(ownerName))) throw new BaseException("User is not a member of the room", HttpStatus.BAD_REQUEST);
 
-        message.setEditedAt(Instant.now());
-        log.warn("messagedto content {}",updateMessageDTO.getMessage());
-        message = messageMapper.updateMessageDTOToMessage(updateMessageDTO,message);
-        log.warn("message content {}",message.getContent());
-        return messageRepository.save(message);
+        return message;
     }
 }
