@@ -1,9 +1,11 @@
-package me.lahirudilhara.webchat.service.api;
+package me.lahirudilhara.webchat.service;
 
 import me.lahirudilhara.webchat.core.exceptions.BaseException;
 import me.lahirudilhara.webchat.dto.api.message.UpdateMessageDTO;
 import me.lahirudilhara.webchat.mappers.api.MessageMapper;
 import me.lahirudilhara.webchat.models.Message;
+import me.lahirudilhara.webchat.models.message.BaseMessage;
+import me.lahirudilhara.webchat.repositories.BaseMessageRepository;
 import me.lahirudilhara.webchat.repositories.MessageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +19,17 @@ public class MessageService {
     private static final Logger log = LoggerFactory.getLogger(MessageService.class);
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
+    private final BaseMessageRepository baseMessageRepository;
 
-    public MessageService(MessageRepository messageRepository, MessageMapper messageMapper) {
+    public MessageService(MessageRepository messageRepository, MessageMapper messageMapper, BaseMessageRepository baseMessageRepository) {
         this.messageRepository = messageRepository;
         this.messageMapper = messageMapper;
+        this.baseMessageRepository = baseMessageRepository;
     }
+
+//    public BaseMessage createMessage(){
+//
+//    }
 
     public Message updateMessage(UpdateMessageDTO updateMessageDTO, int messageId, String ownerName){
         Message message = validateAleration(messageId,ownerName);

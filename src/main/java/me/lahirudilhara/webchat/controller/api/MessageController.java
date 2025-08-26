@@ -4,7 +4,7 @@ import me.lahirudilhara.webchat.dto.api.message.UpdateMessageDTO;
 import me.lahirudilhara.webchat.dto.websocket.message.MessageResponseDTO;
 import me.lahirudilhara.webchat.mappers.api.MessageMapper;
 import me.lahirudilhara.webchat.models.Message;
-import me.lahirudilhara.webchat.service.api.MessageService;
+import me.lahirudilhara.webchat.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

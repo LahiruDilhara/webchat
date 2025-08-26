@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import me.lahirudilhara.webchat.core.util.JsonUtil;
 import me.lahirudilhara.webchat.core.util.SchemaValidator;
 import me.lahirudilhara.webchat.dto.websocket.message.SendMessageDTO;
+import me.lahirudilhara.webchat.dto.websocket.user.UserBaseMessageDto;
+import me.lahirudilhara.webchat.dto.websocket.user.UserTextMessageDto;
 import me.lahirudilhara.webchat.service.websocket.WebSocketRoomService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +22,10 @@ public class WebChatController {
 
     public void onMessage(String payload, String username) throws JsonProcessingException {
         // parse the message from json
-        SendMessageDTO sendMessageDTO = JsonUtil.jsonToObject(payload, SendMessageDTO.class);
-        SchemaValidator.validate(sendMessageDTO);
+        UserBaseMessageDto userBaseMessageDto = JsonUtil.jsonToObject(payload,UserBaseMessageDto.class);
+        SchemaValidator.validate(userBaseMessageDto);
 
-        webSocketRoomService.sendMessageToRoom(sendMessageDTO, username);
+//        webSocketRoomService.sendMessageToRoom(sendMessageDTO, username);
     }
 
 }

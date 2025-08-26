@@ -1,6 +1,7 @@
 package me.lahirudilhara.webchat.websocket;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
 import jakarta.validation.ValidationException;
 import me.lahirudilhara.webchat.core.exceptions.BaseWebSocketException;
 import me.lahirudilhara.webchat.core.lib.WebSocketErrorResponse;
