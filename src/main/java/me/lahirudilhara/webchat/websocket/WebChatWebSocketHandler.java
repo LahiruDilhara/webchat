@@ -25,12 +25,6 @@ public class WebChatWebSocketHandler extends TextWebSocketHandler {
         if(!session.isOpen()) return;
         if(Objects.requireNonNull(session.getPrincipal()).getName() == null) return;
         sessionManager.addWebSocketSession(session);
-//        try{
-//            sessionManager.onUserConnect(session.getPrincipal().getName(),session);
-//        }
-//        catch(Exception e){
-//            webSocketExceptionHandler.handleWebSocketException(e,session);
-//        }
     }
 
     @Override
@@ -49,10 +43,5 @@ public class WebChatWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         if(Objects.requireNonNull(session.getPrincipal()).getName() == null) return;
         sessionManager.removeUser(session.getPrincipal().getName());
-//        try{
-//            sessionManager.onUserDisconnect(session.getPrincipal().getName(),session);
-//        } catch (Exception e) {
-//            webSocketExceptionHandler.handleWebSocketException(e,session);
-//        }
     }
 }
