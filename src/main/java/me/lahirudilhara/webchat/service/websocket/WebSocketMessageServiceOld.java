@@ -13,12 +13,12 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 
 @Service
-public class WebSocketMessageService {
+public class WebSocketMessageServiceOld {
     private final MessageRepository messageRepository;
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
 
-    public WebSocketMessageService(MessageRepository messageRepository, RoomRepository roomRepository, UserRepository userRepository) {
+    public WebSocketMessageServiceOld(MessageRepository messageRepository, RoomRepository roomRepository, UserRepository userRepository) {
         this.messageRepository = messageRepository;
         this.roomRepository = roomRepository;
         this.userRepository = userRepository;

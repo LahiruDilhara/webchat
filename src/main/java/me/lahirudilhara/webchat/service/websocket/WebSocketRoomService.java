@@ -14,11 +14,11 @@ import java.util.List;
 @Service
 public class WebSocketRoomService {
     private final RoomRepository roomRepository;
-    private final WebSocketMessageService webSocketMessageService;
+    private final WebSocketMessageServiceOld webSocketMessageService;
     private final WebSocketMessageMapper webSocketMessageMapper;
     private final WebSocketMessageHandler webSocketMessageHandler;
 
-    public WebSocketRoomService(RoomRepository roomRepository, WebSocketMessageService webSocketMessageService, WebSocketMessageMapper webSocketMessageMapper, WebSocketMessageHandler webSocketMessageHandler) {
+    public WebSocketRoomService(RoomRepository roomRepository, WebSocketMessageServiceOld webSocketMessageService, WebSocketMessageMapper webSocketMessageMapper, WebSocketMessageHandler webSocketMessageHandler) {
         this.roomRepository = roomRepository;
         this.webSocketMessageService = webSocketMessageService;
         this.webSocketMessageMapper = webSocketMessageMapper;
