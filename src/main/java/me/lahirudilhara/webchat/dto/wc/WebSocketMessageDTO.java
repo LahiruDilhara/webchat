@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.dto.websocket.user;
+package me.lahirudilhara.webchat.dto.wc;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -13,10 +13,10 @@ import me.lahirudilhara.webchat.service.websocket.PacketType;
         visible = true
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = UserTextMessageDto.class, name = "Text"),
-        @JsonSubTypes.Type(value = JoinRoomRequestMessageDto.class, name = "Join")
+        @JsonSubTypes.Type(value = WebSocketTextMessageDTO.class, name = "Text"),
+        @JsonSubTypes.Type(value = WebSocketJoinRoomMessageDTO.class, name = "Join")
 })
-public class UserBaseMessageDto {
+public class WebSocketMessageDTO {
     @NotNull(message = "The type cannot be null")
     private PacketType type;
 
@@ -24,10 +24,10 @@ public class UserBaseMessageDto {
     @Min(value = 1,message = "RoomId should be greater than 0")
     private int roomId;
 
-    public UserBaseMessageDto() {
+    public WebSocketMessageDTO() {
     }
 
-    public UserBaseMessageDto(PacketType type, int roomId) {
+    public WebSocketMessageDTO(PacketType type, int roomId) {
         this.type = type;
         this.roomId = roomId;
     }

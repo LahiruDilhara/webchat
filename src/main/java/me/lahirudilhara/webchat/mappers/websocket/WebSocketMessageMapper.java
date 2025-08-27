@@ -1,6 +1,5 @@
 package me.lahirudilhara.webchat.mappers.websocket;
 
-import me.lahirudilhara.webchat.dto.websocket.user.UserTextMessageDto;
 import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.models.message.TextMessage;
 import org.mapstruct.BeanMapping;
@@ -19,7 +18,7 @@ public interface WebSocketMessageMapper {
 //    MessageResponseDTO MessageToMessageResponseDTO(Message message, String senderUsername);
 
 
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "content",source = "message")
-    TextMessage UserTextMessageDtoToTextMessage(UserTextMessageDto userTextMessageDto);
+//    @BeanMapping(ignoreByDefault = true)
+//    @Mapping(target = "content",source = "message")
+//    TextMessage UserTextMessageDtoToTextMessage(UserTextMessageDto userTextMessageDto);
 }

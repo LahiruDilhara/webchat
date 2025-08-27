@@ -1,5 +1,6 @@
 package me.lahirudilhara.webchat.websocket;
 
+import me.lahirudilhara.webchat.core.lib.WebSocketErrorResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -31,11 +32,15 @@ public class WebChatWebSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         if(!session.isOpen()) return;
         if(Objects.requireNonNull(session.getPrincipal()).getName() == null) return;
+        String error = null;
         try{
-            webChatController.onMessage(message.getPayload(),session.getPrincipal().getName());
+            error = webChatController.onMessage(message.getPayload(),session.getPrincipal().getName());
         }
         catch (Exception e){
             webSocketExceptionHandler.handleWebSocketException(e,session);
+        }
+        if(error != null) {
+            webSocketExceptionHandler.sendError(session, new WebSocketErrorResponse(error));
         }
     }
 

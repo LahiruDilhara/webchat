@@ -3,7 +3,7 @@ package me.lahirudilhara.webchat.websocket;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import me.lahirudilhara.webchat.core.util.JsonUtil;
 import me.lahirudilhara.webchat.core.util.SchemaValidator;
-import me.lahirudilhara.webchat.dto.websocket.user.UserBaseMessageDto;
+import me.lahirudilhara.webchat.dto.wc.WebSocketMessageDTO;
 import me.lahirudilhara.webchat.service.websocket.WebSocketMessageDispatcher;
 import me.lahirudilhara.webchat.service.websocket.WebSocketRoomService;
 import org.slf4j.Logger;
@@ -21,11 +21,23 @@ public class WebChatController {
         this.webSocketMessageDispatcher = webSocketMessageDispatcher;
     }
 
-    public void onMessage(String payload, String username) throws JsonProcessingException {
+    public String onMessage(String payload, String username) throws JsonProcessingException {
         // parse the message from json
-        UserBaseMessageDto userBaseMessageDto = JsonUtil.jsonToObject(payload,UserBaseMessageDto.class);
-        SchemaValidator.validate(userBaseMessageDto);
-        webSocketMessageDispatcher.dispatch(userBaseMessageDto,username);
+        WebSocketMessageDTO webSocketMessageDTO = null;
+        try{
+            webSocketMessageDTO = JsonUtil.jsonToObject(payload, WebSocketMessageDTO.class);
+        }
+        catch(JsonProcessingException e){
+            return "The message json is not in correct format";
+        } catch (Exception e) {
+            return "Unknown error occurred";
+        }
+        if(webSocketMessageDTO == null) return "Unknown error occurred";
+        String error = SchemaValidator.validate(webSocketMessageDTO);
+        if(error != null)return error;
+
+        return null;
+//        webSocketMessageDispatcher.dispatch(webSocketMessageDto,username);
 //        webSocketRoomService.sendMessageToRoom(sendMessageDTO, username);
     }
 

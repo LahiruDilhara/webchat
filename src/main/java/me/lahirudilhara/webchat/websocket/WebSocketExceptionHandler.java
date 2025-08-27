@@ -48,7 +48,7 @@ public class WebSocketExceptionHandler {
         sendError(session, response);
     }
 
-    private void sendError(WebSocketSession session, WebSocketErrorResponse data) {
+    public void sendError(WebSocketSession session, WebSocketErrorResponse data) {
         if(!session.isOpen()) return;
         try{
             String messageData = JsonUtil.objectToJson(data);
