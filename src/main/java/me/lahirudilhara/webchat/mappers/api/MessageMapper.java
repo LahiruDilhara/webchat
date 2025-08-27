@@ -1,21 +1,27 @@
 package me.lahirudilhara.webchat.mappers.api;
 
 import me.lahirudilhara.webchat.dto.api.message.UpdateMessageDTO;
-import me.lahirudilhara.webchat.dto.websocket.message.MessageResponseDTO;
-import me.lahirudilhara.webchat.models.Message;
+import me.lahirudilhara.webchat.dto.message.MessageResponseDTO;
+import me.lahirudilhara.webchat.dto.message.TextMessageResponseDTO;
+import me.lahirudilhara.webchat.models.message.Message;
+import me.lahirudilhara.webchat.models.message.TextMessage;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.w3c.dom.Text;
 
 @Mapper(componentModel = "spring")
 public interface MessageMapper {
-    @Mapping(target = "message",source = "content")
-    @Mapping(target = "senderUsername", source = "sentBy.username")
-    @Mapping(target = "roomId",source = "room.id")
-    MessageResponseDTO MessageToMessageResponseDTO(Message message);
+    @Mapping(source = "sender.username",target = "senderUsername")
+    @Mapping(source = "sender.id",target = "senderId")
+    @Mapping(source = "room.id",target = "roomId")
+    TextMessageResponseDTO textMessageToTextMessageResponseDTO(TextMessage textMessage);
 
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(source = "message",target = "content")
-    Message updateMessageDTOToMessage(UpdateMessageDTO updateMessageDTO, @MappingTarget Message message);
+    default MessageResponseDTO toDto(Message message){
+        if(message instanceof TextMessage){
+            return textMessageToTextMessageResponseDTO((TextMessage)message);
+        }
+        throw new IllegalArgumentException("Unkown message type");
+    }
 }

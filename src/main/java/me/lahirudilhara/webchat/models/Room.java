@@ -1,6 +1,7 @@
 package me.lahirudilhara.webchat.models;
 
 import jakarta.persistence.*;
+import me.lahirudilhara.webchat.models.message.Message;
 
 import java.time.Instant;
 import java.util.ArrayList;

@@ -1,9 +1,7 @@
 package me.lahirudilhara.webchat.controller.api;
 
 import me.lahirudilhara.webchat.dto.api.message.UpdateMessageDTO;
-import me.lahirudilhara.webchat.dto.websocket.message.MessageResponseDTO;
 import me.lahirudilhara.webchat.mappers.api.MessageMapper;
-import me.lahirudilhara.webchat.models.Message;
 import me.lahirudilhara.webchat.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,15 +23,15 @@ public class MessageController {
         this.messageService = messageService;
     }
 
-    @PutMapping("/{messageId}")
-    public MessageResponseDTO updateMessage(@PathVariable int messageId, @Validated @RequestBody UpdateMessageDTO updateMessageDTO, Principal principal) {
-        Message message = messageService.updateMessage(updateMessageDTO,messageId,principal.getName());
-        return messageMapper.MessageToMessageResponseDTO(message);
-    }
+//    @PutMapping("/{messageId}")
+//    public MessageResponseDTO updateMessage(@PathVariable int messageId, @Validated @RequestBody UpdateMessageDTO updateMessageDTO, Principal principal) {
+//        Message message = messageService.updateMessage(updateMessageDTO,messageId,principal.getName());
+//        return messageMapper.MessageToMessageResponseDTO(message);
+//    }
 
-    @DeleteMapping("/{messageId}")
-    public ResponseEntity deleteMessage(@PathVariable int messageId, Principal principal){
-        messageService.deleteMessage(messageId,principal.getName());
-        return ResponseEntity.noContent().build();
-    }
+//    @DeleteMapping("/{messageId}")
+//    public ResponseEntity deleteMessage(@PathVariable int messageId, Principal principal){
+//        messageService.deleteMessage(messageId,principal.getName());
+//        return ResponseEntity.noContent().build();
+//    }
 }

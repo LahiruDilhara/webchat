@@ -6,9 +6,9 @@ import me.lahirudilhara.webchat.models.User;
 
 import java.time.Instant;
 
-@Entity(name = "baseMessage")
+@Entity(name = "message")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class BaseMessage {
+public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -26,10 +26,10 @@ public class BaseMessage {
     @JoinColumn(name = "room")
     private Room room;
 
-    public BaseMessage() {
+    public Message() {
     }
 
-    public BaseMessage(Integer id, Instant createdAt, boolean deleted, User sender, Room room) {
+    public Message(Integer id, Instant createdAt, boolean deleted, User sender, Room room) {
         this.id = id;
         this.createdAt = createdAt;
         this.deleted = deleted;

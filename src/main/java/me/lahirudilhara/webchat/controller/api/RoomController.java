@@ -4,13 +4,12 @@ import jakarta.validation.Valid;
 import me.lahirudilhara.webchat.dto.api.room.AddRoomDTO;
 import me.lahirudilhara.webchat.dto.api.room.RoomResponseDTO;
 import me.lahirudilhara.webchat.dto.api.room.UpdateRoomDTO;
-import me.lahirudilhara.webchat.dto.websocket.message.MessageResponseDTO;
+import me.lahirudilhara.webchat.dto.message.MessageResponseDTO;
 import me.lahirudilhara.webchat.mappers.api.MessageMapper;
 import me.lahirudilhara.webchat.mappers.api.RoomMapper;
-import me.lahirudilhara.webchat.models.Message;
 import me.lahirudilhara.webchat.models.Room;
+import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.service.api.RoomService;
-import me.lahirudilhara.webchat.service.api.UserService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -79,6 +78,6 @@ public class RoomController {
     public List<MessageResponseDTO> getMessagesOfRoom(@PathVariable int roomId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "createdAt") String sortBy, Principal principal){
         Pageable pageable = PageRequest.of(page,size, Sort.by(sortBy).descending());
         List<Message> messages = roomService.getRoomMessages(roomId,pageable);
-        return messages.stream().map(messageMapper::MessageToMessageResponseDTO).toList();
+        return messages.stream().map(messageMapper::toDto).toList();
     }
 }

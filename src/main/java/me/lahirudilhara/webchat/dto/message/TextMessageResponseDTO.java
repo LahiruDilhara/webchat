@@ -1,21 +1,16 @@
-package me.lahirudilhara.webchat.models.message;
-
-import jakarta.persistence.Entity;
-import me.lahirudilhara.webchat.models.Room;
-import me.lahirudilhara.webchat.models.User;
+package me.lahirudilhara.webchat.dto.message;
 
 import java.time.Instant;
 
-@Entity(name = "textMessage")
-public class TextMessage extends Message {
+public class TextMessageResponseDTO extends MessageResponseDTO {
     private String content;
     private Instant editedAt;
 
-    public TextMessage() {
+    public TextMessageResponseDTO() {
     }
 
-    public TextMessage(Integer id, Instant createdAt, boolean deleted, User sender, Room room, String content, Instant editedAt) {
-        super(id, createdAt, deleted, sender, room);
+    public TextMessageResponseDTO(int id, Instant createdAt, String senderUsername, int senderId, int roomId, String content, Instant editedAt) {
+        super(id, createdAt, senderUsername, senderId, roomId);
         this.content = content;
         this.editedAt = editedAt;
     }

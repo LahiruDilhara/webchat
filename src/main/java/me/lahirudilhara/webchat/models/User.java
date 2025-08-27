@@ -1,6 +1,7 @@
 package me.lahirudilhara.webchat.models;
 
 import jakarta.persistence.*;
+import me.lahirudilhara.webchat.models.message.Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ public class User {
     private String username;
     private String password;
 
-    @OneToMany(mappedBy = "sentBy",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "sender",cascade = CascadeType.ALL)
     private List<Message> messages = new ArrayList<>();
 
     @OneToMany(mappedBy = "createdBy",cascade = CascadeType.ALL)
