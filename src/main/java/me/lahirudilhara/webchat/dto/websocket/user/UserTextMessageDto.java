@@ -3,7 +3,7 @@ package me.lahirudilhara.webchat.dto.websocket.user;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import me.lahirudilhara.webchat.dto.websocket.PacketType;
+import me.lahirudilhara.webchat.service.websocket.PacketType;
 
 public class UserTextMessageDto extends UserBaseMessageDto {
     @NotNull(message = "The message cannot be null")

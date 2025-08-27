@@ -36,4 +36,12 @@ public class WebSocketRoomService {
         List<String> multiCastMembers = members.stream().map(u->u.getUsername()).toList();
         webSocketMessageHandler.multicastDataToOnlineUsers(multiCastMembers, webSocketMessageMapper.MessageToMessageResponseDTO(addedMessage,senderUserName));
     }
+
+    public void canUserSendMessageToRoom(int roomId, String username){
+        Room room = roomRepository.findByIdWithUsers(roomId).orElse(null);
+        if (room == null) throw new BaseWebSocketException("The room does not exist");
+        List<User> members = room.getUsers();
+        if(members.stream().noneMatch(u -> u.getUsername().equals(username))) throw new  BaseWebSocketException("The user is not member of the specified room");
+        if(!room.isAcceptMessages()) throw new BaseWebSocketException("The room is not accepting messages");
+    }
 }

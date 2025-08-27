@@ -31,4 +31,8 @@ public class UserService {
         return authentication.isAuthenticated();
     }
 
+    public User getUser(String username) {
+        return userRepository.findByUsername(username);
+    }
+
 }

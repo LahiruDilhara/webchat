@@ -27,12 +27,9 @@ public class MessageService {
         this.baseMessageRepository = baseMessageRepository;
     }
 
-//    public BaseMessage createMessage(){
-//
-//    }
 
     public Message updateMessage(UpdateMessageDTO updateMessageDTO, int messageId, String ownerName){
-        Message message = validateAleration(messageId,ownerName);
+        Message message = validateAlteration(messageId,ownerName);
 
         message.setEditedAt(Instant.now());
         message = messageMapper.updateMessageDTOToMessage(updateMessageDTO,message);
@@ -40,12 +37,12 @@ public class MessageService {
     }
 
     public void deleteMessage(int messageId, String ownerName){
-        Message message = validateAleration(messageId,ownerName);
+        Message message = validateAlteration(messageId,ownerName);
         message.setDeleted(true);
         messageRepository.save(message);
     }
 
-    private Message validateAleration(int messageId, String ownerName){
+    private Message validateAlteration(int messageId, String ownerName){
         Message message = messageRepository.findById(messageId).orElse(null);
         if (message == null) throw new BaseException("Message not found", HttpStatus.BAD_REQUEST);
         if(message.isDeleted()) throw new BaseException("Message not found", HttpStatus.BAD_REQUEST);
@@ -54,4 +51,8 @@ public class MessageService {
 
         return message;
     }
+
+//    public BaseMessage addMessage(BaseMessage baseMessage){
+//
+//    }
 }

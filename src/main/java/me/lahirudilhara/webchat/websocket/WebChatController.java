@@ -27,7 +27,7 @@ public class WebChatController {
         // parse the message from json
         UserBaseMessageDto userBaseMessageDto = JsonUtil.jsonToObject(payload,UserBaseMessageDto.class);
         SchemaValidator.validate(userBaseMessageDto);
-        webSocketMessageDispatcher.dispatch(userBaseMessageDto);
+        webSocketMessageDispatcher.dispatch(userBaseMessageDto,username);
 //        webSocketRoomService.sendMessageToRoom(sendMessageDTO, username);
     }
 

@@ -19,11 +19,11 @@ public class WebSocketMessageDispatcher {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends UserBaseMessageDto> void dispatch(T message) {
+    public <T extends UserBaseMessageDto> void dispatch(T message,String senderUsername) {
         UserMessageHandler<T> userMessageHandler = (UserMessageHandler<T>) userMessageHandlerMap.get(message.getClass());
         if (userMessageHandler == null) {
             throw new IllegalArgumentException("No handler found for"+userMessageHandler.getClass().getName());
         }
-        userMessageHandler.handleMessage(message);
+        userMessageHandler.handleMessage(message,senderUsername);
     }
 }

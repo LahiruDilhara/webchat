@@ -182,4 +182,8 @@ public class RoomService {
         return messages;
     }
 
+    public Room getRoom(int roomId){
+        return roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
+    }
+
 }

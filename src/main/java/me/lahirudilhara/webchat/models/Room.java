@@ -118,4 +118,8 @@ public class Room {
     public void setMultiUser(boolean multiUser) {
         this.multiUser = multiUser;
     }
+
+    public boolean isAcceptMessages(){
+        return true;
+    }
 }
