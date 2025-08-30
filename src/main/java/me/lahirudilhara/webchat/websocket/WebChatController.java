@@ -1,6 +1,8 @@
 package me.lahirudilhara.webchat.websocket;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import me.lahirudilhara.webchat.core.lib.Either;
+import me.lahirudilhara.webchat.core.lib.WebSocketErrorResponse;
 import me.lahirudilhara.webchat.core.util.JsonUtil;
 import me.lahirudilhara.webchat.core.util.SchemaValidator;
 import me.lahirudilhara.webchat.dto.wc.WebSocketMessageDTO;
@@ -39,6 +41,9 @@ public class WebChatController {
         return null;
 //        webSocketMessageDispatcher.dispatch(webSocketMessageDto,username);
 //        webSocketRoomService.sendMessageToRoom(sendMessageDTO, username);
+
+
+        // All of these classes should use the ClientExcpetionEvent to send errors to the client, that event handled by the event handler using the same WebSocketError
     }
 
 }

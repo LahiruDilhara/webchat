@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.controller.api;
+package me.lahirudilhara.webchat.controller;
 
 import jakarta.validation.Valid;
 import me.lahirudilhara.webchat.dto.api.room.AddRoomDTO;

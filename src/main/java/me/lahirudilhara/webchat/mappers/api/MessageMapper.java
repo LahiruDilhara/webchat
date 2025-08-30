@@ -22,6 +22,6 @@ public interface MessageMapper {
         if(message instanceof TextMessage){
             return textMessageToTextMessageResponseDTO((TextMessage)message);
         }
-        throw new IllegalArgumentException("Unkown message type");
+        throw new IllegalArgumentException("Unknown message type");
     }
 }

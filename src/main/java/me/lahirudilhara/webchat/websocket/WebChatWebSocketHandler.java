@@ -1,6 +1,15 @@
 package me.lahirudilhara.webchat.websocket;
 
-import me.lahirudilhara.webchat.core.lib.WebSocketErrorResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.validation.ValidationException;
+import me.lahirudilhara.webchat.core.util.JsonUtil;
+import me.lahirudilhara.webchat.core.util.SchemaValidator;
+import me.lahirudilhara.webchat.core.util.WebSocketError;
+import me.lahirudilhara.webchat.dto.wc.WebSocketMessageDTO;
+import me.lahirudilhara.webchat.websocket.events.ClientConnectedEvent;
+import me.lahirudilhara.webchat.websocket.events.ClientDisconnectedEvent;
+import me.lahirudilhara.webchat.websocket.events.OnClientMessageEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -11,42 +20,42 @@ import java.util.Objects;
 
 @Component
 public class WebChatWebSocketHandler extends TextWebSocketHandler {
-    private final SessionManager sessionManager;
-    private final WebChatController webChatController;
-    private final WebSocketExceptionHandler  webSocketExceptionHandler;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public WebChatWebSocketHandler(SessionManager sessionManager, WebSocketExceptionHandler webSocketExceptionHandler,WebChatController webChatController) {
-        this.sessionManager = sessionManager;
-        this.webSocketExceptionHandler = webSocketExceptionHandler;
-        this.webChatController = webChatController;
+    public WebChatWebSocketHandler( ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(WebSocketSession session) {
         if(!session.isOpen()) return;
         if(Objects.requireNonNull(session.getPrincipal()).getName() == null) return;
-        sessionManager.addWebSocketSession(session);
+        applicationEventPublisher.publishEvent(new ClientConnectedEvent(session.getPrincipal().getName(),session));
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) {
         if(!session.isOpen()) return;
         if(Objects.requireNonNull(session.getPrincipal()).getName() == null) return;
-        String error = null;
         try{
-            error = webChatController.onMessage(message.getPayload(),session.getPrincipal().getName());
+            WebSocketMessageDTO webSocketMessageDTO = JsonUtil.jsonToObject(message.getPayload(), WebSocketMessageDTO.class);
+            SchemaValidator.validate(webSocketMessageDTO);
+            applicationEventPublisher.publishEvent(new OnClientMessageEvent(session.getPrincipal().getName(),webSocketMessageDTO));
         }
-        catch (Exception e){
-            webSocketExceptionHandler.handleWebSocketException(e,session);
+        catch(JsonProcessingException e){
+            WebSocketError.sendError(session,"The message json is not in correct format");
         }
-        if(error != null) {
-            webSocketExceptionHandler.sendError(session, new WebSocketErrorResponse(error));
+        catch(ValidationException e){
+            WebSocketError.sendError(session,e.getMessage());
+        }
+        catch (Exception e) {
+            WebSocketError.sendError(session,"Unknown error occurred");
         }
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status){
         if(Objects.requireNonNull(session.getPrincipal()).getName() == null) return;
-        sessionManager.removeUser(session.getPrincipal().getName());
+        applicationEventPublisher.publishEvent(new ClientDisconnectedEvent(session.getPrincipal().getName()));
     }
 }
