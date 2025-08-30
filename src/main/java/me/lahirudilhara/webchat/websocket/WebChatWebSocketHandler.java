@@ -57,5 +57,6 @@ public class WebChatWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status){
         if(Objects.requireNonNull(session.getPrincipal()).getName() == null) return;
         applicationEventPublisher.publishEvent(new ClientDisconnectedEvent(session.getPrincipal().getName()));
+        // using this connection close, can save the user last seen time
     }
 }

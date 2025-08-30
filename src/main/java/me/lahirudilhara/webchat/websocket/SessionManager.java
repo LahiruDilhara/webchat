@@ -1,8 +1,11 @@
 package me.lahirudilhara.webchat.websocket;
 
 import me.lahirudilhara.webchat.entities.WebSocketUserSession;
+import me.lahirudilhara.webchat.websocket.events.ClientConnectedEvent;
+import me.lahirudilhara.webchat.websocket.events.ClientDisconnectedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -22,16 +25,19 @@ public class SessionManager {
 
     public SessionManager() {
         webSocketUsers = new ConcurrentHashMap<>();
-
     }
 
-    public void addWebSocketSession(WebSocketSession session) {
-        WebSocketUserSession webSocketUserSession = new WebSocketUserSession(session.getPrincipal().getName(), Instant.now(),session);
-        webSocketUsers.put(session.getPrincipal().getName(), webSocketUserSession);
+    @EventListener
+    public void onUserConnected(ClientConnectedEvent event){
+        WebSocketUserSession webSocketUserSession = new WebSocketUserSession(event.getUsername(),Instant.now(),event.getSession());
+        webSocketUsers.put(event.getUsername(), webSocketUserSession);
+        log.info("A new User connected with username {}",event.getUsername());
     }
 
-    public void removeUser(String username){
-        this.webSocketUsers.remove(username);
+    @EventListener
+    public void onUserDisconnected(ClientDisconnectedEvent event){
+        this.webSocketUsers.remove(event.getUsername());
+        log.info("The user disconnected with username {}",event.getUsername());
     }
 
     public boolean isUserOnline(String username){

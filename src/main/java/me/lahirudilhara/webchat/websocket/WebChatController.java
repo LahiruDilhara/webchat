@@ -35,8 +35,8 @@ public class WebChatController {
             return "Unknown error occurred";
         }
         if(webSocketMessageDTO == null) return "Unknown error occurred";
-        String error = SchemaValidator.validate(webSocketMessageDTO);
-        if(error != null)return error;
+//        String error = SchemaValidator.validate(webSocketMessageDTO);
+//        if(error != null)return error;
 
         return null;
 //        webSocketMessageDispatcher.dispatch(webSocketMessageDto,username);
