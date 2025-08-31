@@ -52,7 +52,7 @@ public class RoomService {
         }
         return roomRepository.save(room);
     }
-    @CacheEvict(value = "roomUsers",key = "#roomId")
+    @CacheEvict(value = "room",key = "#roomId")
     public void joinToRoom(String username, int roomId){
         User user = userRepository.findByUsername(username);
         if (user == null) {
@@ -80,7 +80,7 @@ public class RoomService {
         roomRepository.save(room);
     }
 
-    @Cacheable(value = "userRooms",key = "#username")
+    @Cacheable(value = "room",key = "#username")
     public List<Room> getUserRooms(String username){
         User user = userRepository.findByUsername(username);
         if (user == null) {
@@ -103,7 +103,7 @@ public class RoomService {
         roomRepository.delete(room);
     }
 
-    @CacheEvict(value = "roomUsers",key = "#roomId")
+    @CacheEvict(value = "room",key = "#roomId")
     public void addUserToRoom(int userId, int roomId, String ownerUsername){
         User owner = userRepository.findByUsername(ownerUsername);
         if (owner == null) {
@@ -128,7 +128,7 @@ public class RoomService {
         roomRepository.save(room);
     }
 
-    @CacheEvict(value = "roomUsers",key = "#roomId")
+    @CacheEvict(value = "room",key = "#roomId")
     public void removeUserFromRoom(int userId, int roomId,  String ownerUsername){
         User owner = userRepository.findByUsername(ownerUsername);
         if (owner == null) {
@@ -191,12 +191,7 @@ public class RoomService {
 
     @Cacheable(value = "room",key = "#roomId")
     public Room getRoom(int roomId){
-        return roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
-    }
-
-    @Cacheable(value = "roomUsers",key = "#roomId")
-    public List<User> getRoomUsers(int roomId){
-        return roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new).getUsers();
+        return roomRepository.findByIdWithUsers(roomId).orElseThrow(RoomNotFoundException::new);
     }
 
 }
