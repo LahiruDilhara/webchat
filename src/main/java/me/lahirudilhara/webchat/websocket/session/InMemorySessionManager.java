@@ -1,6 +1,5 @@
-package me.lahirudilhara.webchat.websocket;
+package me.lahirudilhara.webchat.websocket.session;
 
-import me.lahirudilhara.webchat.entities.WebSocketUserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

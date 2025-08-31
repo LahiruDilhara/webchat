@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.service.websocket;
+package me.lahirudilhara.webchat.websocket.dispatcher;
 
 public enum PacketType {
     Text,

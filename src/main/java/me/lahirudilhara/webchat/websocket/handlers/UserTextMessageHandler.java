@@ -1,19 +1,18 @@
-package me.lahirudilhara.webchat.service.websocket.messageHandlers;
+package me.lahirudilhara.webchat.websocket.handlers;
 
-import me.lahirudilhara.webchat.core.exceptions.BaseWebSocketException;
-import me.lahirudilhara.webchat.dto.wc.WebSocketTextMessageDTO;
+import me.lahirudilhara.webchat.common.exceptions.BaseWebSocketException;
+import me.lahirudilhara.webchat.dto.wc.TextMessageDTO;
 import me.lahirudilhara.webchat.mappers.websocket.WebSocketMessageMapper;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.service.MessageService;
 import me.lahirudilhara.webchat.service.api.RoomService;
 import me.lahirudilhara.webchat.service.api.UserService;
-import me.lahirudilhara.webchat.websocket.MessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserTextMessageHandler implements MessageHandler<WebSocketTextMessageDTO> {
+public class UserTextMessageHandler implements MessageHandler<TextMessageDTO> {
     private final RoomService roomService;
     private final UserService userService;
     private final WebSocketMessageMapper webSocketMessageMapper;
@@ -29,12 +28,12 @@ public class UserTextMessageHandler implements MessageHandler<WebSocketTextMessa
     }
 
     @Override
-    public Class<WebSocketTextMessageDTO> getMessageType() {
-        return WebSocketTextMessageDTO.class;
+    public Class<TextMessageDTO> getMessageType() {
+        return TextMessageDTO.class;
     }
 
     @Override
-    public void handleMessage(WebSocketTextMessageDTO message, String senderUsername) {
+    public void handleMessage(TextMessageDTO message, String senderUsername) {
         Room room = roomService.getRoom(message.getRoomId());
         if(room.getUsers().stream().noneMatch(u -> u.getUsername().equals(senderUsername))) {
             throw new BaseWebSocketException("User cannot have access to the room");

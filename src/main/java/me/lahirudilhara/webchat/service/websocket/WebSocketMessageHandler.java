@@ -1,9 +1,9 @@
 package me.lahirudilhara.webchat.service.websocket;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import me.lahirudilhara.webchat.core.exceptions.BaseWebSocketException;
-import me.lahirudilhara.webchat.core.util.JsonUtil;
-import me.lahirudilhara.webchat.websocket.InMemorySessionManager;
+import me.lahirudilhara.webchat.common.exceptions.BaseWebSocketException;
+import me.lahirudilhara.webchat.common.util.JsonUtil;
+import me.lahirudilhara.webchat.websocket.session.InMemorySessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

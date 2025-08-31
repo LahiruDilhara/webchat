@@ -2,13 +2,14 @@ package me.lahirudilhara.webchat.websocket;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.ValidationException;
-import me.lahirudilhara.webchat.core.util.JsonUtil;
-import me.lahirudilhara.webchat.core.util.SchemaValidator;
-import me.lahirudilhara.webchat.core.util.WebSocketError;
+import me.lahirudilhara.webchat.common.util.JsonUtil;
+import me.lahirudilhara.webchat.common.util.SchemaValidator;
+import me.lahirudilhara.webchat.common.util.WebSocketError;
 import me.lahirudilhara.webchat.dto.wc.WebSocketMessageDTO;
 import me.lahirudilhara.webchat.websocket.events.ClientConnectedEvent;
 import me.lahirudilhara.webchat.websocket.events.ClientDisconnectedEvent;
 import me.lahirudilhara.webchat.websocket.events.OnClientMessageEvent;
+import me.lahirudilhara.webchat.websocket.session.SessionManager;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -43,7 +44,6 @@ public class WebChatWebSocketHandler extends TextWebSocketHandler {
         try{
             WebSocketMessageDTO webSocketMessageDTO = JsonUtil.jsonToObject(message.getPayload(), WebSocketMessageDTO.class);
             SchemaValidator.validate(webSocketMessageDTO);
-            sessionManager.onUserDisconnected(session.getPrincipal().getName());
             applicationEventPublisher.publishEvent(new OnClientMessageEvent(session.getPrincipal().getName(),webSocketMessageDTO));
         }
         catch(JsonProcessingException e){
@@ -60,6 +60,7 @@ public class WebChatWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status){
         if(Objects.requireNonNull(session.getPrincipal()).getName() == null) return;
+        sessionManager.onUserDisconnected(session.getPrincipal().getName());
         applicationEventPublisher.publishEvent(new ClientDisconnectedEvent(session.getPrincipal().getName()));
         // using this connection close, can save the user last seen time
     }

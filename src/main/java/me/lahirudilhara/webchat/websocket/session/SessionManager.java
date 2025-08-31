@@ -1,6 +1,5 @@
-package me.lahirudilhara.webchat.websocket;
+package me.lahirudilhara.webchat.websocket.session;
 
-import me.lahirudilhara.webchat.entities.WebSocketUserSession;
 import org.springframework.web.socket.WebSocketSession;
 
 public interface SessionManager {

@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.core.lib;
+package me.lahirudilhara.webchat.common.types;
 
 public abstract class Either<L,R> {
     protected boolean isLeft;

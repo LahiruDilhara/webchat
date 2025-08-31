@@ -1,6 +1,6 @@
 package me.lahirudilhara.webchat.service.websocket;
 
-import me.lahirudilhara.webchat.core.exceptions.BaseWebSocketException;
+import me.lahirudilhara.webchat.common.exceptions.BaseWebSocketException;
 import me.lahirudilhara.webchat.mappers.websocket.WebSocketMessageMapper;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.User;

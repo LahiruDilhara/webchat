@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.core.util;
+package me.lahirudilhara.webchat.common.util;
 
 import jakarta.validation.*;
 

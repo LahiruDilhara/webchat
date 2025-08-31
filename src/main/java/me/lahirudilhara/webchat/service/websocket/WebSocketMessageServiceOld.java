@@ -1,14 +1,6 @@
 package me.lahirudilhara.webchat.service.websocket;
 
-import me.lahirudilhara.webchat.core.exceptions.BaseException;
-import me.lahirudilhara.webchat.models.Room;
-import me.lahirudilhara.webchat.models.User;
-import me.lahirudilhara.webchat.repositories.RoomRepository;
-import me.lahirudilhara.webchat.repositories.UserRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
 
 @Service
 public class WebSocketMessageServiceOld {

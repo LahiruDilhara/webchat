@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.websocket;
+package me.lahirudilhara.webchat.websocket.handlers;
 
 import me.lahirudilhara.webchat.dto.wc.WebSocketMessageDTO;
 

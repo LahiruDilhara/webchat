@@ -1,8 +1,8 @@
 package me.lahirudilhara.webchat.service.api;
 
-import me.lahirudilhara.webchat.core.exceptions.BaseException;
-import me.lahirudilhara.webchat.core.exceptions.RoomNotFoundException;
-import me.lahirudilhara.webchat.core.exceptions.UserNotFoundException;
+import me.lahirudilhara.webchat.common.exceptions.BaseException;
+import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
+import me.lahirudilhara.webchat.common.exceptions.UserNotFoundException;
 import me.lahirudilhara.webchat.dto.api.room.AddRoomDTO;
 import me.lahirudilhara.webchat.dto.api.room.UpdateRoomDTO;
 import me.lahirudilhara.webchat.mappers.api.RoomMapper;

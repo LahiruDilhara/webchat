@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.core.lib;
+package me.lahirudilhara.webchat.common.types;
 
 public class Right<R> extends Either<Void,R>{
     R data;

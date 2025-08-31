@@ -1,8 +1,8 @@
 package me.lahirudilhara.webchat.configuration;
 
 import jakarta.servlet.http.HttpServletRequest;
-import me.lahirudilhara.webchat.core.exceptions.BaseException;
-import me.lahirudilhara.webchat.core.lib.ErrorResponse;
+import me.lahirudilhara.webchat.common.exceptions.BaseException;
+import me.lahirudilhara.webchat.common.types.ErrorResponse;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -22,8 +21,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {

@@ -1,7 +1,7 @@
-package me.lahirudilhara.webchat.core.util;
+package me.lahirudilhara.webchat.common.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import me.lahirudilhara.webchat.core.lib.WebSocketErrorResponse;
+import me.lahirudilhara.webchat.common.types.WebSocketErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

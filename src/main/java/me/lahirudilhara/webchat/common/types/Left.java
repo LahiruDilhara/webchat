@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.core.lib;
+package me.lahirudilhara.webchat.common.types;
 
 public class Left<L> extends Either<L,Void>{
     private L data;

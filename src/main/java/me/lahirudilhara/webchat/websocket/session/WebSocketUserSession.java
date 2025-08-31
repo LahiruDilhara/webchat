@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.entities;
+package me.lahirudilhara.webchat.websocket.session;
 
 import org.springframework.web.socket.WebSocketSession;
 

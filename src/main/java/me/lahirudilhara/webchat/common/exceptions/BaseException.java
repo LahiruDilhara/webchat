@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.core.exceptions;
+package me.lahirudilhara.webchat.common.exceptions;
 
 import org.springframework.http.HttpStatus;
 

@@ -1,7 +1,7 @@
-package me.lahirudilhara.webchat.service.websocket;
+package me.lahirudilhara.webchat.websocket.dispatcher;
 
 import me.lahirudilhara.webchat.dto.wc.WebSocketMessageDTO;
-import me.lahirudilhara.webchat.websocket.MessageHandler;
+import me.lahirudilhara.webchat.websocket.handlers.MessageHandler;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -18,7 +18,6 @@ public class WebSocketMessageDispatcher {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends WebSocketMessageDTO> void dispatch(T message, String senderUsername) {
         MessageHandler<T> messageHandler = (MessageHandler<T>) userMessageHandlerMap.get(message.getClass());
         if (messageHandler == null) {

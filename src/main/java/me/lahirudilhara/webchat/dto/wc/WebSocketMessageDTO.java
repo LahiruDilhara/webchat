@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import me.lahirudilhara.webchat.service.websocket.PacketType;
+import me.lahirudilhara.webchat.websocket.dispatcher.PacketType;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -13,8 +13,8 @@ import me.lahirudilhara.webchat.service.websocket.PacketType;
         visible = true
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = WebSocketTextMessageDTO.class, name = "Text"),
-        @JsonSubTypes.Type(value = WebSocketJoinRoomMessageDTO.class, name = "Join")
+        @JsonSubTypes.Type(value = TextMessageDTO.class, name = "Text"),
+        @JsonSubTypes.Type(value = JoinRoomMessageDTO.class, name = "Join")
 })
 public class WebSocketMessageDTO {
     @NotNull(message = "The type cannot be null")
