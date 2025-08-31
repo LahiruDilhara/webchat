@@ -25,7 +25,7 @@ public class WebChatWebSocketHandler extends TextWebSocketHandler {
 
     public WebChatWebSocketHandler( ApplicationEventPublisher applicationEventPublisher, SessionManager sessionManager) {
         this.applicationEventPublisher = applicationEventPublisher;
-        this.sessionManager = sessionManager;
+        this.sessionManager =sessionManager;
     }
 
     @Override
