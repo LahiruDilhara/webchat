@@ -27,17 +27,15 @@ public class SessionManager {
         webSocketUsers = new ConcurrentHashMap<>();
     }
 
-    @EventListener
-    public void onUserConnected(ClientConnectedEvent event){
-        WebSocketUserSession webSocketUserSession = new WebSocketUserSession(event.getUsername(),Instant.now(),event.getSession());
-        webSocketUsers.put(event.getUsername(), webSocketUserSession);
-        log.info("A new User connected with username {}",event.getUsername());
+    public void onUserConnected(String username, WebSocketSession session){
+        WebSocketUserSession webSocketUserSession = new WebSocketUserSession(username,Instant.now(),session);
+        webSocketUsers.put(username, webSocketUserSession);
+        log.info("A new User connected with username {}",username);
     }
 
-    @EventListener
-    public void onUserDisconnected(ClientDisconnectedEvent event){
-        this.webSocketUsers.remove(event.getUsername());
-        log.info("The user disconnected with username {}",event.getUsername());
+    public void onUserDisconnected(String username){
+        this.webSocketUsers.remove(username);
+        log.info("The user disconnected with username {}",username);
     }
 
     public boolean isUserOnline(String username){

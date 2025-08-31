@@ -21,15 +21,18 @@ import java.util.Objects;
 @Component
 public class WebChatWebSocketHandler extends TextWebSocketHandler {
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final SessionManager sessionManager;
 
-    public WebChatWebSocketHandler( ApplicationEventPublisher applicationEventPublisher) {
+    public WebChatWebSocketHandler( ApplicationEventPublisher applicationEventPublisher, SessionManager sessionManager) {
         this.applicationEventPublisher = applicationEventPublisher;
+        this.sessionManager = sessionManager;
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         if(!session.isOpen()) return;
         if(Objects.requireNonNull(session.getPrincipal()).getName() == null) return;
+        sessionManager.onUserConnected(session.getPrincipal().getName(),session);
         applicationEventPublisher.publishEvent(new ClientConnectedEvent(session.getPrincipal().getName(),session));
     }
 
@@ -40,6 +43,7 @@ public class WebChatWebSocketHandler extends TextWebSocketHandler {
         try{
             WebSocketMessageDTO webSocketMessageDTO = JsonUtil.jsonToObject(message.getPayload(), WebSocketMessageDTO.class);
             SchemaValidator.validate(webSocketMessageDTO);
+            sessionManager.onUserDisconnected(session.getPrincipal().getName());
             applicationEventPublisher.publishEvent(new OnClientMessageEvent(session.getPrincipal().getName(),webSocketMessageDTO));
         }
         catch(JsonProcessingException e){
