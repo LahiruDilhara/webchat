@@ -78,6 +78,6 @@ public class RoomController {
     public List<MessageResponseDTO> getMessagesOfRoom(@PathVariable int roomId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "createdAt") String sortBy, Principal principal){
         Pageable pageable = PageRequest.of(page,size, Sort.by(sortBy).descending());
         List<Message> messages = roomService.getRoomMessages(roomId,pageable);
-        return messages.stream().map(messageMapper::toDto).toList();
+        return messages.stream().map(messageMapper::messageToMessageResponse).toList();
     }
 }

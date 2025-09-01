@@ -3,8 +3,10 @@ package me.lahirudilhara.webchat.service.websocket;
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.common.types.Either;
 import me.lahirudilhara.webchat.common.types.WebSocketErrorResponse;
+import me.lahirudilhara.webchat.mappers.api.MessageMapper;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.User;
+import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.models.message.TextMessage;
 import me.lahirudilhara.webchat.repositories.MessageRepository;
 import me.lahirudilhara.webchat.service.api.RoomService;
@@ -34,7 +36,7 @@ public class WebSocketRoomService {
         return null;
     }
 
-    public Either<WebSocketErrorResponse, BroadcastData> sendTextMessageToRoom(int roomId, String senderUsername, TextMessage message){
+    public Either<WebSocketErrorResponse, BroadcastData<TextMessage>> sendTextMessageToRoom(int roomId, String senderUsername, TextMessage message){
         Room room = null;
         try{
             room = roomService.getRoom(roomId);
@@ -56,10 +58,7 @@ public class WebSocketRoomService {
         // Save message
         TextMessage addedMessage = messageRepository.save(message);
 
-        // Get receivers username
-        List<String> usernames = room.getUsers().stream().map(u->u.getUsername()).filter(un->!un.equals(senderUsername)).toList();
-
         // Get broadcast users
-        return Either.right(new BroadcastData(usernames,addedMessage));
+        return Either.right(new BroadcastData<>(room.getUsers().stream().map(User::getUsername).toList(),addedMessage));
     }
 }

@@ -13,15 +13,17 @@ import org.w3c.dom.Text;
 
 @Mapper(componentModel = "spring")
 public interface MessageMapper {
+
+//    default MessageResponseDTO toDto(Message message){
+//        if(message instanceof TextMessage){
+//            return textMessageToTextMessageResponseDTO((TextMessage)message);
+//        }
+//        throw new IllegalArgumentException("Unknown message type");
+//    }
     @Mapping(source = "sender.username",target = "senderUsername")
     @Mapping(source = "sender.id",target = "senderId")
     @Mapping(source = "room.id",target = "roomId")
-    TextMessageResponseDTO textMessageToTextMessageResponseDTO(TextMessage textMessage);
+    MessageResponseDTO messageToMessageResponse(Message message);
 
-    default MessageResponseDTO toDto(Message message){
-        if(message instanceof TextMessage){
-            return textMessageToTextMessageResponseDTO((TextMessage)message);
-        }
-        throw new IllegalArgumentException("Unknown message type");
-    }
+    TextMessageResponseDTO textMessageToTextMessageResponseDTO(TextMessage textMessage);
 }

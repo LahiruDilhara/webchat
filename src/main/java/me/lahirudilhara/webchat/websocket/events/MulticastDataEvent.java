@@ -1,12 +1,12 @@
-package me.lahirudilhara.webchat.websocket.entities;
+package me.lahirudilhara.webchat.websocket.events;
 
 import java.util.List;
 
-public class BroadcastData<T> {
+public class MulticastDataEvent {
     private final List<String> users;
-    private final T data;
+    private final Object data;
 
-    public BroadcastData(List<String> users, T data) {
+    public MulticastDataEvent(List<String> users, Object data) {
         this.users = users;
         this.data = data;
     }
@@ -15,7 +15,7 @@ public class BroadcastData<T> {
         return users;
     }
 
-    public T getData() {
+    public Object getData() {
         return data;
     }
 }

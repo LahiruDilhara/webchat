@@ -1,30 +1,38 @@
 package me.lahirudilhara.webchat.websocket.handlers;
 
-import me.lahirudilhara.webchat.common.exceptions.BaseWebSocketException;
+import me.lahirudilhara.webchat.dto.message.MessageResponseDTO;
+import me.lahirudilhara.webchat.dto.message.TextMessageResponseDTO;
 import me.lahirudilhara.webchat.dto.wc.TextMessageDTO;
+import me.lahirudilhara.webchat.mappers.api.MessageMapper;
 import me.lahirudilhara.webchat.mappers.websocket.WebSocketMessageMapper;
-import me.lahirudilhara.webchat.models.Room;
-import me.lahirudilhara.webchat.service.MessageService;
-import me.lahirudilhara.webchat.service.api.RoomService;
-import me.lahirudilhara.webchat.service.api.UserService;
+import me.lahirudilhara.webchat.models.message.Message;
+import me.lahirudilhara.webchat.models.message.TextMessage;
+import me.lahirudilhara.webchat.service.websocket.WebSocketRoomService;
+import me.lahirudilhara.webchat.websocket.entities.BroadcastData;
+import me.lahirudilhara.webchat.websocket.events.ClientExceptionEvent;
+import me.lahirudilhara.webchat.websocket.events.MulticastDataEvent;
+import me.lahirudilhara.webchat.websocket.events.UnicastDataEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserTextMessageHandler implements MessageHandler<TextMessageDTO> {
-    private final RoomService roomService;
-    private final UserService userService;
+    private final WebSocketRoomService webSocketRoomService;
     private final WebSocketMessageMapper webSocketMessageMapper;
-    private final MessageService messageService;
+    private final ApplicationEventPublisher applicationEventPublisher;
+    private final MessageMapper messageMapper;
 
     private static final Logger log = LoggerFactory.getLogger(UserTextMessageHandler.class);
 
-    public UserTextMessageHandler(RoomService roomService,WebSocketMessageMapper webSocketMessageMapper, UserService userService, MessageService messageService) {
-        this.roomService = roomService;
-        this.userService = userService;
+    public UserTextMessageHandler(WebSocketRoomService webSocketRoomService, WebSocketMessageMapper webSocketMessageMapper,ApplicationEventPublisher applicationEventPublisher,MessageMapper messageMapper) {
+        this.webSocketRoomService = webSocketRoomService;
         this.webSocketMessageMapper = webSocketMessageMapper;
-        this.messageService = messageService;
+        this.applicationEventPublisher = applicationEventPublisher;
+        this.messageMapper= messageMapper;
     }
 
     @Override
@@ -34,21 +42,14 @@ public class UserTextMessageHandler implements MessageHandler<TextMessageDTO> {
 
     @Override
     public void handleMessage(TextMessageDTO message, String senderUsername) {
-        Room room = roomService.getRoom(message.getRoomId());
-        if(room.getUsers().stream().noneMatch(u -> u.getUsername().equals(senderUsername))) {
-            throw new BaseWebSocketException("User cannot have access to the room");
+        var dataOrError = webSocketRoomService.sendTextMessageToRoom(message.getRoomId(),senderUsername,webSocketMessageMapper.textMessageDtoToTextMessage(message));
+        if(dataOrError.isLeft()){
+            applicationEventPublisher.publishEvent(new ClientExceptionEvent(senderUsername,dataOrError.getLeft().getError()));
+            return;
         }
-        if(!room.isAcceptMessages()) throw new BaseWebSocketException("The room is not accepting messages");
-
-//        TextMessage textMessage = webSocketMessageMapper.UserTextMessageDtoToTextMessage(message);
-//        textMessage.setCreatedAt(Instant.now());
-//        textMessage.setEditedAt(Instant.now());
-//        textMessage.setRoom(room);
-//        textMessage.setSender(userService.getUser(senderUsername));
-
-        // base message should have a relation to rooms
-
-        System.out.println("UserTextMessageHandler.handleMessage");
-        log.debug(message.toString());
+        BroadcastData<TextMessage> data = dataOrError.getRight();
+        List<String> multicastUsernames = data.getUsers().stream().filter(u->!u.equals(senderUsername)).toList();
+        applicationEventPublisher.publishEvent(new MulticastDataEvent(multicastUsernames,messageMapper.messageToMessageResponse(data.getData())));
+        applicationEventPublisher.publishEvent(new UnicastDataEvent(senderUsername,webSocketMessageMapper.textMessageToTextMessageAckResponseDTO(data.getData(),message.getUuid())));
     }
 }
