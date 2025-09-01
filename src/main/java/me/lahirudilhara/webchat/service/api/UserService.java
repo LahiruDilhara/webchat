@@ -3,6 +3,7 @@ package me.lahirudilhara.webchat.service.api;
 import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,6 +32,7 @@ public class UserService {
         return authentication.isAuthenticated();
     }
 
+    @Cacheable(value = "user",key = "#username")
     public User getUser(String username) {
         return userRepository.findByUsername(username);
     }

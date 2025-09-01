@@ -1,17 +1,25 @@
 package me.lahirudilhara.webchat.common.types;
 
-public abstract class Either<L,R> {
-    protected boolean isLeft;
-    public boolean isLeft(){
-        return isLeft;
+public class Either<L, R> {
+    private final L left;
+    private final R right;
+
+    private Either(L left, R right) {
+        this.left = left;
+        this.right = right;
     }
-    public boolean isRight() {
-        return isLeft;
+
+    public static <L, R> Either<L, R> left(L value) {
+        return new Either<>(value, null);
     }
-    public L getLeft(){
-        return null;
+
+    public static <L, R> Either<L, R> right(R value) {
+        return new Either<>(null, value);
     }
-    public R getRight(){
-        return null;
-    }
+
+    public boolean isLeft() { return left != null; }
+    public boolean isRight() { return right != null; }
+
+    public L getLeft() { return left; }
+    public R getRight() { return right; }
 }
