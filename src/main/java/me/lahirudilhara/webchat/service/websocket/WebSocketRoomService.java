@@ -12,6 +12,8 @@ import me.lahirudilhara.webchat.repositories.MessageRepository;
 import me.lahirudilhara.webchat.service.api.RoomService;
 import me.lahirudilhara.webchat.service.api.UserService;
 import me.lahirudilhara.webchat.websocket.entities.BroadcastData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -19,6 +21,7 @@ import java.util.List;
 
 @Service
 public class WebSocketRoomService {
+    private static final Logger log = LoggerFactory.getLogger(WebSocketRoomService.class);
     private final RoomService roomService;
     private final UserService userService;
     private final MessageRepository messageRepository;
@@ -43,6 +46,7 @@ public class WebSocketRoomService {
         } catch (RoomNotFoundException e) {
             return Either.left(new WebSocketErrorResponse("The specified room doesn't exists"));
         } catch (Exception e) {
+            e.printStackTrace();
             return Either.left(new WebSocketErrorResponse("Unknown Error occurred"));
         }
         String error = canUserSendMessageToRoom(room,senderUsername);
