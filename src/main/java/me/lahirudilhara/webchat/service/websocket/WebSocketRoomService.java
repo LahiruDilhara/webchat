@@ -56,7 +56,7 @@ public class WebSocketRoomService {
         Instant createdTime = Instant.now();
         message.setRoom(room);
         message.setCreatedAt(createdTime);
-        message.setSender(userService.getUser(senderUsername));
+//        message.setSender(userService.getUser(senderUsername));
         message.setEditedAt(createdTime);
 
         // Save message
