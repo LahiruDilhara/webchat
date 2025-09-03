@@ -1,5 +1,6 @@
 package me.lahirudilhara.webchat.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import me.lahirudilhara.webchat.models.message.Message;
 
@@ -17,12 +18,15 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "sender",cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Message> messages = new ArrayList<>();
 
     @OneToMany(mappedBy = "createdBy",cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Room> createdRooms = new ArrayList<>();
 
     @ManyToMany(mappedBy = "users")
+    @JsonIgnore
     private List<Room> rooms = new ArrayList<>();
 
     public User(){}
