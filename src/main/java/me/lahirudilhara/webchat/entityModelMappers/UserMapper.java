@@ -1,11 +1,11 @@
-package me.lahirudilhara.webchat.daoMappers;
+package me.lahirudilhara.webchat.entityModelMappers;
 
 import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.models.User;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring")
-public interface UserDAOMapper {
+@Mapper(componentModel = "spring",implementationName = "entityModelUserMapper")
+public interface UserMapper {
     User userEntityToUser(UserEntity userEntity);
 
     UserEntity userToUserEntity(User user);

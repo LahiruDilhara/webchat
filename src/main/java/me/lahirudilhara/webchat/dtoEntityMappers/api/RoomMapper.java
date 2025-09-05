@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.mappers.api;
+package me.lahirudilhara.webchat.dtoEntityMappers.api;
 
 import me.lahirudilhara.webchat.dto.api.room.AddRoomDTO;
 import me.lahirudilhara.webchat.dto.api.room.RoomResponseDTO;

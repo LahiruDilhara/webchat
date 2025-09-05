@@ -1,11 +1,8 @@
 package me.lahirudilhara.webchat.websocket.handlers;
 
-import me.lahirudilhara.webchat.dto.message.MessageResponseDTO;
-import me.lahirudilhara.webchat.dto.message.TextMessageResponseDTO;
 import me.lahirudilhara.webchat.dto.wc.TextMessageDTO;
-import me.lahirudilhara.webchat.mappers.api.MessageMapper;
-import me.lahirudilhara.webchat.mappers.websocket.WebSocketMessageMapper;
-import me.lahirudilhara.webchat.models.message.Message;
+import me.lahirudilhara.webchat.dtoEntityMappers.api.MessageMapper;
+import me.lahirudilhara.webchat.dtoEntityMappers.websocket.WebSocketMessageMapper;
 import me.lahirudilhara.webchat.models.message.TextMessage;
 import me.lahirudilhara.webchat.service.websocket.WebSocketRoomService;
 import me.lahirudilhara.webchat.websocket.entities.BroadcastData;

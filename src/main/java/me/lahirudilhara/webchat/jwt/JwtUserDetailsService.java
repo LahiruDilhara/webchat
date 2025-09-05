@@ -1,7 +1,8 @@
 package me.lahirudilhara.webchat.jwt;
 
-import me.lahirudilhara.webchat.dao.UserDAO;
-import me.lahirudilhara.webchat.models.User;
+import me.lahirudilhara.webchat.entities.UserEntity;
+import me.lahirudilhara.webchat.entityModelMappers.UserMapper;
+import me.lahirudilhara.webchat.service.api.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -9,22 +10,24 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
-    private final UserDAO userDAO;
+    private final UserService userService;
+    private final UserMapper userMapper;
 
-    public JwtUserDetailsService( UserDAO userDAO) {
-        this.userDAO = userDAO;
+    public JwtUserDetailsService(UserService userService, UserMapper userMapper) {
+        this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userDAO.getUserByUsername(username);
+        UserEntity userEntity = userService.userByUsername(username);
 
-        if (user == null) {
+        if (userEntity == null) {
             System.out.println("User not found");
             throw new UsernameNotFoundException(username);
         }
 
-        UserDetails userDetails = new SecureUserDetails(user);
+        UserDetails userDetails = new SecureUserDetails(userMapper.userEntityToUser(userEntity));
         return userDetails;
     }
 }

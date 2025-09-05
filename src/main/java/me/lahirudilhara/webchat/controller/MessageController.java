@@ -1,6 +1,6 @@
 package me.lahirudilhara.webchat.controller;
 
-import me.lahirudilhara.webchat.mappers.api.MessageMapper;
+import me.lahirudilhara.webchat.dtoEntityMappers.api.MessageMapper;
 import me.lahirudilhara.webchat.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
