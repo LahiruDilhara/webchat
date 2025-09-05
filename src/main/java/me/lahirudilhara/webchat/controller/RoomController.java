@@ -73,10 +73,11 @@ public class RoomController {
 
     @PatchMapping("/{roomId}")
     public RoomResponseDTO updateRoom(@PathVariable int roomId, @RequestBody UpdateRoomDTO updateRoomDTO, Principal principal){
-        RoomEntity roomEntity = roomService.updateRoom(roomMapper.updateRoomDtoToRoomEntity(updateRoomDTO));
+        RoomEntity roomEntity = roomMapper.updateRoomDtoToRoomEntity(updateRoomDTO);
         roomEntity.setId(roomId);
         roomEntity.setCreatedBy(principal.getName());
-        return roomMapper.roomEntityToRoomResponseDTO(roomEntity);
+        RoomEntity updatedRoomEntity = roomService.updateRoom(roomEntity);
+        return roomMapper.roomEntityToRoomResponseDTO(updatedRoomEntity);
     }
 
     @GetMapping("/{roomId}/messages")
