@@ -130,13 +130,11 @@ public class RoomService {
             throw new BaseException("Only the owner can remove user from the room",HttpStatus.BAD_REQUEST);
         }
         UserEntity user = userService.getUserById(userId);
-        if(!room.getUsers().contains(user)){
+        if(room.getUsers().stream().noneMatch(u->u.getId().equals(user.getId()))){
             throw new BaseException("The user is not a member of the room",HttpStatus.BAD_REQUEST);
         }
         List<User> members = room.getUsers();
-        User userModel = new User();
-        userModel.setId(user.getId());
-        members.remove(userModel);
+        members.removeIf(u->u.getId().equals(user.getId()));
         if(members.isEmpty()){
             roomRepository.delete(room);
         }
