@@ -1,24 +1,24 @@
 package me.lahirudilhara.webchat.entities;
 
 public class UserEntity {
-    private int id;
+    private Integer id;
     private String username;
     private String password;
 
     public UserEntity() {
     }
 
-    public UserEntity(int id, String username, String password) {
+    public UserEntity(Integer id, String username, String password) {
         this.id = id;
         this.username = username;
         this.password = password;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
