@@ -7,6 +7,7 @@ import me.lahirudilhara.webchat.dto.api.room.UpdateRoomDTO;
 import me.lahirudilhara.webchat.dto.message.MessageResponseDTO;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.MessageMapper;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.RoomMapper;
+import me.lahirudilhara.webchat.entities.RoomEntity;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.service.api.RoomService;
@@ -34,8 +35,10 @@ public class RoomController {
 
     @PostMapping("/")
     public RoomResponseDTO createRoom(@Valid @RequestBody AddRoomDTO addRoomDTO, Principal principal){
-        Room room = roomService.createRoom(addRoomDTO, principal.getName());
-        return roomMapper.roomDtoToRoomResponseDTO(room);
+        RoomEntity roomEntity = roomMapper.addRoomDtoToRoomEntity(addRoomDTO);
+        roomEntity.setCreatedBy(principal.getName());
+        RoomEntity createdRoom = roomService.createRoom(roomEntity);
+        return roomMapper.roomEntityToRoomResponseDTO(createdRoom);
     }
 
     @PostMapping("/{roomId}/join")
@@ -46,8 +49,8 @@ public class RoomController {
 
     @GetMapping("/")
     public List<RoomResponseDTO> getRooms(Principal principal){
-        List<Room> rooms = roomService.getUserRooms(principal.getName());
-        return rooms.stream().map(roomMapper::roomDtoToRoomResponseDTO).toList();
+        List<RoomEntity> roomEntities = roomService.getUserRooms(principal.getName());
+        return roomEntities.stream().map(roomMapper::roomEntityToRoomResponseDTO).toList();
     }
 
     @DeleteMapping("/{roomId}")
@@ -70,8 +73,10 @@ public class RoomController {
 
     @PatchMapping("/{roomId}")
     public RoomResponseDTO updateRoom(@PathVariable int roomId, @RequestBody UpdateRoomDTO updateRoomDTO, Principal principal){
-        Room room = roomService.updateRoom(roomId,updateRoomDTO,principal.getName());
-        return roomMapper.roomDtoToRoomResponseDTO(room);
+        RoomEntity roomEntity = roomService.updateRoom(roomMapper.updateRoomDtoToRoomEntity(updateRoomDTO));
+        roomEntity.setId(roomId);
+        roomEntity.setCreatedBy(principal.getName());
+        return roomMapper.roomEntityToRoomResponseDTO(roomEntity);
     }
 
     @GetMapping("/{roomId}/messages")

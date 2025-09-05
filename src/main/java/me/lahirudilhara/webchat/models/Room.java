@@ -17,7 +17,7 @@ public class Room {
 
     private boolean isPrivate;
 
-    private Instant createdAt = Instant.now();
+    private Instant createdAt;
 
     private boolean closed = false;
 
@@ -122,5 +122,20 @@ public class Room {
 
     public boolean isAcceptMessages(){
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Room{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", isPrivate=" + isPrivate +
+                ", createdAt=" + createdAt +
+                ", closed=" + closed +
+                ", multiUser=" + multiUser +
+                ", createdBy=" + createdBy +
+                ", messages=" + messages +
+                ", users=" + users +
+                '}';
     }
 }

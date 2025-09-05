@@ -11,20 +11,18 @@ public class RoomResponseDTO {
     private boolean isPrivate;
     private Instant createdAt;
     private boolean closed;
-    private UserResponseDTO createdBy;
-    private List<UserResponseDTO> members;
+    private String createdBy;
 
     public RoomResponseDTO() {
     }
 
-    public RoomResponseDTO(Integer id, String name, boolean isPrivate, Instant createdAt, boolean closed, UserResponseDTO createdBy, List<UserResponseDTO> members) {
+    public RoomResponseDTO(Integer id, String name, boolean isPrivate, Instant createdAt, boolean closed, String createdBy) {
         this.id = id;
         this.name = name;
         this.isPrivate = isPrivate;
         this.createdAt = createdAt;
         this.closed = closed;
         this.createdBy = createdBy;
-        this.members = members;
     }
 
     public Integer getId() {
@@ -43,11 +41,11 @@ public class RoomResponseDTO {
         this.name = name;
     }
 
-    public boolean isPrivate() {
+    public boolean getIsPrivate() {
         return isPrivate;
     }
 
-    public void setPrivate(boolean aPrivate) {
+    public void setIsPrivate(boolean aPrivate) {
         isPrivate = aPrivate;
     }
 
@@ -67,19 +65,11 @@ public class RoomResponseDTO {
         this.closed = closed;
     }
 
-    public UserResponseDTO getCreatedBy() {
+    public String getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(UserResponseDTO createdBy) {
+    public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
-    }
-
-    public List<UserResponseDTO> getMembers() {
-        return members;
-    }
-
-    public void setMembers(List<UserResponseDTO> members) {
-        this.members = members;
     }
 }
