@@ -16,6 +16,13 @@ public class CacheConfiguration {
     public RedisCacheConfiguration redisCacheConfiguration(){
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+
+        mapper.activateDefaultTyping(
+                com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator.instance,
+                ObjectMapper.DefaultTyping.NON_FINAL
+        );
+
+
         return RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(60))
                 .disableCachingNullValues()

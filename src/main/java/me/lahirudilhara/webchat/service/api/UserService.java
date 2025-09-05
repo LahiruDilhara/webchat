@@ -4,6 +4,7 @@ import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.entityModelMappers.UserMapper;
 import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.repositories.UserRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ public class UserService {
         return userMapper.userToUserEntity(user);
     }
 
+    @Cacheable(value = "userServiceUserByUsername",key = "#username")
     public UserEntity userByUsername(String username){
         return userMapper.userToUserEntity(userRepository.findByUsername(username));
     }
