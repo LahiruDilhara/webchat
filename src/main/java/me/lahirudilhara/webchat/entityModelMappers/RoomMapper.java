@@ -8,9 +8,9 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring",implementationName = "entityModelRoomMapper")
 public interface RoomMapper {
 
-    @Mapping(target = "createdBy",source = "user")
+    @Mapping(target = "createdBy",ignore = true)
     @Mapping(target = "id",source = "roomEntity.id")
-    Room roomEntityToRoom(RoomEntity roomEntity, User user);
+    Room roomEntityToRoom(RoomEntity roomEntity);
 
     @Mapping(target = "createdBy",source = "createdBy.username")
     RoomEntity roomToRoomEntity(Room room);

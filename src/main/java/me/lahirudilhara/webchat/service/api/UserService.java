@@ -1,5 +1,6 @@
 package me.lahirudilhara.webchat.service.api;
 
+import me.lahirudilhara.webchat.common.exceptions.UserNotFoundException;
 import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.entityModelMappers.UserMapper;
 import me.lahirudilhara.webchat.models.User;
@@ -26,7 +27,14 @@ public class UserService {
     }
 
     @Cacheable(value = "userServiceUserByUsername",key = "#username")
-    public UserEntity userByUsername(String username){
+    public UserEntity getUserByUsername(String username){
+        User user = userRepository.findByUsername(username);
+        if(user == null) throw new UserNotFoundException();
         return userMapper.userToUserEntity(userRepository.findByUsername(username));
+    }
+
+    public UserEntity getUserById(int id){
+        User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+        return userMapper.userToUserEntity(user);
     }
 }

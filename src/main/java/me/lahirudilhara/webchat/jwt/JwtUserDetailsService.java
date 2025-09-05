@@ -20,13 +20,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = userService.userByUsername(username);
-
-        if (userEntity == null) {
-            System.out.println("User not found");
-            throw new UsernameNotFoundException(username);
-        }
-
+        UserEntity userEntity = userService.getUserByUsername(username);
         UserDetails userDetails = new SecureUserDetails(userMapper.userEntityToUser(userEntity));
         return userDetails;
     }
