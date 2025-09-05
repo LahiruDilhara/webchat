@@ -1,6 +1,7 @@
 package me.lahirudilhara.webchat.dao;
 
-import me.lahirudilhara.webchat.common.exceptions.UserNotFoundException;
+import me.lahirudilhara.webchat.daoMappers.UserDAOMapper;
+import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.repositories.UserRepository;
 import org.springframework.cache.annotation.Cacheable;
@@ -9,22 +10,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserDAO {
     private final UserRepository userRepository;
+    private final UserDAOMapper userDAOMapper;
 
-    public UserDAO(UserRepository userRepository){
+    public UserDAO(UserRepository userRepository,UserDAOMapper userDAOMapper){
         this.userRepository = userRepository;
+        this.userDAOMapper = userDAOMapper;
     }
 
-    public User saveUser(User user){
-        return userRepository.save(user);
+    public UserEntity saveUser(UserEntity userEntity){
+        User user = userRepository.save(userDAOMapper.userEntityToUser(userEntity));
+        return userDAOMapper.userToUserEntity(user);
     }
 
-    @Cacheable(value = "userByName",key = "#username")
-    public User getUserByUsername(String username){
-        return userRepository.findByUsername(username);
+    @Cacheable(value = "userDAOUserByName",key = "#username")
+    public UserEntity getUserByUsername(String username){
+        User user =  userRepository.findByUsername(username);
+        return userDAOMapper.userToUserEntity(user);
     }
 
-    @Cacheable(value = "userById",key = "#id")
-    public User getUserById(int id){
-        return userRepository.findById(id).orElseThrow();
+    @Cacheable(value = "userDAOUserById",key = "#id")
+    public UserEntity getUserById(int id){
+        User user = userRepository.findById(id).orElseThrow();
+        return userDAOMapper.userToUserEntity(user);
     }
 }

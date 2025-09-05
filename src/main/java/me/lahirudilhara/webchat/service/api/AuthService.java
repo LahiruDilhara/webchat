@@ -2,6 +2,7 @@ package me.lahirudilhara.webchat.service.api;
 
 import me.lahirudilhara.webchat.dto.api.auth.LoginDTO;
 import me.lahirudilhara.webchat.dto.api.auth.SignUpDTO;
+import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.jwt.JwtService;
 import me.lahirudilhara.webchat.mappers.api.AuthMapper;
 import me.lahirudilhara.webchat.models.User;
@@ -12,26 +13,22 @@ import org.springframework.stereotype.Service;
 public class AuthService {
     private UserService userService;
     private JwtService jwtService;
-    private AuthMapper authMapper;
 
-    public AuthService(UserService userService, JwtService jwtService, AuthMapper authMapper) {
+    public AuthService(UserService userService, JwtService jwtService) {
         this.userService = userService;
         this.jwtService = jwtService;
-        this.authMapper = authMapper;
     }
 
-    public String loginUser(LoginDTO loginDTO) throws BadCredentialsException {
-        User user = authMapper.loginDtoToUser(loginDTO);
-        if(userService.verify(user)) {
-            return jwtService.generateToken(user.getUsername());
+    public String loginUser(UserEntity userEntity) throws BadCredentialsException {
+        if(userService.verify(userEntity)) {
+            return jwtService.generateToken(userEntity.getUsername());
         }
         else{
             throw new BadCredentialsException("Invalid username or password");
         }
     }
 
-    public User signUpUser(SignUpDTO signUpDTO) {
-        User user = authMapper.signUpDtoToUser(signUpDTO);
-        return userService.addUser(user);
+    public UserEntity signUpUser(UserEntity userEntity) {
+        return userService.addUser(userEntity);
     }
 }

@@ -1,10 +1,8 @@
 package me.lahirudilhara.webchat.service.api;
 
 import me.lahirudilhara.webchat.dao.UserDAO;
-import me.lahirudilhara.webchat.models.User;
-import me.lahirudilhara.webchat.repositories.UserRepository;
+import me.lahirudilhara.webchat.entities.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,13 +21,13 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    public User addUser(User user) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        return userDAO.saveUser(user);
+    public UserEntity addUser(UserEntity userEntity) {
+        userEntity.setPassword(bCryptPasswordEncoder.encode(userEntity.getPassword()));
+        return userDAO.saveUser(userEntity);
     }
 
-    public boolean verify(User user) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword()));
+    public boolean verify(UserEntity userEntity) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userEntity.getUsername(),userEntity.getPassword()));
         return authentication.isAuthenticated();
     }
 
