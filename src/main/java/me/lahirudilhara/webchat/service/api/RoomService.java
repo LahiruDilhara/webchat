@@ -184,8 +184,9 @@ public class RoomService {
         return roomMapper.roomToRoomEntity(room);
     }
 
-    public List<UserEntity> getRoomUsers(int roomId){
+    public List<UserEntity> getRoomUsers(int roomId,String username){
         Room room = roomRepository.findByIdWithUsers(roomId).orElseThrow(RoomNotFoundException::new);
+        if(room.getUsers().stream().noneMatch(u->u.getUsername().equals(username))) throw new RoomNotFoundException();
         return room.getUsers().stream().map(userMapper::userToUserEntity).toList();
     }
 }

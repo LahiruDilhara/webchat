@@ -4,10 +4,13 @@ import jakarta.validation.Valid;
 import me.lahirudilhara.webchat.dto.api.room.AddRoomDTO;
 import me.lahirudilhara.webchat.dto.api.room.RoomResponseDTO;
 import me.lahirudilhara.webchat.dto.api.room.UpdateRoomDTO;
+import me.lahirudilhara.webchat.dto.api.user.UserResponseDTO;
 import me.lahirudilhara.webchat.dto.message.MessageResponseDTO;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.MessageMapper;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.RoomMapper;
+import me.lahirudilhara.webchat.dtoEntityMappers.api.UserMapper;
 import me.lahirudilhara.webchat.entities.RoomEntity;
+import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.service.api.RoomService;
@@ -26,11 +29,13 @@ public class RoomController {
     private final RoomMapper roomMapper;
     private final RoomService roomService;
     private final MessageMapper messageMapper;
+    private final UserMapper userMapper;
 
-    public RoomController(RoomMapper roomMapper, RoomService roomService,MessageMapper messageMapper) {
+    public RoomController(RoomMapper roomMapper, RoomService roomService,MessageMapper messageMapper, UserMapper userMapper) {
         this.roomMapper = roomMapper;
         this.roomService = roomService;
         this.messageMapper = messageMapper;
+        this.userMapper = userMapper;
     }
 
     @PostMapping("/")
@@ -85,5 +90,11 @@ public class RoomController {
         Pageable pageable = PageRequest.of(page,size, Sort.by(sortBy).descending());
         List<Message> messages = roomService.getRoomMessages(roomId,pageable);
         return messages.stream().map(messageMapper::messageToMessageResponse).toList();
+    }
+
+    @GetMapping("/{roomId}/users")
+    public List<UserResponseDTO> getRoomUsers(@PathVariable int roomId, Principal principal){
+        List<UserEntity> users = roomService.getRoomUsers(roomId,principal.getName());
+        return users.stream().map(userMapper::userEntityToUserResponseDTO).toList();
     }
 }
