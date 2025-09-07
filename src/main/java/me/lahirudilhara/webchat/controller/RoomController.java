@@ -17,6 +17,7 @@ import me.lahirudilhara.webchat.service.api.RoomService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,11 +40,11 @@ public class RoomController {
     }
 
     @PostMapping("/")
-    public RoomResponseDTO createRoom(@Valid @RequestBody AddRoomDTO addRoomDTO, Principal principal){
+    public ResponseEntity<RoomResponseDTO> createRoom(@Valid @RequestBody AddRoomDTO addRoomDTO, Principal principal){
         RoomEntity roomEntity = roomMapper.addRoomDtoToRoomEntity(addRoomDTO);
         roomEntity.setCreatedBy(principal.getName());
         RoomEntity createdRoom = roomService.createRoom(roomEntity);
-        return roomMapper.roomEntityToRoomResponseDTO(createdRoom);
+        return new ResponseEntity<>(roomMapper.roomEntityToRoomResponseDTO(createdRoom), HttpStatus.CREATED);
     }
 
     @PostMapping("/{roomId}/join")
