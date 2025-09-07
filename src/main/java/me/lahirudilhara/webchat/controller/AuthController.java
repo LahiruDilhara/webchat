@@ -9,6 +9,8 @@ import me.lahirudilhara.webchat.dtoEntityMappers.api.AuthMapper;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.UserMapper;
 import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.service.api.AuthService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,14 +31,14 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public UserResponseDTO addUser(@Valid @RequestBody SignUpDTO signUpDTO) {
+    public ResponseEntity<UserResponseDTO> addUser(@Valid @RequestBody SignUpDTO signUpDTO) {
         UserEntity userEntity = authService.signUpUser(authMapper.signUpDtoToUserEntity(signUpDTO));
-        return userMapper.userEntityToUserResponseDTO(userEntity);
+        return new ResponseEntity<>(userMapper.userEntityToUserResponseDTO(userEntity),HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public JwtResponseDTO login(@Valid @RequestBody LoginDTO loginDTO) throws BadCredentialsException {
+    public ResponseEntity<JwtResponseDTO> login(@Valid @RequestBody LoginDTO loginDTO) throws BadCredentialsException {
         String token = authService.loginUser(authMapper.loginDtoToUserEntity(loginDTO));
-        return new JwtResponseDTO(token);
+        return new ResponseEntity<>(new JwtResponseDTO(token),HttpStatus.CREATED);
     }
 }
