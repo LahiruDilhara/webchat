@@ -3,22 +3,18 @@ package me.lahirudilhara.webchat.dto.api.room;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public class AddRoomDTO {
+public class AddMultiUserRoomDTO {
     @NotNull(message = "isPrivate is required")
     private Boolean isPrivate;
-
-    @NotNull(message = "multiUser is required")
-    private Boolean multiUser;
 
     @NotBlank(message = "The room name cannot be blank")
     private String name;
 
-    public AddRoomDTO() {
+    public AddMultiUserRoomDTO() {
     }
 
-    public AddRoomDTO(Boolean isPrivate, Boolean multiUser, String name) {
+    public AddMultiUserRoomDTO(Boolean isPrivate, String name) {
         this.isPrivate = isPrivate;
-        this.multiUser = multiUser;
         this.name = name;
     }
 
@@ -28,14 +24,6 @@ public class AddRoomDTO {
 
     public void setIsPrivate(Boolean aPrivate) {
         isPrivate = aPrivate;
-    }
-
-    public Boolean getMultiUser() {
-        return multiUser;
-    }
-
-    public void setMultiUser(Boolean multiUser) {
-        this.multiUser = multiUser;
     }
 
     public String getName() {

@@ -1,9 +1,7 @@
 package me.lahirudilhara.webchat.controller;
 
 import jakarta.validation.Valid;
-import me.lahirudilhara.webchat.dto.api.room.AddRoomDTO;
-import me.lahirudilhara.webchat.dto.api.room.RoomResponseDTO;
-import me.lahirudilhara.webchat.dto.api.room.UpdateRoomDTO;
+import me.lahirudilhara.webchat.dto.api.room.*;
 import me.lahirudilhara.webchat.dto.api.user.UserResponseDTO;
 import me.lahirudilhara.webchat.dto.message.MessageResponseDTO;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.MessageMapper;
@@ -39,12 +37,20 @@ public class RoomController {
         this.userMapper = userMapper;
     }
 
-    @PostMapping("/")
-    public ResponseEntity<RoomResponseDTO> createRoom(@Valid @RequestBody AddRoomDTO addRoomDTO, Principal principal){
-        RoomEntity roomEntity = roomMapper.addRoomDtoToRoomEntity(addRoomDTO);
+    @PostMapping("/multiUser")
+    public ResponseEntity<RoomResponseDTO> createMultiUserRoom(@Valid @RequestBody AddMultiUserRoomDTO addMultiUserRoomDTO, Principal principal){
+        RoomEntity roomEntity = roomMapper.addMultiUserRoomDtoToRoomEntity(addMultiUserRoomDTO);
         roomEntity.setCreatedBy(principal.getName());
-        RoomEntity createdRoom = roomService.createRoom(roomEntity);
-        return new ResponseEntity<>(roomMapper.roomEntityToRoomResponseDTO(createdRoom), HttpStatus.CREATED);
+        RoomEntity createdRoom = roomService.createMultiUserRoom(roomEntity);
+        return new ResponseEntity<>(roomMapper.roomEntityToRoomResponseDTO(createdRoom),HttpStatus.CREATED);
+    }
+
+    @PostMapping("/dualUser")
+    public ResponseEntity<RoomResponseDTO> createDualUserRoom(@Valid @RequestBody AddDualUserRoomDTO addDualUserRoomDTO, Principal principal){
+        RoomEntity roomEntity = roomMapper.addDualUserRoomDtoToRoomEntity(addDualUserRoomDTO);
+        roomEntity.setCreatedBy(principal.getName());
+        RoomEntity createdRoom = roomService.createDualUserRoom(roomEntity,addDualUserRoomDTO.getUserId());
+        return new ResponseEntity<>(roomMapper.roomEntityToRoomResponseDTO(createdRoom),HttpStatus.CREATED);
     }
 
     @PostMapping("/{roomId}/join")

@@ -43,6 +43,47 @@ public class RoomService {
         this.userMapper = userMapper;
     }
 
+    public RoomEntity createMultiUserRoom(RoomEntity roomEntity){
+        UserEntity userEntity = userService.getUserByUsername(roomEntity.getCreatedBy());
+        User userRef = entityManager.getReference(User.class, userEntity.getId());
+
+        Room room = roomMapper.roomEntityToRoom(roomEntity);
+        room.setCreatedBy(userRef);
+        room.setCreatedAt(Instant.now());
+        List<User> members = new ArrayList<>();
+        members.add(userRef);
+        room.setUsers(members);
+        room.setMultiUser(true);
+        String error = validateRoom(room);
+        if (error != null) {
+            throw new BaseException(error,HttpStatus.BAD_REQUEST);
+        }
+        Room createdRoom = roomRepository.save(room);
+        return roomMapper.roomToRoomEntity(createdRoom);
+    }
+
+    public RoomEntity createDualUserRoom(RoomEntity roomEntity, int nextUserId){
+        UserEntity owner = userService.getUserByUsername(roomEntity.getCreatedBy());
+        UserEntity user = userService.getUserById(nextUserId);
+
+        User ownerRef = entityManager.getReference(User.class, owner.getId());
+        User userRef = entityManager.getReference(User.class, user.getId());
+
+        Room room = roomMapper.roomEntityToRoom(roomEntity);
+        room.setCreatedBy(ownerRef);
+        room.setCreatedAt(Instant.now());
+        room.setIsPrivate(true);
+        room.setMultiUser(false);
+        room.setUsers(List.of(ownerRef,userRef));
+        room.setClosed(true);
+        String error = validateRoom(room);
+        if (error != null) {
+            throw new BaseException(error,HttpStatus.BAD_REQUEST);
+        }
+        Room createdRoom = roomRepository.save(room);
+        return roomMapper.roomToRoomEntity(createdRoom);
+    }
+
     public RoomEntity createRoom(RoomEntity roomEntity) {
         UserEntity userEntity = userService.getUserByUsername(roomEntity.getCreatedBy());
         User userRef = entityManager.getReference(User.class, userEntity.getId());
@@ -58,7 +99,6 @@ public class RoomService {
             throw new BaseException(error,HttpStatus.BAD_REQUEST);
         }
         Room createdRoom = roomRepository.save(room);
-        System.out.println(createdRoom.getCreatedBy().getUsername());
         return roomMapper.roomToRoomEntity(createdRoom);
     }
 
@@ -133,6 +173,11 @@ public class RoomService {
     public void removeUserFromRoom(int userId, int roomId,  String ownerUsername){
         UserEntity owner = userService.getUserByUsername(ownerUsername);
         Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
+
+        if(!room.getMultiUser()){
+            throw new BaseException("The user cannot remove from a dual user room",HttpStatus.BAD_REQUEST);
+        }
+
         if(!room.getCreatedBy().getId().equals(owner.getId())){
             throw new BaseException("Only the owner can remove user from the room",HttpStatus.BAD_REQUEST);
         }

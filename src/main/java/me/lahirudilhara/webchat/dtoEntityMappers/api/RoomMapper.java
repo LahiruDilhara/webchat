@@ -1,15 +1,16 @@
 package me.lahirudilhara.webchat.dtoEntityMappers.api;
 
-import me.lahirudilhara.webchat.dto.api.room.AddRoomDTO;
-import me.lahirudilhara.webchat.dto.api.room.RoomResponseDTO;
-import me.lahirudilhara.webchat.dto.api.room.UpdateRoomDTO;
+import me.lahirudilhara.webchat.dto.api.room.*;
 import me.lahirudilhara.webchat.entities.RoomEntity;
 import me.lahirudilhara.webchat.models.Room;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface RoomMapper {
-    RoomEntity addRoomDtoToRoomEntity(AddRoomDTO addRoomDTO);
+
+    RoomEntity addMultiUserRoomDtoToRoomEntity(AddMultiUserRoomDTO addMultiUserRoomDTO);
+
+    RoomEntity addDualUserRoomDtoToRoomEntity(AddDualUserRoomDTO addDualUserRoomDTO);
 
     RoomResponseDTO roomEntityToRoomResponseDTO(RoomEntity roomEntity);
 
