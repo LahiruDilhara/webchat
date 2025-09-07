@@ -1,5 +1,7 @@
 package me.lahirudilhara.webchat.service.api;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import me.lahirudilhara.webchat.common.exceptions.BaseException;
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.common.exceptions.UserNotFoundException;
@@ -30,6 +32,9 @@ public class RoomService {
     private final UserService userService;
     private final UserMapper userMapper;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public RoomService(RoomRepository roomRepository, MessageRepository messageRepository, RoomMapper roomMapper, UserService userService, UserMapper userMapper) {
         this.roomRepository = roomRepository;
         this.messageRepository = messageRepository;
@@ -40,19 +45,21 @@ public class RoomService {
 
     public RoomEntity createRoom(RoomEntity roomEntity) {
         UserEntity userEntity = userService.getUserByUsername(roomEntity.getCreatedBy());
+        User userRef = entityManager.getReference(User.class, userEntity.getId());
+
         Room room = roomMapper.roomEntityToRoom(roomEntity);
-        User user = new User();
-        user.setId(userEntity.getId());
-        room.setCreatedBy(user);
+        room.setCreatedBy(userRef);
         room.setCreatedAt(Instant.now());
         List<User> members = new ArrayList<>();
-        members.add(user);
+        members.add(userRef);
         room.setUsers(members);
         String error = validateRoom(room);
         if (error != null) {
             throw new BaseException(error,HttpStatus.BAD_REQUEST);
         }
-        return roomMapper.roomToRoomEntity(roomRepository.save(room));
+        Room createdRoom = roomRepository.save(room);
+        System.out.println(createdRoom.getCreatedBy().getUsername());
+        return roomMapper.roomToRoomEntity(createdRoom);
     }
 
 //    @CacheEvict(value = "room",key = "#roomId")

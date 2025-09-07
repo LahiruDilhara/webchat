@@ -54,6 +54,12 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-cache
     implementation 'org.springframework.boot:spring-boot-starter-cache:3.5.5'
+
+    // https://mvnrepository.com/artifact/org.projectlombok/lombok
+    compileOnly 'org.projectlombok:lombok:1.18.40'
+    annotationProcessor 'org.projectlombok:lombok:1.18.40'
+
+
 }
 
 tasks.named('test') {

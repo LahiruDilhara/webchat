@@ -1,5 +1,8 @@
 package me.lahirudilhara.webchat.entities;
 
+import lombok.ToString;
+
+@ToString
 public class UserEntity {
     private Integer id;
     private String username;

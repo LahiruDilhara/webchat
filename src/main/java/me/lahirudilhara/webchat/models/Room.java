@@ -1,6 +1,7 @@
 package me.lahirudilhara.webchat.models;
 
 import jakarta.persistence.*;
+import lombok.ToString;
 import me.lahirudilhara.webchat.models.message.Message;
 
 import java.time.Instant;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "room")
+@ToString
 public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

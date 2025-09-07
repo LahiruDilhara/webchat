@@ -1,7 +1,10 @@
 package me.lahirudilhara.webchat.entities;
 
+import lombok.ToString;
+
 import java.time.Instant;
 
+@ToString
 public class RoomEntity {
     private Integer id;
     private String name;
