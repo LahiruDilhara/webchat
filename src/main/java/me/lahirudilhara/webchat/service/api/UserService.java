@@ -33,6 +33,7 @@ public class UserService {
         return userMapper.userToUserEntity(userRepository.findByUsername(username));
     }
 
+    @Cacheable(value = "userById",key = "#id")
     public UserEntity getUserById(int id){
         User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
         return userMapper.userToUserEntity(user);
