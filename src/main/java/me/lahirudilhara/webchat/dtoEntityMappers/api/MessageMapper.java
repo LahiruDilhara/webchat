@@ -18,11 +18,4 @@ public interface MessageMapper {
     MessageResponseDTO messageToMessageResponse(Message message);
 
     TextMessageResponseDTO textMessageToTextMessageResponseDTO(TextMessage textMessage);
-
-//    default MessageResponseDTO toDTO(T message){
-//        if(message instanceof TextMessage textMessage){
-//            return textMessageToTextMessageResponseDTO(textMessage);
-//        }
-//        return messageToMessageResponse(message);
-//    }
 }

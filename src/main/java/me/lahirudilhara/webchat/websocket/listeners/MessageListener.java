@@ -55,41 +55,41 @@ public class MessageListener {
     @Async
     @EventListener
     public void OnClientExceptionEvent(ClientExceptionEvent event){
-        WebSocketUserSession webSocketUserSession = sessionManager.getUserByUsername(event.getUsername());
+        WebSocketUserSession webSocketUserSession = sessionManager.getUserByUsername(event.username());
         if(webSocketUserSession == null) return;
         WebSocketSession session = webSocketUserSession.getSession();
         if(!session.isOpen()) {
-            log.error("Session has been closed for the user {}",event.getUsername());
+            log.error("Session has been closed for the user {}",event.username());
             return;
         }
-        sendTextMessage(session, event.getMessage());
+        sendTextMessage(session, event.message());
     }
 
     @Async
     @EventListener
     public void OnMulticastDataEvent(MulticastDataEvent event){
-        List<WebSocketUserSession> webSocketUserSessions = sessionManager.getUsersByUsernames(event.getUsers());
+        List<WebSocketUserSession> webSocketUserSessions = sessionManager.getUsersByUsernames(event.users());
         for(WebSocketUserSession webSocketUserSession : webSocketUserSessions){
             if(webSocketUserSession == null) continue;
             WebSocketSession session = webSocketUserSession.getSession();
             if(!session.isOpen()) {
-                log.error("Session has been closed for the user {}",event.getUsers());
+                log.error("Session has been closed for the user {}",event.users());
                 continue;
             }
-            sendtextrMessage(session, event.getData());
+            sendtextrMessage(session, event.data());
         }
     }
 
     @Async
     @EventListener
     public void OnUnicastDataEvent(UnicastDataEvent event){
-        WebSocketUserSession webSocketUserSession = sessionManager.getUserByUsername(event.getUsername());
+        WebSocketUserSession webSocketUserSession = sessionManager.getUserByUsername(event.username());
         if(webSocketUserSession == null) return;
         WebSocketSession session = webSocketUserSession.getSession();
         if(!session.isOpen()) {
-            log.error("Session has been closed for the user {}",event.getUsername());
+            log.error("Session has been closed for the user {}",event.username());
             return;
         }
-        sendtextrMessage(session,event.getObject());
+        sendtextrMessage(session,event.object());
     }
 }

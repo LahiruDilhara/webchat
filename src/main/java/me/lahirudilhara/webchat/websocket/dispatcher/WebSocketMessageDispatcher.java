@@ -41,6 +41,6 @@ public class WebSocketMessageDispatcher {
     @Async
     @EventListener
     public void OnClientMessage(ClientMessageEvent event){
-        this.dispatch(event.getMessageDTO(),event.getUsername());
+        this.dispatch(event.messageDTO(),event.username());
     }
 }
