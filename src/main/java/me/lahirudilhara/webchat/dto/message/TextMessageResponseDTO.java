@@ -1,33 +1,15 @@
 package me.lahirudilhara.webchat.dto.message;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.Instant;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class TextMessageResponseDTO extends MessageResponseDTO {
     private String content;
     private Instant editedAt;
-
-    public TextMessageResponseDTO() {
-    }
-
-    public TextMessageResponseDTO(int id, Instant createdAt, String senderUsername, int senderId, int roomId, String content, Instant editedAt) {
-        super(id, createdAt, senderUsername, senderId, roomId);
-        this.content = content;
-        this.editedAt = editedAt;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Instant getEditedAt() {
-        return editedAt;
-    }
-
-    public void setEditedAt(Instant editedAt) {
-        this.editedAt = editedAt;
-    }
 }

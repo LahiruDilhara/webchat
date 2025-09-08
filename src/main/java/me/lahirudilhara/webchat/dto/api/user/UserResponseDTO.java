@@ -1,30 +1,13 @@
 package me.lahirudilhara.webchat.dto.api.user;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserResponseDTO {
     private Integer id;
     private String username;
-
-    public UserResponseDTO() {
-    }
-
-    public UserResponseDTO(Integer id, String username) {
-        this.id = id;
-        this.username = username;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 }

@@ -1,20 +1,12 @@
 package me.lahirudilhara.webchat.dto.api.jwt;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class JwtResponseDTO {
     private String token;
-
-    public JwtResponseDTO() {
-    }
-
-    public JwtResponseDTO(String token) {
-        this.token = token;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
 }

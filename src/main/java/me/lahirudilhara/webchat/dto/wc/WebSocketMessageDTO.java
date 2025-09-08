@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import me.lahirudilhara.webchat.websocket.dispatcher.PacketType;
 
 @JsonTypeInfo(
@@ -16,35 +19,14 @@ import me.lahirudilhara.webchat.websocket.dispatcher.PacketType;
         @JsonSubTypes.Type(value = TextMessageDTO.class, name = "Text"),
         @JsonSubTypes.Type(value = JoinRoomMessageDTO.class, name = "Join")
 })
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class WebSocketMessageDTO {
     @NotNull(message = "The type cannot be null")
     private PacketType type;
 
     @NotNull
     @Min(value = 1,message = "RoomId should be greater than 0")
-    private int roomId;
-
-    public WebSocketMessageDTO() {
-    }
-
-    public WebSocketMessageDTO(PacketType type, int roomId) {
-        this.type = type;
-        this.roomId = roomId;
-    }
-
-    public PacketType getType() {
-        return type;
-    }
-
-    public void setType(PacketType type) {
-        this.type = type;
-    }
-
-    public int getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(int roomId) {
-        this.roomId = roomId;
-    }
+    private Integer roomId;
 }
