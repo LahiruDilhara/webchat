@@ -223,7 +223,7 @@ public class RoomService {
 
     public List<Message> getRoomMessages(int roomId, Pageable pageable){
         Page<Message> page = messageRepository.findByRoomIdOrderByCreatedAtDesc(roomId, pageable);
-        List<Message> messages = page.getContent().stream().filter(m->!m.isDeleted()).toList();
+        List<Message> messages = page.getContent().stream().filter(m->!m.getDeleted()).toList();
         return messages;
     }
 

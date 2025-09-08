@@ -2,11 +2,17 @@ package me.lahirudilhara.webchat.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import me.lahirudilhara.webchat.models.message.Message;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity(name = "MyUser")
 public class User {
     @Id
@@ -28,60 +34,4 @@ public class User {
     @ManyToMany(mappedBy = "users")
     @JsonIgnore
     private List<Room> rooms = new ArrayList<>();
-
-    public User(){}
-
-    public User(Integer id, String username, String password) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public List<Message> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
-    }
-
-    public List<Room> getCreatedRooms() {
-        return createdRooms;
-    }
-
-    public void setCreatedRooms(List<Room> createdRooms) {
-        this.createdRooms = createdRooms;
-    }
-
-    public List<Room> getRooms() {
-        return rooms;
-    }
-
-    public void setRooms(List<Room> rooms) {
-        this.rooms = rooms;
-    }
 }
