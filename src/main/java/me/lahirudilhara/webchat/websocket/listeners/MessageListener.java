@@ -3,6 +3,7 @@ package me.lahirudilhara.webchat.websocket.listeners;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import me.lahirudilhara.webchat.common.util.JsonUtil;
+import me.lahirudilhara.webchat.websocket.events.ClientErrorEvent;
 import me.lahirudilhara.webchat.websocket.events.ClientExceptionEvent;
 import me.lahirudilhara.webchat.websocket.events.MulticastDataEvent;
 import me.lahirudilhara.webchat.websocket.events.UnicastDataEvent;
@@ -25,16 +26,6 @@ public class MessageListener {
 
     public MessageListener(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
-    }
-
-    private void sendTextMessage(WebSocketSession session, String message) {
-        try{
-            session.sendMessage(new TextMessage(message));
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
     }
 
     private void sendtextrMessage(WebSocketSession session, Object data){
@@ -62,7 +53,21 @@ public class MessageListener {
             log.error("Session has been closed for the user {}",event.username());
             return;
         }
-        sendTextMessage(session, event.message());
+
+    }
+
+    @Async
+    @EventListener
+    public void OnClientErrorEvent(ClientErrorEvent event){
+        System.out.println("Handling the error");
+        WebSocketUserSession webSocketUserSession = sessionManager.getUserByUsername(event.username());
+        if(webSocketUserSession == null) return;
+        WebSocketSession session = webSocketUserSession.getSession();
+        if(!session.isOpen()) {
+            log.error("Session has been closed for the user {}",event.username());
+            return;
+        }
+        sendtextrMessage(session,event.error());
     }
 
     @Async

@@ -5,10 +5,11 @@ import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import me.lahirudilhara.webchat.common.util.JsonUtil;
 import me.lahirudilhara.webchat.common.util.SchemaValidator;
-import me.lahirudilhara.webchat.common.util.WebSocketError;
+import me.lahirudilhara.webchat.dto.wc.WebSocketError;
 import me.lahirudilhara.webchat.dto.wc.WebSocketMessageDTO;
 import me.lahirudilhara.webchat.websocket.events.ClientConnectedEvent;
 import me.lahirudilhara.webchat.websocket.events.ClientDisconnectedEvent;
+import me.lahirudilhara.webchat.websocket.events.ClientErrorEvent;
 import me.lahirudilhara.webchat.websocket.events.ClientMessageEvent;
 import me.lahirudilhara.webchat.websocket.session.SessionManager;
 import org.springframework.context.ApplicationEventPublisher;
@@ -47,20 +48,24 @@ public class WebChatWebSocketHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
         if(!session.isOpen()) return;
-        if(Objects.requireNonNull(session.getPrincipal()).getName() == null) return;
+        String username = Objects.requireNonNull(session.getPrincipal()).getName();
+        if(username == null) return;
         try{
             WebSocketMessageDTO webSocketMessageDTO = JsonUtil.jsonToObject(message.getPayload(), WebSocketMessageDTO.class);
             SchemaValidator.validate(webSocketMessageDTO);
             applicationEventPublisher.publishEvent(new ClientMessageEvent(session.getPrincipal().getName(),webSocketMessageDTO));
         }
         catch(JsonProcessingException e){
-            WebSocketError.sendError(session,"The message json is not in correct format");
+            System.out.println(e.getMessage());
+            applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError("The message json is not in correct format"),username));
         }
         catch(ValidationException e){
-            WebSocketError.sendError(session,e.getMessage());
+            System.out.println(e.getMessage());
+            applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError(e.getMessage()),username));
         }
         catch (Exception e) {
-            WebSocketError.sendError(session,"Unknown error occurred");
+            System.out.println(e.getMessage());
+            applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError("Unknown error occurred"),username));
         }
     }
 

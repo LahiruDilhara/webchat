@@ -1,5 +1,7 @@
 package me.lahirudilhara.webchat.websocket.events;
 
-public class ClientErrorEvent {
+import me.lahirudilhara.webchat.dto.wc.WebSocketError;
+
+public record ClientErrorEvent(WebSocketError error, String username) {
 
 }
