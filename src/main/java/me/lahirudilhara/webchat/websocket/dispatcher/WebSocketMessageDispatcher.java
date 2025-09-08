@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.WebSocketSession;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,19 +30,19 @@ public class WebSocketMessageDispatcher {
         }
     }
 
-    public <T extends WebSocketMessageDTO> void dispatch(T message, String senderUsername) {
+    public <T extends WebSocketMessageDTO> void dispatch(T message, String senderUsername, WebSocketSession session) {
         MessageHandler<T> messageHandler = (MessageHandler<T>) userMessageHandlerMap.get(message.getClass());
         if (messageHandler == null) {
             log.error("The message handler not found. The username is {}. The message class is {}",senderUsername,message.getClass());
             applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError("Internal error occurred"),senderUsername));
             return;
         }
-        messageHandler.handleMessage(message,senderUsername);
+        messageHandler.handleMessage(message,senderUsername,session);
     }
 
     @Async
     @EventListener
     public void OnClientMessage(ClientMessageEvent event){
-        this.dispatch(event.messageDTO(),event.username());
+        this.dispatch(event.messageDTO(),event.username(),event.session());
     }
 }
