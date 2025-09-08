@@ -9,7 +9,7 @@ import me.lahirudilhara.webchat.common.util.WebSocketError;
 import me.lahirudilhara.webchat.dto.wc.WebSocketMessageDTO;
 import me.lahirudilhara.webchat.websocket.events.ClientConnectedEvent;
 import me.lahirudilhara.webchat.websocket.events.ClientDisconnectedEvent;
-import me.lahirudilhara.webchat.websocket.events.OnClientMessageEvent;
+import me.lahirudilhara.webchat.websocket.events.ClientMessageEvent;
 import me.lahirudilhara.webchat.websocket.session.SessionManager;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -51,7 +51,7 @@ public class WebChatWebSocketHandler extends TextWebSocketHandler {
         try{
             WebSocketMessageDTO webSocketMessageDTO = JsonUtil.jsonToObject(message.getPayload(), WebSocketMessageDTO.class);
             SchemaValidator.validate(webSocketMessageDTO);
-            applicationEventPublisher.publishEvent(new OnClientMessageEvent(session.getPrincipal().getName(),webSocketMessageDTO));
+            applicationEventPublisher.publishEvent(new ClientMessageEvent(session.getPrincipal().getName(),webSocketMessageDTO));
         }
         catch(JsonProcessingException e){
             WebSocketError.sendError(session,"The message json is not in correct format");

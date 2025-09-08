@@ -49,6 +49,17 @@ public class InMemorySessionManager implements SessionManager{
         return this.webSocketUsers.get(username);
     }
 
+    @Override
+    public List<WebSocketUserSession> getUsersByUsernames(List<String> usernames) {
+        List<WebSocketUserSession> webSocketSessions = new ArrayList<>();
+        for(WebSocketUserSession webSocketUserSession : this.webSocketUsers.values()){
+            if(usernames.contains(webSocketUserSession.getUsername())){
+                webSocketSessions.add(webSocketUserSession);
+            }
+        }
+        return webSocketSessions;
+    }
+
     public List<String> getActiveUsers(){
         return new ArrayList<>(this.webSocketUsers.keySet());
     }

@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.service.websocket;
+package me.lahirudilhara.webchat.websocket.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import me.lahirudilhara.webchat.common.exceptions.BaseWebSocketException;

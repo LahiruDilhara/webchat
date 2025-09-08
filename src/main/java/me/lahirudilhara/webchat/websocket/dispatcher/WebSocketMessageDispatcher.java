@@ -2,7 +2,7 @@ package me.lahirudilhara.webchat.websocket.dispatcher;
 
 import me.lahirudilhara.webchat.dto.wc.WebSocketMessageDTO;
 import me.lahirudilhara.webchat.websocket.events.ClientExceptionEvent;
-import me.lahirudilhara.webchat.websocket.events.OnClientMessageEvent;
+import me.lahirudilhara.webchat.websocket.events.ClientMessageEvent;
 import me.lahirudilhara.webchat.websocket.handlers.MessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public class WebSocketMessageDispatcher {
 
     @Async
     @EventListener
-    public void OnClientMessage(OnClientMessageEvent event){
+    public void OnClientMessage(ClientMessageEvent event){
         this.dispatch(event.getMessageDTO(),event.getUsername());
     }
 }

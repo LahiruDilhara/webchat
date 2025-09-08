@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.SubclassMapping;
 
 @Mapper(componentModel = "spring")
-public interface MessageMapper <T extends  Message> {
+public interface MessageMapper {
 
     @Mapping(source = "sender.username",target = "senderUsername")
     @Mapping(source = "sender.id",target = "senderId")
