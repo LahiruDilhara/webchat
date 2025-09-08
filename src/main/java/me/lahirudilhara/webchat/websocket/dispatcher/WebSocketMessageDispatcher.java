@@ -1,7 +1,8 @@
 package me.lahirudilhara.webchat.websocket.dispatcher;
 
+import me.lahirudilhara.webchat.dto.wc.WebSocketError;
 import me.lahirudilhara.webchat.dto.wc.WebSocketMessageDTO;
-import me.lahirudilhara.webchat.websocket.events.ClientExceptionEvent;
+import me.lahirudilhara.webchat.websocket.events.ClientErrorEvent;
 import me.lahirudilhara.webchat.websocket.events.ClientMessageEvent;
 import me.lahirudilhara.webchat.websocket.handlers.MessageHandler;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ public class WebSocketMessageDispatcher {
         MessageHandler<T> messageHandler = (MessageHandler<T>) userMessageHandlerMap.get(message.getClass());
         if (messageHandler == null) {
             log.error("The message handler not found. The username is {}. The message class is {}",senderUsername,message.getClass());
-            applicationEventPublisher.publishEvent(new ClientExceptionEvent(senderUsername,"Internal error occurred"));
+            applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError("Internal error occurred"),senderUsername));
             return;
         }
         messageHandler.handleMessage(message,senderUsername);

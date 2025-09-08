@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import me.lahirudilhara.webchat.common.util.JsonUtil;
 import me.lahirudilhara.webchat.websocket.events.ClientErrorEvent;
-import me.lahirudilhara.webchat.websocket.events.ClientExceptionEvent;
 import me.lahirudilhara.webchat.websocket.events.MulticastDataEvent;
 import me.lahirudilhara.webchat.websocket.events.UnicastDataEvent;
 import me.lahirudilhara.webchat.websocket.session.SessionManager;
@@ -39,19 +38,6 @@ public class MessageListener {
         }
         catch (Exception e){
             log.error("An exception occurred. The message is {}",e.getMessage());
-        }
-
-    }
-
-    @Async
-    @EventListener
-    public void OnClientExceptionEvent(ClientExceptionEvent event){
-        WebSocketUserSession webSocketUserSession = sessionManager.getUserByUsername(event.username());
-        if(webSocketUserSession == null) return;
-        WebSocketSession session = webSocketUserSession.getSession();
-        if(!session.isOpen()) {
-            log.error("Session has been closed for the user {}",event.username());
-            return;
         }
 
     }

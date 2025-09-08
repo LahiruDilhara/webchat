@@ -1,12 +1,13 @@
 package me.lahirudilhara.webchat.websocket.handlers;
 
 import me.lahirudilhara.webchat.dto.wc.TextMessageDTO;
+import me.lahirudilhara.webchat.dto.wc.WebSocketError;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.MessageMapper;
 import me.lahirudilhara.webchat.dtoEntityMappers.websocket.WebSocketMessageMapper;
 import me.lahirudilhara.webchat.models.message.TextMessage;
 import me.lahirudilhara.webchat.service.websocket.WebSocketRoomService;
 import me.lahirudilhara.webchat.websocket.entities.BroadcastData;
-import me.lahirudilhara.webchat.websocket.events.ClientExceptionEvent;
+import me.lahirudilhara.webchat.websocket.events.ClientErrorEvent;
 import me.lahirudilhara.webchat.websocket.events.MulticastDataEvent;
 import me.lahirudilhara.webchat.websocket.events.UnicastDataEvent;
 import org.slf4j.Logger;
@@ -42,7 +43,7 @@ public class UserTextMessageHandler implements MessageHandler<TextMessageDTO> {
         var dataOrError = webSocketRoomService.publishMessageToRoom(message.getRoomId(),senderUsername,webSocketMessageMapper.textMessageDtoToTextMessage(message));
         if(dataOrError.isLeft()){
             System.out.println(dataOrError.getLeft().getError());
-            applicationEventPublisher.publishEvent(new ClientExceptionEvent(senderUsername,dataOrError.getLeft().getError()));
+            applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError(dataOrError.getLeft().getError()),senderUsername));
             return;
         }
         BroadcastData<TextMessage> data = dataOrError.getRight();
