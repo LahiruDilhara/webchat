@@ -13,6 +13,8 @@ import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.repositories.MessageRepository;
 import me.lahirudilhara.webchat.repositories.RoomRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -60,9 +62,9 @@ public class RoomService {
         return roomMapper.roomToRoomEntity(createdRoom);
     }
 
-    public RoomEntity createDualUserRoom(RoomEntity roomEntity, int nextUserId){
+    public RoomEntity createDualUserRoom(RoomEntity roomEntity, String nextUsername){
         UserEntity owner = userService.getUserByUsername(roomEntity.getCreatedBy());
-        UserEntity user = userService.getUserById(nextUserId);
+        UserEntity user = userService.getUserByUsername(nextUsername);
 
         User ownerRef = entityManager.getReference(User.class, owner.getId());
         User userRef = entityManager.getReference(User.class, user.getId());
@@ -82,7 +84,6 @@ public class RoomService {
         return roomMapper.roomToRoomEntity(createdRoom);
     }
 
-//    @CacheEvict(value = "room",key = "#roomId")
     public void joinToRoom(String username, int roomId){
         UserEntity userEntity = userService.getUserByUsername(username);
         Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
@@ -106,13 +107,12 @@ public class RoomService {
         roomRepository.save(room);
     }
 
-//    @Cacheable(value = "room",key = "#username")
     public List<RoomEntity> getUserRooms(String username){
         List<Room> rooms = roomRepository.findByCreatedByUsername(username);
         return rooms.stream().map(roomMapper::roomToRoomEntity).toList();
     }
 
-//    @CacheEvict(value = "room",key = "#roomId")
+
     public void deleteRoom(String username, int roomId){
         UserEntity userEntity = userService.getUserByUsername(username);
         Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
@@ -122,8 +122,7 @@ public class RoomService {
         roomRepository.delete(room);
     }
 
-//    @CacheEvict(value = "room",key = "#roomId")
-    public void addUserToRoom(int userId, int roomId, String ownerUsername){
+    public void addUserToRoom(String addingUsername, int roomId, String ownerUsername){
         UserEntity owner = userService.getUserByUsername(ownerUsername);
         Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
         if(!room.getCreatedBy().getId().equals(owner.getId())){
@@ -132,7 +131,7 @@ public class RoomService {
         if(room.getClosed()){
             throw new BaseException("The room is closed",HttpStatus.BAD_REQUEST);
         }
-        UserEntity user = userService.getUserById(userId);
+        UserEntity user = userService.getUserByUsername(addingUsername);
         List<User> members = room.getUsers();
         if(members.contains(user)){
             throw new BaseException("The user already exists in the room", HttpStatus.CONFLICT);
@@ -146,8 +145,7 @@ public class RoomService {
         roomRepository.save(room);
     }
 
-//    @CacheEvict(value = "room",key = "#roomId")
-    public void removeUserFromRoom(int userId, int roomId,  String ownerUsername){
+    public void removeUserFromRoom(String removingUsername, int roomId,  String ownerUsername){
         UserEntity owner = userService.getUserByUsername(ownerUsername);
         Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
 
@@ -158,7 +156,7 @@ public class RoomService {
         if(!room.getCreatedBy().getId().equals(owner.getId())){
             throw new BaseException("Only the owner can remove user from the room",HttpStatus.BAD_REQUEST);
         }
-        UserEntity user = userService.getUserById(userId);
+        UserEntity user = userService.getUserByUsername(removingUsername);
         if(room.getUsers().stream().noneMatch(u->u.getId().equals(user.getId()))){
             throw new BaseException("The user is not a member of the room",HttpStatus.BAD_REQUEST);
         }
@@ -187,16 +185,6 @@ public class RoomService {
         return roomMapper.roomToRoomEntity(roomRepository.save(room));
     }
 
-    private String validateRoomData(Room room){
-        int usersCount = room.getUsers().size();
-        if(!room.getMultiUser() && usersCount > 2){
-            return "Cannot create non multi user room with more than two users";
-        }
-        if(!room.getMultiUser() && !room.getIsPrivate()){
-            return "Cannot make non multi user room public";
-        }
-        return null;
-    }
 
     public List<Message> getRoomMessages(int roomId,String accessUser, Pageable pageable){
         if(validateRoomDataAccess(accessUser, roomId)) throw new RoomNotFoundException();
@@ -227,4 +215,16 @@ public class RoomService {
         if(roomMemebers.stream().anyMatch(u->u.getUsername().equals(currentAccessUser))) return false;
         return true;
     }
+
+    private String validateRoomData(Room room){
+        int usersCount = room.getUsers().size();
+        if(!room.getMultiUser() && usersCount > 2){
+            return "Cannot create non multi user room with more than two users";
+        }
+        if(!room.getMultiUser() && !room.getIsPrivate()){
+            return "Cannot make non multi user room public";
+        }
+        return null;
+    }
+
 }

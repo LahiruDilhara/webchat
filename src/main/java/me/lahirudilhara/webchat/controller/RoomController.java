@@ -49,7 +49,7 @@ public class RoomController {
     public ResponseEntity<RoomResponseDTO> createDualUserRoom(@Valid @RequestBody AddDualUserRoomDTO addDualUserRoomDTO, Principal principal){
         RoomEntity roomEntity = roomMapper.addDualUserRoomDtoToRoomEntity(addDualUserRoomDTO);
         roomEntity.setCreatedBy(principal.getName());
-        RoomEntity createdRoom = roomService.createDualUserRoom(roomEntity,addDualUserRoomDTO.getUserId());
+        RoomEntity createdRoom = roomService.createDualUserRoom(roomEntity,addDualUserRoomDTO.getAddingUsername());
         return new ResponseEntity<>(roomMapper.roomEntityToRoomResponseDTO(createdRoom),HttpStatus.CREATED);
     }
 
@@ -71,15 +71,15 @@ public class RoomController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{roomId}/add/{userId}")
-    public ResponseEntity addUserToRoom(@PathVariable int roomId,@PathVariable int userId, Principal principal){
-        roomService.addUserToRoom(userId,roomId,principal.getName());
+    @PostMapping("/{roomId}/add/{username}")
+    public ResponseEntity addUserToRoom(@PathVariable int roomId,@PathVariable String username, Principal principal){
+        roomService.addUserToRoom(username,roomId,principal.getName());
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{roomId}/remove/{userId}")
-    public ResponseEntity removeUserFromRoom(@PathVariable int roomId, @PathVariable int userId, Principal principal){
-        roomService.removeUserFromRoom(userId,roomId,principal.getName());
+    @DeleteMapping("/{roomId}/remove/{username}")
+    public ResponseEntity removeUserFromRoom(@PathVariable int roomId, @PathVariable String username, Principal principal){
+        roomService.removeUserFromRoom(username,roomId,principal.getName());
         return ResponseEntity.noContent().build();
     }
 
