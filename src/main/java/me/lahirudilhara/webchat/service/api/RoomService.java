@@ -4,7 +4,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import me.lahirudilhara.webchat.common.exceptions.BaseException;
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
-import me.lahirudilhara.webchat.common.exceptions.UserNotFoundException;
 import me.lahirudilhara.webchat.entities.RoomEntity;
 import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.entityModelMappers.RoomMapper;
@@ -14,7 +13,6 @@ import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.repositories.MessageRepository;
 import me.lahirudilhara.webchat.repositories.RoomRepository;
-import me.lahirudilhara.webchat.repositories.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -89,10 +87,7 @@ public class RoomService {
         UserEntity userEntity = userService.getUserByUsername(username);
         Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
         if(!room.getCreatedBy().getId().equals(userEntity.getId())){
-            if(room.getIsPrivate()){
-                throw new BaseException("The room is private. cannot join",HttpStatus.BAD_REQUEST);
-            }
-            else if(room.getClosed()){
+            if(room.getClosed()){
                 throw new BaseException("The room is closed",HttpStatus.BAD_REQUEST);
             }
         }
@@ -204,7 +199,7 @@ public class RoomService {
     }
 
     public List<Message> getRoomMessages(int roomId,String accessUser, Pageable pageable){
-        if(!validateRoomDataAccess(accessUser,roomId)) throw new RoomNotFoundException();
+        if(validateRoomDataAccess(accessUser, roomId)) throw new RoomNotFoundException();
         Page<Message> page = messageRepository.findByRoomIdOrderByCreatedAtDesc(roomId, pageable);
         List<Message> messages = page.getContent().stream().filter(m->!m.getDeleted()).toList();
         return messages;
@@ -216,7 +211,7 @@ public class RoomService {
     }
 
     public List<UserEntity> getRoomUsers(int roomId, String username){
-        if(!validateRoomDataAccess(username,roomId)) throw new RoomNotFoundException();
+        if(validateRoomDataAccess(username, roomId)) throw new RoomNotFoundException();
         return getRoomUsers(roomId);
     }
 
@@ -227,9 +222,9 @@ public class RoomService {
 
     private boolean validateRoomDataAccess(String currentAccessUser, int roomId){
         RoomEntity roomEntity = getRoom(roomId);
-        if(roomEntity.getCreatedBy().equals(currentAccessUser)) return true;
+        if(roomEntity.getCreatedBy().equals(currentAccessUser)) return false;
         List<UserEntity> roomMemebers = getRoomUsers(roomId);
-        if(roomMemebers.stream().anyMatch(u->u.getUsername().equals(currentAccessUser))) return true;
-        return false;
+        if(roomMemebers.stream().anyMatch(u->u.getUsername().equals(currentAccessUser))) return false;
+        return true;
     }
 }
