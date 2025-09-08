@@ -83,12 +83,12 @@ public class RoomController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{roomId}")
-    public RoomResponseDTO updateRoom(@PathVariable int roomId, @RequestBody UpdateRoomDTO updateRoomDTO, Principal principal){
-        RoomEntity roomEntity = roomMapper.updateRoomDtoToRoomEntity(updateRoomDTO);
+    @PatchMapping("/multiUser/{roomId}")
+    public RoomResponseDTO updateMultiUserRoom(@PathVariable int roomId, @RequestBody UpdateMultiUserRoomDTO updateMultiUserRoomDTO, Principal principal){
+        RoomEntity roomEntity = roomMapper.updateMultiUserDtoToRoomEntity(updateMultiUserRoomDTO);
         roomEntity.setId(roomId);
         roomEntity.setCreatedBy(principal.getName());
-        RoomEntity updatedRoomEntity = roomService.updateRoom(roomEntity);
+        RoomEntity updatedRoomEntity = roomService.updateMultiUserRoom(roomEntity);
         return roomMapper.roomEntityToRoomResponseDTO(updatedRoomEntity);
     }
 

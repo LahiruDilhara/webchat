@@ -195,15 +195,13 @@ public class RoomService {
         }
     }
 
-//    @CacheEvict(value = "room",key = "#roomId")
-    public RoomEntity updateRoom(RoomEntity roomEntity){
+    public RoomEntity updateMultiUserRoom(RoomEntity roomEntity){
         UserEntity user = userService.getUserByUsername(roomEntity.getCreatedBy());
 
         Room room = roomRepository.findById(roomEntity.getId()).orElseThrow(RoomNotFoundException::new);
         if(!room.getCreatedBy().getId().equals(user.getId())){
             throw new BaseException("Only the owner can update the room",HttpStatus.BAD_REQUEST);
         }
-
         roomMapper.mapRoomEntityToRoom(roomEntity,room);
         String error = validateRoom(room);
         if(error != null){

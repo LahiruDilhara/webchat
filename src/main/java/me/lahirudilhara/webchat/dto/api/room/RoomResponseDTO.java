@@ -8,21 +8,23 @@ import java.util.List;
 public class RoomResponseDTO {
     private Integer id;
     private String name;
-    private boolean isPrivate;
+    private Boolean isPrivate;
     private Instant createdAt;
-    private boolean closed;
+    private Boolean closed;
     private String createdBy;
+    private Boolean multiUser;
 
     public RoomResponseDTO() {
     }
 
-    public RoomResponseDTO(Integer id, String name, boolean isPrivate, Instant createdAt, boolean closed, String createdBy) {
+    public RoomResponseDTO(Integer id, String name, Boolean isPrivate, Instant createdAt, Boolean closed, String createdBy, Boolean multiUser) {
         this.id = id;
         this.name = name;
         this.isPrivate = isPrivate;
         this.createdAt = createdAt;
         this.closed = closed;
         this.createdBy = createdBy;
+        this.multiUser = multiUser;
     }
 
     public Integer getId() {
@@ -41,11 +43,11 @@ public class RoomResponseDTO {
         this.name = name;
     }
 
-    public boolean getIsPrivate() {
+    public Boolean getIsPrivate() {
         return isPrivate;
     }
 
-    public void setIsPrivate(boolean aPrivate) {
+    public void setIsPrivate(Boolean aPrivate) {
         isPrivate = aPrivate;
     }
 
@@ -57,11 +59,11 @@ public class RoomResponseDTO {
         this.createdAt = createdAt;
     }
 
-    public boolean isClosed() {
+    public Boolean isClosed() {
         return closed;
     }
 
-    public void setClosed(boolean closed) {
+    public void setClosed(Boolean closed) {
         this.closed = closed;
     }
 
@@ -71,5 +73,13 @@ public class RoomResponseDTO {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public Boolean getMultiUser() {
+        return multiUser;
+    }
+
+    public void setMultiUser(Boolean multiUser) {
+        this.multiUser = multiUser;
     }
 }

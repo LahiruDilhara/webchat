@@ -15,5 +15,6 @@ public interface RoomMapper {
     RoomResponseDTO roomEntityToRoomResponseDTO(RoomEntity roomEntity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    RoomEntity updateRoomDtoToRoomEntity(UpdateRoomDTO updateRoomDTO);
+    RoomEntity updateMultiUserDtoToRoomEntity(UpdateMultiUserRoomDTO updateMultiUserRoomDTO);
+
 }
