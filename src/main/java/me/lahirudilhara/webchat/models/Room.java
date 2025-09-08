@@ -1,6 +1,9 @@
 package me.lahirudilhara.webchat.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import me.lahirudilhara.webchat.models.message.Message;
 
@@ -8,8 +11,10 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "room")
-@ToString
 public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,13 +22,13 @@ public class Room {
 
     private String name;
 
-    private boolean isPrivate;
+    private Boolean isPrivate;
 
     private Instant createdAt;
 
-    private boolean closed = false;
+    private Boolean closed = false;
 
-    private boolean multiUser;
+    private Boolean multiUser;
 
     @ManyToOne
     @JoinColumn(name = "createdRooms")
@@ -40,104 +45,7 @@ public class Room {
     )
     private List<User> users = new ArrayList<>();
 
-    public Room(Integer id, String name, boolean isPrivate, User createdBy,boolean multiUser) {
-        this.id = id;
-        this.name = name;
-        this.isPrivate = isPrivate;
-        this.createdBy = createdBy;
-        this.multiUser = multiUser;
-    }
-
-    public Room(){}
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public boolean getIsPrivate() {
-        return isPrivate;
-    }
-
-    public void setIsPrivate(boolean aPrivate) {
-        isPrivate = aPrivate;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public boolean getClosed() {
-        return closed;
-    }
-
-    public void setClosed(boolean closed) {
-        this.closed = closed;
-    }
-
-    public User getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(User createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public List<Message> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-
-    public boolean getMultiUser() {
-        return multiUser;
-    }
-
-    public void setMultiUser(boolean multiUser) {
-        this.multiUser = multiUser;
-    }
-
     public boolean isAcceptMessages(){
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return "Room{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", isPrivate=" + isPrivate +
-                ", createdAt=" + createdAt +
-                ", closed=" + closed +
-                ", multiUser=" + multiUser +
-                ", createdBy=" + createdBy +
-                ", messages=" + messages +
-                ", users=" + users +
-                '}';
     }
 }
