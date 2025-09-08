@@ -62,11 +62,15 @@ public class InMemorySessionManager implements SessionManager{
             log.error("Session has been closed for the user {}",username);
             return;
         }
-        try{
-            webSocketUserSession.getSession().sendMessage(new TextMessage(message));
+        WebSocketSession session =  webSocketUserSession.getSession();
+        synchronized (session){
+            try{
+                session.sendMessage(new TextMessage(message));
+            }
+            catch(Exception e){
+                log.error("Error while sending data to session. the user name is {}",username, e);
+            }
         }
-        catch(Exception e){
-            log.error("Error while sending data to session. the user name is {}",username, e);
-        }
+
     }
 }

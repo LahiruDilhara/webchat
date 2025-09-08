@@ -2,6 +2,7 @@ package me.lahirudilhara.webchat.websocket;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.ValidationException;
+import lombok.extern.slf4j.Slf4j;
 import me.lahirudilhara.webchat.common.util.JsonUtil;
 import me.lahirudilhara.webchat.common.util.SchemaValidator;
 import me.lahirudilhara.webchat.common.util.WebSocketError;
@@ -19,6 +20,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.util.Objects;
 
+@Slf4j
 @Component
 public class WebChatWebSocketHandler extends TextWebSocketHandler {
     private final ApplicationEventPublisher applicationEventPublisher;
@@ -33,8 +35,13 @@ public class WebChatWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) {
         if(!session.isOpen()) return;
         if(Objects.requireNonNull(session.getPrincipal()).getName() == null) return;
-        sessionManager.onUserConnected(session.getPrincipal().getName(),session);
-        applicationEventPublisher.publishEvent(new ClientConnectedEvent(session.getPrincipal().getName(),session));
+        try{
+            sessionManager.onUserConnected(session.getPrincipal().getName(),session);
+            applicationEventPublisher.publishEvent(new ClientConnectedEvent(session.getPrincipal().getName(),session));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+
     }
 
     @Override
@@ -60,8 +67,13 @@ public class WebChatWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status){
         if(Objects.requireNonNull(session.getPrincipal()).getName() == null) return;
-        sessionManager.onUserDisconnected(session.getPrincipal().getName());
-        applicationEventPublisher.publishEvent(new ClientDisconnectedEvent(session.getPrincipal().getName()));
+        try{
+            sessionManager.onUserDisconnected(session.getPrincipal().getName());
+            applicationEventPublisher.publishEvent(new ClientDisconnectedEvent(session.getPrincipal().getName()));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+
         // using this connection close, can save the user last seen time
     }
 }
