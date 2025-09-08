@@ -5,7 +5,7 @@ import me.lahirudilhara.webchat.dto.wc.WebSocketError;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.MessageMapper;
 import me.lahirudilhara.webchat.dtoEntityMappers.websocket.WebSocketMessageMapper;
 import me.lahirudilhara.webchat.models.message.TextMessage;
-import me.lahirudilhara.webchat.service.websocket.WebSocketRoomService;
+import me.lahirudilhara.webchat.websocket.service.WebSocketRoomService;
 import me.lahirudilhara.webchat.websocket.entities.BroadcastData;
 import me.lahirudilhara.webchat.websocket.events.ClientErrorEvent;
 import me.lahirudilhara.webchat.websocket.events.MulticastDataEvent;

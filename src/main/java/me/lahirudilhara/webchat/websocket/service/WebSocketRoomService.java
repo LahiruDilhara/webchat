@@ -1,19 +1,15 @@
-package me.lahirudilhara.webchat.service.websocket;
+package me.lahirudilhara.webchat.websocket.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.common.types.Either;
 import me.lahirudilhara.webchat.common.types.WebSocketErrorResponse;
-import me.lahirudilhara.webchat.entities.RoomEntity;
 import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.models.Room;
-import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.models.message.TextMessage;
-import me.lahirudilhara.webchat.repositories.MessageRepository;
 import me.lahirudilhara.webchat.service.MessageService;
 import me.lahirudilhara.webchat.service.api.RoomService;
-import me.lahirudilhara.webchat.service.api.UserService;
 import me.lahirudilhara.webchat.websocket.entities.BroadcastData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
