@@ -39,15 +39,17 @@ public class UserTextMessageHandler implements MessageHandler<TextMessageDTO> {
 
     @Override
     public void handleMessage(TextMessageDTO message, String senderUsername) {
-        var dataOrError = webSocketRoomService.sendTextMessageToRoom(message.getRoomId(),senderUsername,webSocketMessageMapper.textMessageDtoToTextMessage(message));
+        var dataOrError = webSocketRoomService.publishMessageToRoom(message.getRoomId(),senderUsername,webSocketMessageMapper.textMessageDtoToTextMessage(message));
         if(dataOrError.isLeft()){
             System.out.println(dataOrError.getLeft().getError());
             applicationEventPublisher.publishEvent(new ClientExceptionEvent(senderUsername,dataOrError.getLeft().getError()));
             return;
         }
         BroadcastData<TextMessage> data = dataOrError.getRight();
-        List<String> multicastUsernames = data.getUsers().stream().filter(u->!u.equals(senderUsername)).toList();
-        applicationEventPublisher.publishEvent(new MulticastDataEvent(multicastUsernames,messageMapper.messageToMessageResponse(data.getData())));
-        applicationEventPublisher.publishEvent(new UnicastDataEvent(senderUsername,webSocketMessageMapper.textMessageToTextMessageAckResponseDTO(data.getData(),message.getUuid())));
+        // Filter multicast users
+        List<String> multicastUsernames = data.users().stream().filter(u->!u.equals(senderUsername)).toList();
+
+        applicationEventPublisher.publishEvent(new MulticastDataEvent(multicastUsernames,messageMapper.messageToMessageResponse(data.data())));
+        applicationEventPublisher.publishEvent(new UnicastDataEvent(senderUsername,webSocketMessageMapper.textMessageToTextMessageAckResponseDTO(data.data(),message.getUuid())));
     }
 }

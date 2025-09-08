@@ -1,10 +1,13 @@
 package me.lahirudilhara.webchat.service;
 
 import me.lahirudilhara.webchat.dtoEntityMappers.api.MessageMapper;
+import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.repositories.MessageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
 
 @Service
 public class MessageService {
@@ -17,6 +20,10 @@ public class MessageService {
         this.messageRepository = messageRepository;
         this.messageMapper = messageMapper;
         this.baseMessageRepository = baseMessageRepository;
+    }
+
+    public <T extends Message> T addMessage(T message){
+        return messageRepository.save(message);
     }
 
 

@@ -6,20 +6,23 @@ import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.models.message.TextMessage;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.SubclassMapping;
 
 @Mapper(componentModel = "spring")
-public interface MessageMapper {
+public interface MessageMapper <T extends  Message> {
 
-//    default MessageResponseDTO toDto(Message message){
-//        if(message instanceof TextMessage){
-//            return textMessageToTextMessageResponseDTO((TextMessage)message);
-//        }
-//        throw new IllegalArgumentException("Unknown message type");
-//    }
     @Mapping(source = "sender.username",target = "senderUsername")
     @Mapping(source = "sender.id",target = "senderId")
     @Mapping(source = "room.id",target = "roomId")
+    @SubclassMapping(source = TextMessage.class,target = TextMessageResponseDTO.class)
     MessageResponseDTO messageToMessageResponse(Message message);
 
     TextMessageResponseDTO textMessageToTextMessageResponseDTO(TextMessage textMessage);
+
+//    default MessageResponseDTO toDTO(T message){
+//        if(message instanceof TextMessage textMessage){
+//            return textMessageToTextMessageResponseDTO(textMessage);
+//        }
+//        return messageToMessageResponse(message);
+//    }
 }

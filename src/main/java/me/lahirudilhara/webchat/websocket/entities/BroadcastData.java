@@ -2,20 +2,5 @@ package me.lahirudilhara.webchat.websocket.entities;
 
 import java.util.List;
 
-public class BroadcastData<T> {
-    private final List<String> users;
-    private final T data;
-
-    public BroadcastData(List<String> users, T data) {
-        this.users = users;
-        this.data = data;
-    }
-
-    public List<String> getUsers() {
-        return users;
-    }
-
-    public T getData() {
-        return data;
-    }
+public record BroadcastData<T>(List<String> users, T data) {
 }

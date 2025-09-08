@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -37,6 +38,7 @@ public class WebSocketMessageDispatcher {
         messageHandler.handleMessage(message,senderUsername);
     }
 
+    @Async
     @EventListener
     public void OnClientMessage(OnClientMessageEvent event){
         this.dispatch(event.getMessageDTO(),event.getUsername());
