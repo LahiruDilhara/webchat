@@ -89,6 +89,7 @@ public class RoomController {
         roomEntity.setId(roomId);
         roomEntity.setCreatedBy(principal.getName());
         RoomEntity updatedRoomEntity = roomService.updateMultiUserRoom(roomEntity);
+        System.out.println(updatedRoomEntity);
         return roomMapper.roomEntityToRoomResponseDTO(updatedRoomEntity);
     }
 

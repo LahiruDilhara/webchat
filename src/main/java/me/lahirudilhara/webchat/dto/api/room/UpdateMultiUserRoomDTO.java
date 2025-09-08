@@ -2,9 +2,13 @@ package me.lahirudilhara.webchat.dto.api.room;
 
 
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UpdateMultiUserRoomDTO {
     private Boolean isPrivate;
 

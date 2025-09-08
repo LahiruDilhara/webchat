@@ -43,9 +43,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation
     implementation 'org.springframework.boot:spring-boot-starter-validation:3.5.4'
 
-    implementation 'org.mapstruct:mapstruct:1.6.3'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
-
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.2'
 
@@ -59,7 +56,8 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.40'
     annotationProcessor 'org.projectlombok:lombok:1.18.40'
 
-
+    implementation 'org.mapstruct:mapstruct:1.6.3'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 }
 
 tasks.named('test') {
