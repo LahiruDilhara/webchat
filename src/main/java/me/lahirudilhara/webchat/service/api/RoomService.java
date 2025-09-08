@@ -54,7 +54,7 @@ public class RoomService {
         members.add(userRef);
         room.setUsers(members);
         room.setMultiUser(true);
-        String error = validateRoom(room);
+        String error = validateRoomData(room);
         if (error != null) {
             throw new BaseException(error,HttpStatus.BAD_REQUEST);
         }
@@ -76,25 +76,7 @@ public class RoomService {
         room.setMultiUser(false);
         room.setUsers(List.of(ownerRef,userRef));
         room.setClosed(true);
-        String error = validateRoom(room);
-        if (error != null) {
-            throw new BaseException(error,HttpStatus.BAD_REQUEST);
-        }
-        Room createdRoom = roomRepository.save(room);
-        return roomMapper.roomToRoomEntity(createdRoom);
-    }
-
-    public RoomEntity createRoom(RoomEntity roomEntity) {
-        UserEntity userEntity = userService.getUserByUsername(roomEntity.getCreatedBy());
-        User userRef = entityManager.getReference(User.class, userEntity.getId());
-
-        Room room = roomMapper.roomEntityToRoom(roomEntity);
-        room.setCreatedBy(userRef);
-        room.setCreatedAt(Instant.now());
-        List<User> members = new ArrayList<>();
-        members.add(userRef);
-        room.setUsers(members);
-        String error = validateRoom(room);
+        String error = validateRoomData(room);
         if (error != null) {
             throw new BaseException(error,HttpStatus.BAD_REQUEST);
         }
@@ -203,14 +185,14 @@ public class RoomService {
             throw new BaseException("Only the owner can update the room",HttpStatus.BAD_REQUEST);
         }
         roomMapper.mapRoomEntityToRoom(roomEntity,room);
-        String error = validateRoom(room);
+        String error = validateRoomData(room);
         if(error != null){
             throw new BaseException(error,HttpStatus.BAD_REQUEST);
         }
         return roomMapper.roomToRoomEntity(roomRepository.save(room));
     }
 
-    private String validateRoom(Room room){
+    private String validateRoomData(Room room){
         int usersCount = room.getUsers().size();
         if(!room.getMultiUser() && usersCount > 2){
             return "Cannot create non multi user room with more than two users";
@@ -221,7 +203,8 @@ public class RoomService {
         return null;
     }
 
-    public List<Message> getRoomMessages(int roomId, Pageable pageable){
+    public List<Message> getRoomMessages(int roomId,String accessUser, Pageable pageable){
+        if(!validateRoomDataAccess(accessUser,roomId)) throw new RoomNotFoundException();
         Page<Message> page = messageRepository.findByRoomIdOrderByCreatedAtDesc(roomId, pageable);
         List<Message> messages = page.getContent().stream().filter(m->!m.getDeleted()).toList();
         return messages;
@@ -232,9 +215,21 @@ public class RoomService {
         return roomMapper.roomToRoomEntity(room);
     }
 
-    public List<UserEntity> getRoomUsers(int roomId,String username){
+    public List<UserEntity> getRoomUsers(int roomId, String username){
+        if(!validateRoomDataAccess(username,roomId)) throw new RoomNotFoundException();
+        return getRoomUsers(roomId);
+    }
+
+    public List<UserEntity> getRoomUsers(int roomId){
         Room room = roomRepository.findByIdWithUsers(roomId).orElseThrow(RoomNotFoundException::new);
-        if(room.getUsers().stream().noneMatch(u->u.getUsername().equals(username))) throw new RoomNotFoundException();
         return room.getUsers().stream().map(userMapper::userToUserEntity).toList();
+    }
+
+    private boolean validateRoomDataAccess(String currentAccessUser, int roomId){
+        RoomEntity roomEntity = getRoom(roomId);
+        if(roomEntity.getCreatedBy().equals(currentAccessUser)) return true;
+        List<UserEntity> roomMemebers = getRoomUsers(roomId);
+        if(roomMemebers.stream().anyMatch(u->u.getUsername().equals(currentAccessUser))) return true;
+        return false;
     }
 }
