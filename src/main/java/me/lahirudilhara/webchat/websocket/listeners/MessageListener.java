@@ -27,7 +27,13 @@ public class MessageListener {
         this.sessionManager = sessionManager;
     }
 
-    private void sendtextrMessage(WebSocketSession session, Object data){
+    private void sendAsTextMessage(WebSocketUserSession webSocketUserSession, Object data){
+        if(webSocketUserSession == null) return;
+        WebSocketSession session = webSocketUserSession.getSession();
+        if(!session.isOpen()) {
+            log.error("Session has been closed for the user {}",webSocketUserSession.getUsername());
+            return;
+        }
         try{
             session.sendMessage(new TextMessage(JsonUtil.objectToJson(data)));
         }
@@ -39,21 +45,15 @@ public class MessageListener {
         catch (Exception e){
             log.error("An exception occurred. The message is {}",e.getMessage());
         }
-
     }
+
 
     @Async
     @EventListener
     public void OnClientErrorEvent(ClientErrorEvent event){
         System.out.println("Handling the error");
         WebSocketUserSession webSocketUserSession = sessionManager.getUserByUsername(event.username());
-        if(webSocketUserSession == null) return;
-        WebSocketSession session = webSocketUserSession.getSession();
-        if(!session.isOpen()) {
-            log.error("Session has been closed for the user {}",event.username());
-            return;
-        }
-        sendtextrMessage(session,event.error());
+        sendAsTextMessage(webSocketUserSession,event.error());
     }
 
     @Async
@@ -61,13 +61,7 @@ public class MessageListener {
     public void OnMulticastDataEvent(MulticastDataEvent event){
         List<WebSocketUserSession> webSocketUserSessions = sessionManager.getUsersByUsernames(event.users());
         for(WebSocketUserSession webSocketUserSession : webSocketUserSessions){
-            if(webSocketUserSession == null) continue;
-            WebSocketSession session = webSocketUserSession.getSession();
-            if(!session.isOpen()) {
-                log.error("Session has been closed for the user {}",event.users());
-                continue;
-            }
-            sendtextrMessage(session, event.data());
+            sendAsTextMessage(webSocketUserSession,event.data());
         }
     }
 
@@ -75,12 +69,6 @@ public class MessageListener {
     @EventListener
     public void OnUnicastDataEvent(UnicastDataEvent event){
         WebSocketUserSession webSocketUserSession = sessionManager.getUserByUsername(event.username());
-        if(webSocketUserSession == null) return;
-        WebSocketSession session = webSocketUserSession.getSession();
-        if(!session.isOpen()) {
-            log.error("Session has been closed for the user {}",event.username());
-            return;
-        }
-        sendtextrMessage(session,event.object());
+        sendAsTextMessage(webSocketUserSession,event.object());
     }
 }
