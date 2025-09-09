@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.time.Instant;
+
 @Slf4j
 @Service
 public class JoinRoomRequestMessageHandler implements MessageHandler<JoinRoomMessageDTO> {
@@ -39,6 +41,6 @@ public class JoinRoomRequestMessageHandler implements MessageHandler<JoinRoomMes
                 log.error(e.getMessage(),e);
             }
         }
-        applicationEventPublisher.publishEvent(new NewClientJoinedEvent(senderUsername,session,joinRoomMessageDTO.getRoomId()));
+        applicationEventPublisher.publishEvent(new NewClientJoinedEvent(senderUsername,session,joinRoomMessageDTO.getRoomId(), Instant.now()));
     }
 }
