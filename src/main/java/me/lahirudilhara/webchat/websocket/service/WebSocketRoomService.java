@@ -4,7 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.common.types.Either;
-import me.lahirudilhara.webchat.dto.wc.WebSocketError;
+import me.lahirudilhara.webchat.common.types.WebSocketErrorResponse;
 import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.message.TextMessage;
@@ -37,25 +37,25 @@ public class WebSocketRoomService {
         return null;
     }
 
-    private Either<WebSocketError,List<UserEntity>> getRoomUsers(int roomId){
+    private Either<WebSocketErrorResponse,List<UserEntity>> getRoomUsers(int roomId){
         try{
             return Either.right(roomService.getRoomUsers(roomId).getData());
         }
         catch (RoomNotFoundException e){
-            return Either.left(new WebSocketError("Room not found"));
+            return Either.left(new WebSocketErrorResponse("Room not found"));
         }
         catch (Exception e){
-            return Either.left(new WebSocketError("Unknown error occurred"));
+            return Either.left(new WebSocketErrorResponse("Unknown error occurred"));
         }
     }
 
-    public Either<WebSocketError, BroadcastData<TextMessage>> publishMessageToRoom(int roomId, String senderUsername,TextMessage textMessage){
+    public Either<WebSocketErrorResponse, BroadcastData<TextMessage>> publishMessageToRoom(int roomId, String senderUsername,TextMessage textMessage){
         var dataOrError = getRoomUsers(roomId);
         if(dataOrError.isLeft()) return Either.left(dataOrError.getLeft());
         List<UserEntity> roomUsers = dataOrError.getRight();
 
         String error = canUserSendMessageToRoom(roomUsers,senderUsername);
-        if(error != null) return Either.left(new WebSocketError(error));
+        if(error != null) return Either.left(new WebSocketErrorResponse(error));
 
         // populate the message data
         Instant createdTime = Instant.now();
@@ -67,13 +67,5 @@ public class WebSocketRoomService {
         TextMessage addedMessage = messageService.addMessage(textMessage);
         List<String> receivers = roomUsers.stream().map(UserEntity::getUsername).toList();
         return Either.right(new BroadcastData<>(receivers,addedMessage));
-    }
-
-    public Either<WebSocketError,Void> canUserJoinToRoom(int roomId, String username){
-        var errorOrData = getRoomUsers(roomId);
-        if(errorOrData.isLeft()) return Either.left(errorOrData.getLeft());
-        List<UserEntity> roomUsers = errorOrData.getRight();
-        if(roomUsers.stream().noneMatch(u->u.getUsername().equals(username))) return Either.left(new WebSocketError("Room not found"));
-        return Either.right(null);
     }
 }

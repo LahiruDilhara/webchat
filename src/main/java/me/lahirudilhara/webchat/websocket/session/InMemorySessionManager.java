@@ -16,42 +16,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class InMemorySessionManager implements SessionManager{
     private static final Logger log = LoggerFactory.getLogger(InMemorySessionManager.class);
 
-    private final Map<Integer, List<WebSocketUserSession>> roomContainsSessions;
-    private final Map<String,List<Integer>> userJoinedRoomIds;
 
     private final Map<String, WebSocketUserSession> webSocketUsers;
 
     public InMemorySessionManager() {
         webSocketUsers = new ConcurrentHashMap<>();
-        roomContainsSessions = new ConcurrentHashMap<>();
-        userJoinedRoomIds = new ConcurrentHashMap<>();
-    }
-
-    @Override
-    public void onUserConnected(String username, int roomId, WebSocketSession session,Instant joinedAt) {
-
-        if(!userJoinedRoomIds.containsKey(username)) {
-            userJoinedRoomIds.put(username, new ArrayList<>());
-        }
-        else{
-            if(!userJoinedRoomIds.get(username).contains(roomId)){
-                log.warn("Same user {} joined room id {} already joined",username, roomId);
-                //TODO: add sending a warning message
-                return;
-            }
-        }
-        userJoinedRoomIds.get(username).add(roomId);
-
-        WebSocketUserSession webSocketUserSession = new WebSocketUserSession(username,joinedAt,session);
-        if(!roomContainsSessions.containsKey(roomId)) {
-            roomContainsSessions.put(roomId, new ArrayList<>());
-        }
-        roomContainsSessions.get(roomId).add(webSocketUserSession);
-    }
-
-    @Override
-    public void onUserDisconnected(String username, WebSocketSession session) {
-        if(!userJoinedRoomIds.containsKey(username)) return;
     }
 
     public void onUserConnected(String username, WebSocketSession session){

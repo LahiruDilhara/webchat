@@ -1,6 +1,7 @@
 package me.lahirudilhara.webchat.websocket.handlers;
 
 import me.lahirudilhara.webchat.dto.wc.TextMessageDTO;
+import me.lahirudilhara.webchat.dto.wc.WebSocketError;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.MessageMapper;
 import me.lahirudilhara.webchat.dtoEntityMappers.websocket.WebSocketMessageMapper;
 import me.lahirudilhara.webchat.models.message.TextMessage;
@@ -13,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.WebSocketSession;
 
 import java.util.List;
 
@@ -39,10 +39,11 @@ public class UserTextMessageHandler implements MessageHandler<TextMessageDTO> {
     }
 
     @Override
-    public void handleMessage(TextMessageDTO message, String senderUsername, WebSocketSession session) {
+    public void handleMessage(TextMessageDTO message, String senderUsername) {
         var dataOrError = webSocketRoomService.publishMessageToRoom(message.getRoomId(),senderUsername,webSocketMessageMapper.textMessageDtoToTextMessage(message));
         if(dataOrError.isLeft()){
-            applicationEventPublisher.publishEvent(new ClientErrorEvent(dataOrError.getLeft(),senderUsername));
+            System.out.println(dataOrError.getLeft().getError());
+            applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError(dataOrError.getLeft().getError()),senderUsername));
             return;
         }
         BroadcastData<TextMessage> data = dataOrError.getRight();

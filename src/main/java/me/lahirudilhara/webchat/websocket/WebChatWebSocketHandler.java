@@ -42,6 +42,7 @@ public class WebChatWebSocketHandler extends TextWebSocketHandler {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
+
     }
 
     @Override
@@ -52,7 +53,7 @@ public class WebChatWebSocketHandler extends TextWebSocketHandler {
         try{
             WebSocketMessageDTO webSocketMessageDTO = JsonUtil.jsonToObject(message.getPayload(), WebSocketMessageDTO.class);
             SchemaValidator.validate(webSocketMessageDTO);
-            applicationEventPublisher.publishEvent(new ClientMessageEvent(session.getPrincipal().getName(),webSocketMessageDTO,session));
+            applicationEventPublisher.publishEvent(new ClientMessageEvent(session.getPrincipal().getName(),webSocketMessageDTO));
         }
         catch(JsonProcessingException e){
             System.out.println(e.getMessage());
