@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface SessionManager {
 
-    void onUserConnected(String username, WebSocketSession session);
-    void onUserDisconnected(String username);
-    WebSocketUserSession getUserByUsername(String username);
-    List<WebSocketUserSession> getUsersByUsernames(List<String> usernames);
+    void onUserConnection(String username, WebSocketSession session);
+    void onUserDisconnection(String username, String sessionId);
+    List<WebSocketUserSession> getUserSessions(String username);
+    List<WebSocketUserSession> getMultipleUserSessions(List<String> usernames);
 }

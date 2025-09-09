@@ -27,48 +27,47 @@ public class MessageListener {
         this.sessionManager = sessionManager;
     }
 
-    private void sendAsTextMessage(WebSocketUserSession webSocketUserSession, Object data){
-        if(webSocketUserSession == null) return;
-        WebSocketSession session = webSocketUserSession.getSession();
-        if(!session.isOpen()) {
-            log.error("Session has been closed for the user {}",webSocketUserSession.getUsername());
-            return;
-        }
-        try{
-            session.sendMessage(new TextMessage(JsonUtil.objectToJson(data)));
-        }
-        catch (JsonProcessingException e){
-            log.error("The message json is not in correct format. The message is {}",e.getMessage());
-        } catch (IOException e) {
-            log.error("An IO exception occurred. The message is {}",e.getMessage());
-        }
-        catch (Exception e){
-            log.error("An exception occurred. The message is {}",e.getMessage());
-        }
+    private void sendAsTextMessage(List<WebSocketUserSession> webSocketUserSessions, Object data){
+        if(webSocketUserSessions.isEmpty()) return;
+        webSocketUserSessions.forEach(webSocketUserSession -> {
+            WebSocketSession session = webSocketUserSession.getSession();
+            if(!session.isOpen()) {
+                log.error("Session has been closed for the user {}",webSocketUserSession.getUsername());
+                return;
+            }
+            try{
+                session.sendMessage(new TextMessage(JsonUtil.objectToJson(data)));
+            }
+            catch (JsonProcessingException e){
+                log.error("The message json is not in correct format. The message is {}",e.getMessage());
+            } catch (IOException e) {
+                log.error("An IO exception occurred. The message is {}",e.getMessage());
+            }
+            catch (Exception e){
+                log.error("An exception occurred. The message is {}",e.getMessage());
+            }
+        });
     }
 
 
     @Async
     @EventListener
     public void OnClientErrorEvent(ClientErrorEvent event){
-        System.out.println("Handling the error");
-        WebSocketUserSession webSocketUserSession = sessionManager.getUserByUsername(event.username());
+        List<WebSocketUserSession> webSocketUserSession = sessionManager.getUserSessions(event.username());
         sendAsTextMessage(webSocketUserSession,event.error());
     }
 
     @Async
     @EventListener
     public void OnMulticastDataEvent(MulticastDataEvent event){
-        List<WebSocketUserSession> webSocketUserSessions = sessionManager.getUsersByUsernames(event.users());
-        for(WebSocketUserSession webSocketUserSession : webSocketUserSessions){
-            sendAsTextMessage(webSocketUserSession,event.data());
-        }
+        List<WebSocketUserSession> webSocketUserSessions = sessionManager.getMultipleUserSessions(event.users());
+        sendAsTextMessage(webSocketUserSessions,event.data());
     }
 
     @Async
     @EventListener
     public void OnUnicastDataEvent(UnicastDataEvent event){
-        WebSocketUserSession webSocketUserSession = sessionManager.getUserByUsername(event.username());
+        List<WebSocketUserSession> webSocketUserSession = sessionManager.getUserSessions(event.username());
         sendAsTextMessage(webSocketUserSession,event.object());
     }
 }

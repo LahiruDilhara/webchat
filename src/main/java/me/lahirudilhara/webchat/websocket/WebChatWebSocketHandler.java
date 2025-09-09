@@ -7,8 +7,6 @@ import me.lahirudilhara.webchat.common.util.JsonUtil;
 import me.lahirudilhara.webchat.common.util.SchemaValidator;
 import me.lahirudilhara.webchat.dto.wc.WebSocketError;
 import me.lahirudilhara.webchat.dto.wc.WebSocketMessageDTO;
-import me.lahirudilhara.webchat.websocket.events.ClientConnectedEvent;
-import me.lahirudilhara.webchat.websocket.events.ClientDisconnectedEvent;
 import me.lahirudilhara.webchat.websocket.events.ClientErrorEvent;
 import me.lahirudilhara.webchat.websocket.events.ClientMessageEvent;
 import me.lahirudilhara.webchat.websocket.session.SessionManager;
@@ -37,12 +35,10 @@ public class WebChatWebSocketHandler extends TextWebSocketHandler {
         if(!session.isOpen()) return;
         if(Objects.requireNonNull(session.getPrincipal()).getName() == null) return;
         try{
-            sessionManager.onUserConnected(session.getPrincipal().getName(),session);
-            applicationEventPublisher.publishEvent(new ClientConnectedEvent(session.getPrincipal().getName(),session));
+            sessionManager.onUserConnection(session.getPrincipal().getName(),session);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
-
     }
 
     @Override
@@ -73,8 +69,7 @@ public class WebChatWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status){
         if(Objects.requireNonNull(session.getPrincipal()).getName() == null) return;
         try{
-            sessionManager.onUserDisconnected(session.getPrincipal().getName());
-            applicationEventPublisher.publishEvent(new ClientDisconnectedEvent(session.getPrincipal().getName()));
+            sessionManager.onUserDisconnection(session.getPrincipal().getName(),session.getId());
         } catch (Exception e) {
             log.error(e.getMessage());
         }

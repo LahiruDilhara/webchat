@@ -1,7 +1,10 @@
 package me.lahirudilhara.webchat.websocket.session;
 
+import me.lahirudilhara.webchat.websocket.events.ClientConnectedEvent;
+import me.lahirudilhara.webchat.websocket.events.ClientDisconnectedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -16,72 +19,49 @@ import java.util.concurrent.ConcurrentHashMap;
 public class InMemorySessionManager implements SessionManager{
     private static final Logger log = LoggerFactory.getLogger(InMemorySessionManager.class);
 
+    private final Map<String, List<WebSocketUserSession>> webSocketUsers;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    private final Map<String, WebSocketUserSession> webSocketUsers;
-
-    public InMemorySessionManager() {
+    public InMemorySessionManager(ApplicationEventPublisher applicationEventPublisher) {
         webSocketUsers = new ConcurrentHashMap<>();
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public void onUserConnected(String username, WebSocketSession session){
+    public void onUserConnection(String username, WebSocketSession session){
         WebSocketUserSession webSocketUserSession = new WebSocketUserSession(username,Instant.now(),session);
-        webSocketUsers.put(username, webSocketUserSession);
-        log.info("A new User connected with username {}",username);
-    }
-
-    public void onUserDisconnected(String username){
-        this.webSocketUsers.remove(username);
-        log.info("The user disconnected with username {}",username);
-    }
-
-    public boolean isUserOnline(String username){
-        WebSocketUserSession userSession = this.webSocketUsers.get(username);
-        if(userSession == null){
-            return false;
+        if(!webSocketUsers.containsKey(username)){
+            webSocketUsers.put(username,new ArrayList<>());
+            applicationEventPublisher.publishEvent(new ClientConnectedEvent(session.getPrincipal().getName(),session));
         }
-        if(!userSession.getSession().isOpen()){
-            return false;
-        }
-        return true;
+        webSocketUsers.get(username).add(webSocketUserSession);
+        log.info("A new User connected with username {} and session id {}",username,session.getId());
     }
 
-    public WebSocketUserSession getUserByUsername(String username){
-        return this.webSocketUsers.get(username);
+    public void onUserDisconnection(String username, String sessionId){
+        if(!webSocketUsers.containsKey(username)) return;
+        List<WebSocketUserSession> webSocketUserSessions = webSocketUsers.get(username);
+        WebSocketUserSession webSocketUserSession = webSocketUserSessions.stream().filter(c->c.getSession().getId().equals(sessionId)).findFirst().orElse(null);
+        if(webSocketUserSession == null) return;
+        webSocketUsers.get(username).remove(webSocketUserSession);
+        if(webSocketUserSessions.isEmpty()) {
+            webSocketUsers.remove(username);
+            applicationEventPublisher.publishEvent(new ClientDisconnectedEvent(username));
+        }
+        log.info("A new User Disconnected with username {} and session id {}",username,sessionId);
     }
 
     @Override
-    public List<WebSocketUserSession> getUsersByUsernames(List<String> usernames) {
-        List<WebSocketUserSession> webSocketSessions = new ArrayList<>();
-        for(WebSocketUserSession webSocketUserSession : this.webSocketUsers.values()){
-            if(usernames.contains(webSocketUserSession.getUsername())){
-                webSocketSessions.add(webSocketUserSession);
-            }
-        }
-        return webSocketSessions;
+    public List<WebSocketUserSession> getUserSessions(String username) {
+        if(!webSocketUsers.containsKey(username)) return new ArrayList<>();
+        return webSocketUsers.get(username);
     }
 
-    public List<String> getActiveUsers(){
-        return new ArrayList<>(this.webSocketUsers.keySet());
-    }
-
-    public void sendMessageToSession(String username, String message){
-        WebSocketUserSession webSocketUserSession = this.webSocketUsers.get(username);
-        if(webSocketUserSession == null){
-            return;
+    @Override
+    public List<WebSocketUserSession> getMultipleUserSessions(List<String> usernames) {
+        List<WebSocketUserSession> webSocketUserSessions = new ArrayList<>();
+        for(String username : usernames){
+            webSocketUserSessions.addAll(getUserSessions(username));
         }
-        if(!webSocketUserSession.getSession().isOpen()){
-            log.error("Session has been closed for the user {}",username);
-            return;
-        }
-        WebSocketSession session =  webSocketUserSession.getSession();
-        synchronized (session){
-            try{
-                session.sendMessage(new TextMessage(message));
-            }
-            catch(Exception e){
-                log.error("Error while sending data to session. the user name is {}",username, e);
-            }
-        }
-
+        return webSocketUserSessions;
     }
 }
