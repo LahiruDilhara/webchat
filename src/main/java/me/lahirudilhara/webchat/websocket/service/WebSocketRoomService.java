@@ -3,13 +3,16 @@ package me.lahirudilhara.webchat.websocket.service;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
+import me.lahirudilhara.webchat.common.exceptions.UserNotFoundException;
 import me.lahirudilhara.webchat.common.types.Either;
 import me.lahirudilhara.webchat.common.types.WebSocketErrorResponse;
 import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.models.Room;
+import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.models.message.TextMessage;
 import me.lahirudilhara.webchat.service.MessageService;
 import me.lahirudilhara.webchat.service.api.RoomService;
+import me.lahirudilhara.webchat.service.api.UserService;
 import me.lahirudilhara.webchat.websocket.entities.BroadcastData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,13 +26,15 @@ public class WebSocketRoomService {
     private static final Logger log = LoggerFactory.getLogger(WebSocketRoomService.class);
     private final RoomService roomService;
     private final MessageService messageService;
+    private final UserService userService;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public WebSocketRoomService(RoomService roomService, MessageService messageService) {
+    public WebSocketRoomService(RoomService roomService, MessageService messageService, UserService userService) {
         this.roomService = roomService;
         this.messageService = messageService;
+        this.userService = userService;
     }
 
     private String canUserSendMessageToRoom(List<UserEntity> roomMemebers, String senderUsername){
@@ -49,6 +54,14 @@ public class WebSocketRoomService {
         }
     }
 
+    private Either<WebSocketErrorResponse,UserEntity> getUserByUsername(String username){
+        try{
+            return Either.right(userService.getUserByUsername(username));
+        } catch (UserNotFoundException e) {
+            return Either.left(new WebSocketErrorResponse("The user not found"));
+        }
+    }
+
     public Either<WebSocketErrorResponse, BroadcastData<TextMessage>> publishMessageToRoom(int roomId, String senderUsername,TextMessage textMessage){
         var dataOrError = getRoomUsers(roomId);
         if(dataOrError.isLeft()) return Either.left(dataOrError.getLeft());
@@ -57,9 +70,16 @@ public class WebSocketRoomService {
         String error = canUserSendMessageToRoom(roomUsers,senderUsername);
         if(error != null) return Either.left(new WebSocketErrorResponse(error));
 
+        var userOrError = getUserByUsername(senderUsername);
+        if(userOrError.isLeft()) return Either.left(userOrError.getLeft());
+        UserEntity user = userOrError.getRight();
+
         // populate the message data
         Instant createdTime = Instant.now();
         Room roomRef = entityManager.getReference(Room.class, roomId);
+        User userRef = entityManager.getReference(User.class,user.getId());
+        textMessage.setSender(userRef);
+        textMessage.setDeleted(false);
         textMessage.setRoom(roomRef);
         textMessage.setCreatedAt(createdTime);
         textMessage.setEditedAt(createdTime);

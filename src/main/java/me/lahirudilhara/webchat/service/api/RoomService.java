@@ -218,6 +218,10 @@ public class RoomService {
         if(validateRoomDataAccess(accessUser, roomId)) throw new RoomNotFoundException();
         Page<Message> page = messageRepository.findByRoomIdOrderByCreatedAtDesc(roomId, pageable);
         List<Message> messages = page.getContent().stream().filter(m->!m.getDeleted()).toList();
+        messages.forEach(m-> {
+            System.out.println(m.getSender().getUsername());
+            System.out.println(m);
+        });
         return messages;
     }
 

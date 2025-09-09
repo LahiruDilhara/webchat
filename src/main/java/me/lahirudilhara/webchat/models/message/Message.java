@@ -24,12 +24,12 @@ public class Message {
 
     private Boolean deleted = false;
 
-    @ManyToOne
-    @JoinColumn(name = "messages")
+    @ManyToOne()
+    @JoinColumn(name = "messages",nullable = false)
     private User sender;
 
-    @ManyToOne
-    @JoinColumn(name = "room")
+    @ManyToOne()
+    @JoinColumn(name = "room",nullable = false)
     private Room room;
 
 }
