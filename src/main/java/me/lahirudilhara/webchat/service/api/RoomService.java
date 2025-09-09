@@ -8,6 +8,8 @@ import me.lahirudilhara.webchat.common.exceptions.ValidationException;
 import me.lahirudilhara.webchat.common.types.CachableObject;
 import me.lahirudilhara.webchat.entities.RoomEntity;
 import me.lahirudilhara.webchat.entities.UserEntity;
+import me.lahirudilhara.webchat.entities.message.MessageEntity;
+import me.lahirudilhara.webchat.entityModelMappers.MessageMapper;
 import me.lahirudilhara.webchat.entityModelMappers.RoomMapper;
 import me.lahirudilhara.webchat.entityModelMappers.UserMapper;
 import me.lahirudilhara.webchat.models.Room;
@@ -36,17 +38,19 @@ public class RoomService {
     private final UserService userService;
     private final UserMapper userMapper;
     private final CacheManager cacheManager;
+    private final MessageMapper messageMapper;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public RoomService(RoomRepository roomRepository, MessageRepository messageRepository, RoomMapper roomMapper, UserService userService, UserMapper userMapper, CacheManager cacheManager) {
+    public RoomService(RoomRepository roomRepository, MessageRepository messageRepository, RoomMapper roomMapper, UserService userService, UserMapper userMapper, CacheManager cacheManager, MessageMapper messageMapper) {
         this.roomRepository = roomRepository;
         this.messageRepository = messageRepository;
         this.roomMapper = roomMapper;
         this.userService = userService;
         this.userMapper = userMapper;
         this.cacheManager = cacheManager;
+        this.messageMapper = messageMapper;
     }
 
     @CacheEvict(value = "userRoomsByUsername",key = "#roomEntity.createdBy")
@@ -214,14 +218,12 @@ public class RoomService {
     }
 
 
-    public List<Message> getRoomMessages(int roomId,String accessUser, Pageable pageable){
+    public List<MessageEntity> getRoomMessages(int roomId, String accessUser, Pageable pageable){
         if(validateRoomDataAccess(accessUser, roomId)) throw new RoomNotFoundException();
         Page<Message> page = messageRepository.findByRoomIdOrderByCreatedAtDesc(roomId, pageable);
-        List<Message> messages = page.getContent().stream().filter(m->!m.getDeleted()).toList();
-        messages.forEach(m-> {
-            System.out.println(m.getSender().getUsername());
-            System.out.println(m);
-        });
+
+        // Remove deleted messages and convert
+        List<MessageEntity> messages = page.getContent().stream().filter(m->!m.getDeleted()).map(m->messageMapper.messageToMessageEntity(m)).toList();
         return messages;
     }
 

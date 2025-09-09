@@ -9,6 +9,7 @@ import me.lahirudilhara.webchat.dtoEntityMappers.api.RoomMapper;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.UserMapper;
 import me.lahirudilhara.webchat.entities.RoomEntity;
 import me.lahirudilhara.webchat.entities.UserEntity;
+import me.lahirudilhara.webchat.entities.message.MessageEntity;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.service.api.RoomService;
@@ -96,8 +97,8 @@ public class RoomController {
     @GetMapping("/{roomId}/messages")
     public List<MessageResponseDTO> getMessagesOfRoom(@PathVariable int roomId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "createdAt") String sortBy, Principal principal){
         Pageable pageable = PageRequest.of(page,size, Sort.by(sortBy).descending());
-        List<Message> messages = roomService.getRoomMessages(roomId,principal.getName(),pageable);
-        return messages.stream().map(messageMapper::messageToMessageResponse).toList();
+        List<MessageEntity> messages = roomService.getRoomMessages(roomId,principal.getName(),pageable);
+        return messages.stream().map(messageMapper::messageEntityToMessageResponseDTO).toList();
     }
 
     @GetMapping("/{roomId}/users")
