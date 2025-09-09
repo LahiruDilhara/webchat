@@ -47,7 +47,7 @@ public class MessageService {
 
 
     public MessageEntity updateMessage(TextMessageEntity messageEntity, int messageId){
-        validateAlteration(messageEntity,messageId);
+        validateAlteration(messageEntity.getSenderUsername(),messageEntity.getRoomId(),messageId);
         messageEntity.setEditedAt(Instant.now());
         TextMessage message = (TextMessage) messageRepository.findById(messageId).orElseThrow(MessageNotFoundException::new);
         messageMapper.updateTextMessageEntityToTextMessage(messageEntity,message);
@@ -55,19 +55,20 @@ public class MessageService {
         return messageMapper.messageToMessageEntity(updatedMessage);
     }
 
-//    public void deleteMessage(int messageId, String ownerName){
-//        Message message = validateAlteration(messageId,ownerName);
-//        message.setDeleted(true);
-//        messageRepository.save(message);
-//    }
+    public void deleteMessage(int messageId, int roomId, String ownerName){
+        validateAlteration(ownerName,roomId,messageId);
+        Message message = messageRepository.findByIdWithSenderAndRoom(messageId).orElseThrow(MessageNotFoundException::new);
+        message.setDeleted(true);
+        messageRepository.save(message);
+    }
 
-    private void validateAlteration(TextMessageEntity messageEntity, int messageId){
+    private void validateAlteration(String username, int roomId, int messageId){
         Message message = messageRepository.findByIdWithSenderAndRoom(messageId).orElseThrow(MessageNotFoundException::new);
         if(!(message instanceof TextMessage)) throw new ValidationException("Message type not support update");
         if(message.getDeleted()) throw new ValidationException("Message not found");
-        if(!message.getSender().getUsername().equals(messageEntity.getSenderUsername())) throw new ValidationException("Message not found");
-        List<UserEntity> roomMembers = roomService.getRoomUsers(messageEntity.getRoomId()).getData();
-        if(roomMembers.stream().noneMatch(u->u.getUsername().equals(messageEntity.getSenderUsername()))) throw new ValidationException("Room not found");
+        if(!message.getSender().getUsername().equals(username)) throw new ValidationException("Message not found");
+        List<UserEntity> roomMembers = roomService.getRoomUsers(roomId).getData();
+        if(roomMembers.stream().noneMatch(u->u.getUsername().equals(username))) throw new ValidationException("Room not found");
         return;
     }
 }

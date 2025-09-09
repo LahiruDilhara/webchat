@@ -8,6 +8,7 @@ import me.lahirudilhara.webchat.entities.message.TextMessageEntity;
 import me.lahirudilhara.webchat.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,9 +33,9 @@ public class MessageController {
         return messageMapper.messageEntityToMessageResponseDTO(updatedMessage);
     }
 
-//    @DeleteMapping("/{messageId}")
-//    public ResponseEntity deleteMessage(@PathVariable int messageId, Principal principal){
-//        messageService.deleteMessage(messageId,principal.getName());
-//        return ResponseEntity.noContent().build();
-//    }
+    @DeleteMapping("/{roomId}/{messageId}")
+    public ResponseEntity deleteMessage(@PathVariable int roomId, @PathVariable int messageId, Principal principal){
+        messageService.deleteMessage(messageId,roomId,principal.getName());
+        return ResponseEntity.noContent().build();
+    }
 }
