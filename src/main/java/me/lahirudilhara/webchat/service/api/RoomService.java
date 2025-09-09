@@ -2,10 +2,9 @@ package me.lahirudilhara.webchat.service.api;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.validation.ValidationException;
-import me.lahirudilhara.webchat.common.exceptions.BaseException;
 import me.lahirudilhara.webchat.common.exceptions.ConflictException;
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
+import me.lahirudilhara.webchat.common.exceptions.ValidationException;
 import me.lahirudilhara.webchat.common.types.CachableObject;
 import me.lahirudilhara.webchat.entities.RoomEntity;
 import me.lahirudilhara.webchat.entities.UserEntity;
@@ -23,7 +22,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
