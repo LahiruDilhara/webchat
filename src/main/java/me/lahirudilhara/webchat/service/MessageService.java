@@ -27,13 +27,12 @@ public class MessageService {
 //        return messageRepository.save(message);
 //    }
 
-    public MessageEntity addMessage(Message message){
-        Message addedMessage = messageRepository.save(message);
-        return messageMapper.messageToMessageEntity(addedMessage);
+    public Message addMessage(Message message){
+        return messageRepository.save(message);
     }
 
     public MessageEntity getMessageById(int id){
-        Message message = messageRepository.findById(id).orElseThrow();
+        Message message = messageRepository.findByIdWithSenderAndRoom(id).orElseThrow();
         return messageMapper.baseMessageToMessageEntity(message);
     }
 
