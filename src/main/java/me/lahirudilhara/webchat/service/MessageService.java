@@ -1,6 +1,5 @@
 package me.lahirudilhara.webchat.service;
 
-import me.lahirudilhara.webchat.common.exceptions.BaseException;
 import me.lahirudilhara.webchat.entities.message.MessageEntity;
 import me.lahirudilhara.webchat.entityModelMappers.MessageMapper;
 import me.lahirudilhara.webchat.models.message.Message;
@@ -8,7 +7,6 @@ import me.lahirudilhara.webchat.repositories.MessageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
@@ -22,10 +20,6 @@ public class MessageService {
         this.messageRepository = messageRepository;
         this.messageMapper = messageMapper;
     }
-
-//    public <T extends Message> T addMessage(T message){
-//        return messageRepository.save(message);
-//    }
 
     public MessageEntity addMessageAsync(Message message){
         Message addedMessage = messageRepository.save(message);
@@ -65,9 +59,5 @@ public class MessageService {
 //        if(message.getRoom().getUsers().stream().noneMatch(u->u.getUsername().equals(ownerName))) throw new BaseException("User is not a member of the room", HttpStatus.BAD_REQUEST);
 //
 //        return message;
-//    }
-
-//    public BaseMessage addMessage(BaseMessage baseMessage){
-//
 //    }
 }

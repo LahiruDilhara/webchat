@@ -31,18 +31,14 @@ public class WebSocketRoomService {
     private final RoomService roomService;
     private final MessageService messageService;
     private final UserService userService;
-    private final MessageMapper messageMapper;
-    private final MessageRepository messageRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public WebSocketRoomService(RoomService roomService, MessageService messageService, UserService userService,MessageMapper messageMapper,MessageRepository messageRepository) {
+    public WebSocketRoomService(RoomService roomService, MessageService messageService, UserService userService) {
         this.roomService = roomService;
         this.messageService = messageService;
         this.userService = userService;
-        this.messageMapper = messageMapper;
-        this.messageRepository = messageRepository;
     }
 
     private String canUserSendMessageToRoom(List<UserEntity> roomMemebers, String senderUsername){
