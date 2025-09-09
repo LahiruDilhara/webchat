@@ -27,6 +27,12 @@ public class MessageService {
 //        return messageRepository.save(message);
 //    }
 
+    public MessageEntity addMessageAsync(Message message){
+        Message addedMessage = messageRepository.save(message);
+        Message queryiedMessage = messageRepository.findByIdWithSenderAndRoom(addedMessage.getId()).orElseThrow();
+        return messageMapper.messageToMessageEntity(queryiedMessage);
+    }
+
     public Message addMessage(Message message){
         return messageRepository.save(message);
     }

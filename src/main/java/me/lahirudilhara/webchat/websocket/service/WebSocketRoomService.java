@@ -92,8 +92,7 @@ public class WebSocketRoomService {
         textMessage.setCreatedAt(createdTime);
         textMessage.setEditedAt(createdTime);
 
-        Message message = messageRepository.save(textMessage);
-        MessageEntity addedMessage = messageService.getMessageById(message.getId());
+        MessageEntity addedMessage = messageService.addMessageAsync(textMessage);
 
         List<String> receivers = roomUsers.stream().map(UserEntity::getUsername).toList();
         return Either.right(new BroadcastData<>(receivers,addedMessage));
