@@ -2,7 +2,9 @@ package me.lahirudilhara.webchat.service.api;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.validation.ValidationException;
 import me.lahirudilhara.webchat.common.exceptions.BaseException;
+import me.lahirudilhara.webchat.common.exceptions.ConflictException;
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.common.types.CachableObject;
 import me.lahirudilhara.webchat.entities.RoomEntity;
@@ -63,7 +65,7 @@ public class RoomService {
         room.setMultiUser(true);
         String error = validateRoomData(room);
         if (error != null) {
-            throw new BaseException(error,HttpStatus.BAD_REQUEST);
+            throw new ValidationException(error);
         }
         Room createdRoom = roomRepository.save(room);
         return roomMapper.roomToRoomEntity(createdRoom);
@@ -89,7 +91,7 @@ public class RoomService {
         room.setClosed(true);
         String error = validateRoomData(room);
         if (error != null) {
-            throw new BaseException(error,HttpStatus.BAD_REQUEST);
+            throw new ValidationException(error);
         }
         Room createdRoom = roomRepository.save(room);
         return roomMapper.roomToRoomEntity(createdRoom);
@@ -105,16 +107,16 @@ public class RoomService {
         Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
         if(!room.getCreatedBy().getId().equals(userEntity.getId())){
             if(room.getClosed()){
-                throw new BaseException("The room is closed",HttpStatus.BAD_REQUEST);
+                throw new ValidationException("The room is closed");
             }
         }
 
         List<User> members = room.getUsers();
         if(members.stream().anyMatch(u -> u.getId().equals(userEntity.getId()))){
-            throw new BaseException("The user already exists in the room", HttpStatus.CONFLICT);
+            throw new ConflictException("The user already exists in the room");
         }
         if(members.size() >= 2 && !room.getMultiUser()){
-            throw new BaseException("The room is not multiuser. cannot join",HttpStatus.BAD_REQUEST);
+            throw new ValidationException("The room is not multiuser. cannot join");
         }
         User user = new User();
         user.setId(userEntity.getId());
@@ -132,7 +134,7 @@ public class RoomService {
         UserEntity userEntity = userService.getUserByUsername(username);
         Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
         if(!room.getCreatedBy().getId().equals(userEntity.getId())){
-            throw new BaseException("Only the owner can delete the room",HttpStatus.CONFLICT);
+            throw new ValidationException("Only the owner can delete the room");
         }
         List<UserEntity> roomUsers = getRoomUsers(roomId).getData();
         evictRemovedRoomUserCache(roomUsers);
@@ -148,18 +150,18 @@ public class RoomService {
         UserEntity owner = userService.getUserByUsername(ownerUsername);
         Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
         if(!room.getCreatedBy().getId().equals(owner.getId())){
-            throw new BaseException("Only the owner can add user to the room",HttpStatus.BAD_REQUEST);
+            throw new ValidationException("Only the owner can add user to the room");
         }
         if(room.getClosed()){
-            throw new BaseException("The room is closed",HttpStatus.BAD_REQUEST);
+            throw new ValidationException("The room is closed");
         }
         UserEntity user = userService.getUserByUsername(addingUsername);
         List<User> members = room.getUsers();
         if(members.contains(user)){
-            throw new BaseException("The user already exists in the room", HttpStatus.CONFLICT);
+            throw new ConflictException("The user already exists in the room");
         }
         if(members.size() >= 2 && !room.getMultiUser()){
-            throw new BaseException("The room is not multiuser. cannot join",HttpStatus.BAD_REQUEST);
+            throw new ValidationException("The room is not multiuser. cannot join");
         }
         User userModel = new User();
         userModel.setId(user.getId());
@@ -177,15 +179,15 @@ public class RoomService {
         Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
 
         if(!room.getMultiUser()){
-            throw new BaseException("The user cannot remove from a dual user room",HttpStatus.BAD_REQUEST);
+            throw new ValidationException("The user cannot remove from a dual user room");
         }
 
         if(!room.getCreatedBy().getId().equals(owner.getId())){
-            throw new BaseException("Only the owner can remove user from the room",HttpStatus.BAD_REQUEST);
+            throw new ValidationException("Only the owner can remove user from the room");
         }
         UserEntity user = userService.getUserByUsername(removingUsername);
         if(room.getUsers().stream().noneMatch(u->u.getId().equals(user.getId()))){
-            throw new BaseException("The user is not a member of the room",HttpStatus.BAD_REQUEST);
+            throw new ValidationException("The user is not a member of the room");
         }
         List<User> members = room.getUsers();
         members.removeIf(u->u.getId().equals(user.getId()));
@@ -203,12 +205,12 @@ public class RoomService {
 
         Room room = roomRepository.findById(roomEntity.getId()).orElseThrow(RoomNotFoundException::new);
         if(!room.getCreatedBy().getId().equals(user.getId())){
-            throw new BaseException("Only the owner can update the room",HttpStatus.BAD_REQUEST);
+            throw new ValidationException("Only the owner can update the room");
         }
         roomMapper.mapRoomEntityToRoom(roomEntity,room);
         String error = validateRoomData(room);
         if(error != null){
-            throw new BaseException(error,HttpStatus.BAD_REQUEST);
+            throw new ValidationException(error);
         }
         return roomMapper.roomToRoomEntity(roomRepository.save(room));
     }

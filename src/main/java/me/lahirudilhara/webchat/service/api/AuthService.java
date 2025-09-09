@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
-    private UserService userService;
-    private JwtService jwtService;
-    private AuthenticationManager authenticationManager;
+    private final UserService userService;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
     public AuthService(UserService userService, JwtService jwtService, AuthenticationManager authenticationManager) {
         this.userService = userService;

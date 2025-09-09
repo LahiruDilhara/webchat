@@ -44,8 +44,7 @@ public class UserTextMessageHandler implements MessageHandler<TextMessageDTO> {
     public void handleMessage(TextMessageDTO message, String senderUsername,String sessionId) {
         var dataOrError = webSocketRoomService.publishMessageToRoom(message.getRoomId(),senderUsername,webSocketMessageMapper.textMessageDtoToTextMessage(message));
         if(dataOrError.isLeft()){
-            System.out.println(dataOrError.getLeft().getError());
-            applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError(dataOrError.getLeft().getError()),senderUsername,sessionId));
+            applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError(dataOrError.getLeft().getMessage()),senderUsername,sessionId));
             return;
         }
         BroadcastData<MessageEntity> data = dataOrError.getRight();

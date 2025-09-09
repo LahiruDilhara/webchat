@@ -4,6 +4,6 @@ import org.springframework.http.HttpStatus;
 
 public class RoomNotFoundException extends BaseException{
     public RoomNotFoundException() {
-        super("The room not found", HttpStatus.NOT_FOUND);
+        super("The room not found",HttpStatus.NOT_FOUND);
     }
 }

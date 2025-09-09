@@ -1,5 +1,6 @@
 package me.lahirudilhara.webchat.service;
 
+import me.lahirudilhara.webchat.common.exceptions.MessageNotFoundException;
 import me.lahirudilhara.webchat.entities.message.MessageEntity;
 import me.lahirudilhara.webchat.entityModelMappers.MessageMapper;
 import me.lahirudilhara.webchat.models.message.Message;
@@ -23,7 +24,7 @@ public class MessageService {
 
     public MessageEntity addMessageAsync(Message message){
         Message addedMessage = messageRepository.save(message);
-        Message queryiedMessage = messageRepository.findByIdWithSenderAndRoom(addedMessage.getId()).orElseThrow();
+        Message queryiedMessage = messageRepository.findByIdWithSenderAndRoom(addedMessage.getId()).orElseThrow(MessageNotFoundException::new);
         return messageMapper.messageToMessageEntity(queryiedMessage);
     }
 
@@ -32,7 +33,7 @@ public class MessageService {
     }
 
     public MessageEntity getMessageById(int id){
-        Message message = messageRepository.findByIdWithSenderAndRoom(id).orElseThrow();
+        Message message = messageRepository.findByIdWithSenderAndRoom(id).orElseThrow(MessageNotFoundException::new);
         return messageMapper.baseMessageToMessageEntity(message);
     }
 

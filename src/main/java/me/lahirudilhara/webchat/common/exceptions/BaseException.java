@@ -3,14 +3,14 @@ package me.lahirudilhara.webchat.common.exceptions;
 import org.springframework.http.HttpStatus;
 
 public class BaseException extends RuntimeException {
-    private final HttpStatus code;
+    private final HttpStatus httpStatus;
 
-    public BaseException(String message, HttpStatus code) {
+    public BaseException(String message,HttpStatus httpStatus) {
         super(message);
-        this.code = code;
+        this.httpStatus = httpStatus;
     }
 
-    public HttpStatus getCode() {
-        return code;
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
     }
 }

@@ -5,15 +5,12 @@ import jakarta.persistence.PersistenceContext;
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.common.exceptions.UserNotFoundException;
 import me.lahirudilhara.webchat.common.types.Either;
-import me.lahirudilhara.webchat.common.types.WebSocketErrorResponse;
+import me.lahirudilhara.webchat.common.types.Failure;
 import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.entities.message.MessageEntity;
-import me.lahirudilhara.webchat.entityModelMappers.MessageMapper;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.User;
-import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.models.message.TextMessage;
-import me.lahirudilhara.webchat.repositories.MessageRepository;
 import me.lahirudilhara.webchat.service.MessageService;
 import me.lahirudilhara.webchat.service.api.RoomService;
 import me.lahirudilhara.webchat.service.api.UserService;
@@ -46,33 +43,33 @@ public class WebSocketRoomService {
         return null;
     }
 
-    private Either<WebSocketErrorResponse,List<UserEntity>> getRoomUsers(int roomId){
+    private Either<Failure,List<UserEntity>> getRoomUsers(int roomId){
         try{
             return Either.right(roomService.getRoomUsers(roomId).getData());
         }
         catch (RoomNotFoundException e){
-            return Either.left(new WebSocketErrorResponse("Room not found"));
+            return Either.left(new Failure("Room not found"));
         }
         catch (Exception e){
-            return Either.left(new WebSocketErrorResponse("Unknown error occurred"));
+            return Either.left(new Failure("Unknown error occurred"));
         }
     }
 
-    private Either<WebSocketErrorResponse,UserEntity> getUserByUsername(String username){
+    private Either<Failure,UserEntity> getUserByUsername(String username){
         try{
             return Either.right(userService.getUserByUsername(username));
         } catch (UserNotFoundException e) {
-            return Either.left(new WebSocketErrorResponse("The user not found"));
+            return Either.left(new Failure("The user not found"));
         }
     }
 
-    public Either<WebSocketErrorResponse, BroadcastData<MessageEntity>> publishMessageToRoom(int roomId, String senderUsername, TextMessage textMessage){
+    public Either<Failure, BroadcastData<MessageEntity>> publishMessageToRoom(int roomId, String senderUsername, TextMessage textMessage){
         var dataOrError = getRoomUsers(roomId);
         if(dataOrError.isLeft()) return Either.left(dataOrError.getLeft());
         List<UserEntity> roomUsers = dataOrError.getRight();
 
         String error = canUserSendMessageToRoom(roomUsers,senderUsername);
-        if(error != null) return Either.left(new WebSocketErrorResponse(error));
+        if(error != null) return Either.left(new Failure(error));
 
         var userOrError = getUserByUsername(senderUsername);
         if(userOrError.isLeft()) return Either.left(userOrError.getLeft());

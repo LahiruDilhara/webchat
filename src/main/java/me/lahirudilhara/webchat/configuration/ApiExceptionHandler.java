@@ -33,8 +33,8 @@ public class ApiExceptionHandler {
 
         log.warn("Business exception: {}", ex.getMessage());
 
-        ErrorResponse error = new ErrorResponse(ex.getMessage(), ex.getCode());
-        return new ResponseEntity<>(error, ex.getCode());
+        ErrorResponse error = new ErrorResponse(ex.getMessage(), ex.getHttpStatus());
+        return new ResponseEntity<>(error, ex.getHttpStatus());
     }
 
     // Handle validation errors - return only first error message
