@@ -11,7 +11,7 @@ public class JoinRoomRequestMessageHandler implements MessageHandler<JoinRoomMes
     }
 
     @Override
-    public void handleMessage(JoinRoomMessageDTO message, String senderUsername) {
+    public void handleMessage(JoinRoomMessageDTO message, String senderUsername, String sessionId) {
         System.out.println("Handling join room request");
     }
 }

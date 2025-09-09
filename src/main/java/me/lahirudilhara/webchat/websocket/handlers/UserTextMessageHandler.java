@@ -39,11 +39,11 @@ public class UserTextMessageHandler implements MessageHandler<TextMessageDTO> {
     }
 
     @Override
-    public void handleMessage(TextMessageDTO message, String senderUsername) {
+    public void handleMessage(TextMessageDTO message, String senderUsername,String sessionId) {
         var dataOrError = webSocketRoomService.publishMessageToRoom(message.getRoomId(),senderUsername,webSocketMessageMapper.textMessageDtoToTextMessage(message));
         if(dataOrError.isLeft()){
             System.out.println(dataOrError.getLeft().getError());
-            applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError(dataOrError.getLeft().getError()),senderUsername));
+            applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError(dataOrError.getLeft().getError()),senderUsername,sessionId));
             return;
         }
         BroadcastData<TextMessage> data = dataOrError.getRight();

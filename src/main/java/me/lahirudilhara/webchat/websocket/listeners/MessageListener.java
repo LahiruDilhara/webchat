@@ -54,7 +54,9 @@ public class MessageListener {
     @EventListener
     public void OnClientErrorEvent(ClientErrorEvent event){
         List<WebSocketUserSession> webSocketUserSession = sessionManager.getUserSessions(event.username());
-        sendAsTextMessage(webSocketUserSession,event.error());
+        WebSocketUserSession errorSession = webSocketUserSession.stream().filter(s->s.getSession().getId().equals(event.sessionId())).findFirst().orElse(null);
+        if(errorSession==null) return;
+        sendAsTextMessage(List.of(errorSession),event.error());
     }
 
     @Async

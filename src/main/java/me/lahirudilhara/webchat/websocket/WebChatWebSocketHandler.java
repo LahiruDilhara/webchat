@@ -49,19 +49,19 @@ public class WebChatWebSocketHandler extends TextWebSocketHandler {
         try{
             WebSocketMessageDTO webSocketMessageDTO = JsonUtil.jsonToObject(message.getPayload(), WebSocketMessageDTO.class);
             SchemaValidator.validate(webSocketMessageDTO);
-            applicationEventPublisher.publishEvent(new ClientMessageEvent(session.getPrincipal().getName(),webSocketMessageDTO));
+            applicationEventPublisher.publishEvent(new ClientMessageEvent(session.getPrincipal().getName(), session.getId(),webSocketMessageDTO));
         }
         catch(JsonProcessingException e){
             System.out.println(e.getMessage());
-            applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError("The message json is not in correct format"),username));
+            applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError("The message json is not in correct format"),username,session.getId()));
         }
         catch(ValidationException e){
             System.out.println(e.getMessage());
-            applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError(e.getMessage()),username));
+            applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError(e.getMessage()),username,session.getId()));
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
-            applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError("Unknown error occurred"),username));
+            applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError("Unknown error occurred"),username,session.getId()));
         }
     }
 
