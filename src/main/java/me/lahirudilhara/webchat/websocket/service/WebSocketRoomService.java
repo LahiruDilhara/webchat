@@ -7,9 +7,13 @@ import me.lahirudilhara.webchat.common.exceptions.UserNotFoundException;
 import me.lahirudilhara.webchat.common.types.Either;
 import me.lahirudilhara.webchat.common.types.WebSocketErrorResponse;
 import me.lahirudilhara.webchat.entities.UserEntity;
+import me.lahirudilhara.webchat.entities.message.MessageEntity;
+import me.lahirudilhara.webchat.entityModelMappers.MessageMapper;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.User;
+import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.models.message.TextMessage;
+import me.lahirudilhara.webchat.repositories.MessageRepository;
 import me.lahirudilhara.webchat.service.MessageService;
 import me.lahirudilhara.webchat.service.api.RoomService;
 import me.lahirudilhara.webchat.service.api.UserService;
@@ -27,14 +31,18 @@ public class WebSocketRoomService {
     private final RoomService roomService;
     private final MessageService messageService;
     private final UserService userService;
+    private final MessageMapper messageMapper;
+    private final MessageRepository messageRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public WebSocketRoomService(RoomService roomService, MessageService messageService, UserService userService) {
+    public WebSocketRoomService(RoomService roomService, MessageService messageService, UserService userService,MessageMapper messageMapper,MessageRepository messageRepository) {
         this.roomService = roomService;
         this.messageService = messageService;
         this.userService = userService;
+        this.messageMapper = messageMapper;
+        this.messageRepository = messageRepository;
     }
 
     private String canUserSendMessageToRoom(List<UserEntity> roomMemebers, String senderUsername){
@@ -62,7 +70,7 @@ public class WebSocketRoomService {
         }
     }
 
-    public Either<WebSocketErrorResponse, BroadcastData<TextMessage>> publishMessageToRoom(int roomId, String senderUsername,TextMessage textMessage){
+    public Either<WebSocketErrorResponse, BroadcastData<MessageEntity>> publishMessageToRoom(int roomId, String senderUsername, TextMessage textMessage){
         var dataOrError = getRoomUsers(roomId);
         if(dataOrError.isLeft()) return Either.left(dataOrError.getLeft());
         List<UserEntity> roomUsers = dataOrError.getRight();
@@ -84,7 +92,9 @@ public class WebSocketRoomService {
         textMessage.setCreatedAt(createdTime);
         textMessage.setEditedAt(createdTime);
 
-        TextMessage addedMessage = messageService.addMessage(textMessage);
+        Message message = messageRepository.save(textMessage);
+        MessageEntity addedMessage = messageService.getMessageById(message.getId());
+
         List<String> receivers = roomUsers.stream().map(UserEntity::getUsername).toList();
         return Either.right(new BroadcastData<>(receivers,addedMessage));
     }

@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import me.lahirudilhara.webchat.models.Room;
-import me.lahirudilhara.webchat.models.User;
 
 import java.time.Instant;
 

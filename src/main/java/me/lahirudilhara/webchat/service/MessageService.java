@@ -1,11 +1,14 @@
 package me.lahirudilhara.webchat.service;
 
-import me.lahirudilhara.webchat.dtoEntityMappers.api.MessageMapper;
+import me.lahirudilhara.webchat.common.exceptions.BaseException;
+import me.lahirudilhara.webchat.entities.message.MessageEntity;
+import me.lahirudilhara.webchat.entityModelMappers.MessageMapper;
 import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.repositories.MessageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
@@ -14,16 +17,24 @@ public class MessageService {
     private static final Logger log = LoggerFactory.getLogger(MessageService.class);
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
-    private final MessageRepository baseMessageRepository;
 
-    public MessageService(MessageRepository messageRepository, MessageMapper messageMapper, MessageRepository baseMessageRepository) {
+    public MessageService(MessageRepository messageRepository, MessageMapper messageMapper) {
         this.messageRepository = messageRepository;
         this.messageMapper = messageMapper;
-        this.baseMessageRepository = baseMessageRepository;
     }
 
-    public <T extends Message> T addMessage(T message){
-        return messageRepository.save(message);
+//    public <T extends Message> T addMessage(T message){
+//        return messageRepository.save(message);
+//    }
+
+    public MessageEntity addMessage(Message message){
+        Message addedMessage = messageRepository.save(message);
+        return messageMapper.messageToMessageEntity(addedMessage);
+    }
+
+    public MessageEntity getMessageById(int id){
+        Message message = messageRepository.findById(id).orElseThrow();
+        return messageMapper.baseMessageToMessageEntity(message);
     }
 
 

@@ -1,9 +1,11 @@
 package me.lahirudilhara.webchat.websocket.handlers;
 
+import me.lahirudilhara.webchat.dto.message.MessageResponseDTO;
 import me.lahirudilhara.webchat.dto.wc.TextMessageDTO;
 import me.lahirudilhara.webchat.dto.wc.WebSocketError;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.MessageMapper;
 import me.lahirudilhara.webchat.dtoEntityMappers.websocket.WebSocketMessageMapper;
+import me.lahirudilhara.webchat.entities.message.MessageEntity;
 import me.lahirudilhara.webchat.models.message.TextMessage;
 import me.lahirudilhara.webchat.websocket.service.WebSocketRoomService;
 import me.lahirudilhara.webchat.websocket.entities.BroadcastData;
@@ -46,11 +48,13 @@ public class UserTextMessageHandler implements MessageHandler<TextMessageDTO> {
             applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError(dataOrError.getLeft().getError()),senderUsername,sessionId));
             return;
         }
-        BroadcastData<TextMessage> data = dataOrError.getRight();
+        BroadcastData<MessageEntity> data = dataOrError.getRight();
         // Filter multicast users
         List<String> multicastUsernames = data.users().stream().filter(u->!u.equals(senderUsername)).toList();
 
-        applicationEventPublisher.publishEvent(new MulticastDataEvent(multicastUsernames,messageMapper.messageToMessageResponse(data.data())));
-        applicationEventPublisher.publishEvent(new UnicastDataEvent(senderUsername,webSocketMessageMapper.textMessageToTextMessageAckResponseDTO(data.data(),message.getUuid())));
+        applicationEventPublisher.publishEvent(new MulticastDataEvent(multicastUsernames,messageMapper.messageEntityToMessageResponseDTO(data.data())));
+        MessageResponseDTO messageResponseDTO = messageMapper.messageEntityToMessageResponseDTO(data.data());
+        messageResponseDTO.setUuid(message.getUuid());
+        applicationEventPublisher.publishEvent(new UnicastDataEvent(senderUsername,messageResponseDTO));
     }
 }
