@@ -4,10 +4,7 @@ import me.lahirudilhara.webchat.entities.message.MessageEntity;
 import me.lahirudilhara.webchat.entities.message.TextMessageEntity;
 import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.models.message.TextMessage;
-import org.mapstruct.InheritConfiguration;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.SubclassMapping;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring",implementationName = "entityModelMessageMapper")
 public interface MessageMapper {
@@ -22,4 +19,9 @@ public interface MessageMapper {
 
     @InheritConfiguration(name = "baseMessageToMessageEntity")
     TextMessageEntity textMessageToTextMessageEntity(TextMessage message);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,ignoreByDefault = true)
+    @Mapping(source = "content",target = "content")
+    @Mapping(source = "editedAt",target = "editedAt")
+    void updateTextMessageEntityToTextMessage(TextMessageEntity textMessageEntity,@MappingTarget TextMessage textMessage);
 }
