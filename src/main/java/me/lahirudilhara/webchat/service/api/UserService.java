@@ -29,6 +29,7 @@ public class UserService {
     @Cacheable(value = "userServiceUserByUsername",key = "#username")
     public UserEntity getUserByUsername(String username){
         User user = userRepository.findByUsername(username);
+        System.out.println(user);
         if(user == null) throw new UserNotFoundException();
         return userMapper.userToUserEntity(userRepository.findByUsername(username));
     }
