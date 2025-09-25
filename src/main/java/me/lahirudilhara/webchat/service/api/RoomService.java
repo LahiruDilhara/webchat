@@ -265,6 +265,10 @@ public class RoomService {
         return new CachableObject<>(rooms.stream().map(roomMapper::roomToRoomEntity).toList());
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "roomUsersByRoomId",key = "#roomId"),
+            @CacheEvict(value = "userRoomsByUsername",key = "#username")
+    })
     public void leaveFromRoom(int roomId,String username){
         Room room =  roomRepository.findByIdWithUsers(roomId).orElseThrow(RoomNotFoundException::new);
         UserEntity user = userService.getUserByUsername(username);
