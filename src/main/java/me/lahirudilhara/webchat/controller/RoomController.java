@@ -106,4 +106,10 @@ public class RoomController {
         List<UserEntity> users = roomService.getRoomUsers(roomId,principal.getName());
         return users.stream().map(userMapper::userEntityToUserResponseDTO).toList();
     }
+
+    @PostMapping("/{roomId}/leave")
+    public ResponseEntity leaveRoom(@PathVariable int roomId, Principal principal){
+        roomService.leaveFromRoom(roomId,principal.getName());
+        return ResponseEntity.noContent().build();
+    }
 }
