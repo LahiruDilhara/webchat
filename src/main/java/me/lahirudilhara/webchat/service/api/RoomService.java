@@ -18,11 +18,13 @@ import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.repositories.MessageRepository;
 import me.lahirudilhara.webchat.repositories.RoomRepository;
 import me.lahirudilhara.webchat.repositories.UserRoomStatusRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,13 +42,14 @@ public class RoomService {
     private final UserMapper userMapper;
     private final CacheManager cacheManager;
     private final MessageMapper messageMapper;
-    private final UserRoomStatusRepository  userRoomStatusRepository;
     private final UserRoomStatusService userRoomStatusService;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public RoomService(RoomRepository roomRepository, MessageRepository messageRepository, RoomMapper roomMapper, UserService userService, UserMapper userMapper, CacheManager cacheManager, MessageMapper messageMapper, UserRoomStatusRepository userRoomStatusRepository, UserRoomStatusService userRoomStatusService) {
+    private RoomService self;
+
+    public RoomService(RoomRepository roomRepository, MessageRepository messageRepository, RoomMapper roomMapper, UserService userService, UserMapper userMapper, CacheManager cacheManager, MessageMapper messageMapper,  UserRoomStatusService userRoomStatusService,@Lazy RoomService self) {
         this.roomRepository = roomRepository;
         this.messageRepository = messageRepository;
         this.roomMapper = roomMapper;
@@ -54,8 +57,8 @@ public class RoomService {
         this.userMapper = userMapper;
         this.cacheManager = cacheManager;
         this.messageMapper = messageMapper;
-        this.userRoomStatusRepository = userRoomStatusRepository;
         this.userRoomStatusService = userRoomStatusService;
+        this.self = self;
     }
 
     @CacheEvict(value = "userRoomsByUsername",key = "#roomEntity.createdBy")
@@ -150,7 +153,7 @@ public class RoomService {
         if(!room.getCreatedBy().getId().equals(userEntity.getId())){
             throw new ValidationException("Only the owner can delete the room");
         }
-        List<UserEntity> roomUsers = getRoomUsers(roomId).getData();
+        List<UserEntity> roomUsers = self.getRoomUsers(roomId).getData();
         evictRemovedRoomUserCache(roomUsers);
         roomRepository.delete(room);
     }
@@ -237,14 +240,13 @@ public class RoomService {
         Page<Message> page = messageRepository.findByRoomIdOrderByCreatedAtDesc(roomId, pageable);
 
         // Remove deleted messages and convert
-        List<MessageEntity> messages = page.getContent().stream().filter(m->!m.getDeleted()).map(m->messageMapper.messageToMessageEntity(m)).toList();
-        return messages;
+        return page.getContent().stream().filter(m->!m.getDeleted()).map(messageMapper::messageToMessageEntity).toList();
     }
 
 
     public List<UserEntity> getRoomUsers(int roomId, String username){
         if(validateRoomDataAccess(username, roomId)) throw new RoomNotFoundException();
-        return getRoomUsers(roomId).getData();
+        return self.getRoomUsers(roomId).getData();
     }
 
     @Cacheable(value = "roomUsersByRoomId",key = "#roomId")
@@ -285,10 +287,10 @@ public class RoomService {
     }
 
     private boolean validateRoomDataAccess(String currentAccessUser, int roomId){
-        RoomEntity roomEntity = getRoom(roomId);
+        RoomEntity roomEntity = self.getRoom(roomId);
         if(roomEntity.getCreatedBy().equals(currentAccessUser)) return false;
-        List<UserEntity> roomMemebers = getRoomUsers(roomId).getData();
-        if(roomMemebers.stream().anyMatch(u->u.getUsername().equals(currentAccessUser))) return false;
+        List<UserEntity> roomMembers = self.getRoomUsers(roomId).getData();
+        if(roomMembers.stream().anyMatch(u->u.getUsername().equals(currentAccessUser))) return false;
         return true;
     }
 
