@@ -1,9 +1,8 @@
-package me.lahirudilhara.webchat.entities;
+package me.lahirudilhara.webchat.entities.room;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.time.Instant;
 

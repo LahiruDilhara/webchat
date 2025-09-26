@@ -6,7 +6,7 @@ import me.lahirudilhara.webchat.common.exceptions.ConflictException;
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.common.exceptions.ValidationException;
 import me.lahirudilhara.webchat.common.types.CachableObject;
-import me.lahirudilhara.webchat.entities.RoomEntity;
+import me.lahirudilhara.webchat.entities.room.RoomEntity;
 import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.entities.UserRoomId;
 import me.lahirudilhara.webchat.entities.UserRoomStatus;

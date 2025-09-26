@@ -1,10 +1,9 @@
-package me.lahirudilhara.webchat.dto.api.user;
+package me.lahirudilhara.webchat.entities.room;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import me.lahirudilhara.webchat.dto.api.room.RoomResponseDTO;
 
 import java.time.Instant;
 
@@ -12,7 +11,7 @@ import java.time.Instant;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRoomStatResponseDTO extends RoomResponseDTO {
+public class UserRoomStatEntity extends RoomEntity {
     private Integer unreadMessagesCount;
     private Instant lastAccessedAt;
     private Integer memberCount;
