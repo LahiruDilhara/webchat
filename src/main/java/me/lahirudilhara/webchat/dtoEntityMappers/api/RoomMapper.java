@@ -1,12 +1,10 @@
 package me.lahirudilhara.webchat.dtoEntityMappers.api;
 
 import me.lahirudilhara.webchat.dto.api.room.*;
-import me.lahirudilhara.webchat.dto.api.room.UserRoomStatResponseDTO;
+import me.lahirudilhara.webchat.dto.api.stat.UserRoomStatResponseDTO;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
 import me.lahirudilhara.webchat.entities.room.UserRoomStatEntity;
 import org.mapstruct.*;
-
-import java.time.Instant;
 
 @Mapper(componentModel = "spring")
 public interface RoomMapper {

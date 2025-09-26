@@ -1,7 +1,6 @@
 package me.lahirudilhara.webchat.controller;
 
 import me.lahirudilhara.webchat.dto.api.room.RoomResponseDTO;
-import me.lahirudilhara.webchat.dto.api.room.UserRoomStatResponseDTO;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.RoomMapper;
 import me.lahirudilhara.webchat.entities.room.UserRoomStatEntity;
 import me.lahirudilhara.webchat.service.api.UserService;
@@ -24,7 +23,7 @@ public class UserController {
         this.roomMapper = roomMapper;
     }
 
-    @GetMapping("/rooms")
+    @GetMapping("/me/rooms")
     public List<RoomResponseDTO> getRooms(Principal principal) {
         List<UserRoomStatEntity> userRoomStatEntities = userService.getUserRoomStats(principal.getName());
         userRoomStatEntities.stream().forEach(e-> System.out.println(e));

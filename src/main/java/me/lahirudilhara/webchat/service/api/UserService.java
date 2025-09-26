@@ -12,6 +12,7 @@ import me.lahirudilhara.webchat.repositories.MessageRepository;
 import me.lahirudilhara.webchat.repositories.UserRepository;
 import me.lahirudilhara.webchat.repositories.UserRoomStatusRepository;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,13 +29,15 @@ public class UserService {
     private final UserRoomStatusRepository userRoomStatusRepository;
     private final MessageRepository messageRepository;
     private final RoomMapper roomMapper;
+    private final RoomService roomService;
 
-    public UserService(UserRepository userRepository,UserMapper userMapper,UserRoomStatusRepository userRoomStatusRepository,MessageRepository messageRepository,RoomMapper roomMapper) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, UserRoomStatusRepository userRoomStatusRepository, MessageRepository messageRepository, RoomMapper roomMapper, @Lazy RoomService roomService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.userRoomStatusRepository = userRoomStatusRepository;
         this.messageRepository = messageRepository;
         this.roomMapper = roomMapper;
+        this.roomService = roomService;
     }
 
     public UserEntity addUser(UserEntity userEntity) {
@@ -70,7 +73,8 @@ public class UserService {
             if(status ==null) continue;
 
             long unReadMessageCount = messageRepository.countUnreadMessagesForUser(room.getId(),status.getLastSeenAt(),username);
-            int memberCount = room.getUsers().size();
+            List<UserEntity> roomUsers = roomService.getRoomUsers(room.getId()).getData();
+            int memberCount = roomUsers.size();
             userRoomStats.add(roomMapper.userRoomStatToUserRoomStatEntity(room,status,(int) unReadMessageCount,memberCount));
         }
         return userRoomStats;
