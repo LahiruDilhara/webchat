@@ -71,7 +71,7 @@ public class UserService {
 
     public List<UserRoomStatEntity> getUserRoomStats(String username){
         UserEntity user = self.getUserByUsername(username);
-        List<RoomEntity> userRooms = roomService.getUserRooms(username).getData();
+        List<RoomEntity> userRooms = roomService.getUserJoinedRooms(username).getData();
         List<UserRoomStatus> userRoomStats = userRoomStatusRepository.findAllByRoomIds(userRooms.stream().map(RoomEntity::getId).toList());
 
         List<UserRoomStatEntity> userRoomStatEntities = new ArrayList<>();

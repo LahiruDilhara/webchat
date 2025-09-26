@@ -18,4 +18,6 @@ public interface RoomRepository extends JpaRepository<Room,Integer> {
     @Query("SELECT r FROM room r WHERE r.createdBy.username = :username")
     List<Room> findByCreatedByUsername(@Param("username") String username);
 
+    @Query("SELECT r FROM room r JOIN r.users u WHERE u.username = :username")
+    List<Room> findUserJoinedRooms(@Param("username") String username);
 }
