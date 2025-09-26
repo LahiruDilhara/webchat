@@ -8,8 +8,6 @@ import me.lahirudilhara.webchat.common.exceptions.ValidationException;
 import me.lahirudilhara.webchat.common.types.CachableObject;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
 import me.lahirudilhara.webchat.entities.UserEntity;
-import me.lahirudilhara.webchat.entities.UserRoomId;
-import me.lahirudilhara.webchat.entities.UserRoomStatus;
 import me.lahirudilhara.webchat.entities.message.MessageEntity;
 import me.lahirudilhara.webchat.entityModelMappers.MessageMapper;
 import me.lahirudilhara.webchat.entityModelMappers.RoomMapper;
@@ -43,11 +41,12 @@ public class RoomService {
     private final CacheManager cacheManager;
     private final MessageMapper messageMapper;
     private final UserRoomStatusRepository  userRoomStatusRepository;
+    private final UserRoomStatusService userRoomStatusService;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public RoomService(RoomRepository roomRepository, MessageRepository messageRepository, RoomMapper roomMapper, UserService userService, UserMapper userMapper, CacheManager cacheManager, MessageMapper messageMapper, UserRoomStatusRepository userRoomStatusRepository) {
+    public RoomService(RoomRepository roomRepository, MessageRepository messageRepository, RoomMapper roomMapper, UserService userService, UserMapper userMapper, CacheManager cacheManager, MessageMapper messageMapper, UserRoomStatusRepository userRoomStatusRepository, UserRoomStatusService userRoomStatusService) {
         this.roomRepository = roomRepository;
         this.messageRepository = messageRepository;
         this.roomMapper = roomMapper;
@@ -56,6 +55,7 @@ public class RoomService {
         this.cacheManager = cacheManager;
         this.messageMapper = messageMapper;
         this.userRoomStatusRepository = userRoomStatusRepository;
+        this.userRoomStatusService = userRoomStatusService;
     }
 
     @CacheEvict(value = "userRoomsByUsername",key = "#roomEntity.createdBy")
@@ -76,14 +76,7 @@ public class RoomService {
         }
         Room createdRoom = roomRepository.save(room);
 
-        UserRoomId userRoomId = new UserRoomId(userRef.getId(), createdRoom.getId());
-        UserRoomStatus userRoomStatus = new UserRoomStatus();
-        userRoomStatus.setRoom(createdRoom);
-        userRoomStatus.setUserRoomId(userRoomId);
-        userRoomStatus.setUser(userRef);
-        userRoomStatus.setLastSeenAt(Instant.now());
-        userRoomStatusRepository.save(userRoomStatus);
-
+        userRoomStatusService.addUserRoomStatus(userRef.getId(),  createdRoom.getId());
         return roomMapper.roomToRoomEntity(createdRoom);
     }
 
@@ -110,6 +103,10 @@ public class RoomService {
             throw new ValidationException(error);
         }
         Room createdRoom = roomRepository.save(room);
+
+        userRoomStatusService.addUserRoomStatus(owner.getId(),  createdRoom.getId());
+        userRoomStatusService.addUserRoomStatus(user.getId(),  createdRoom.getId());
+
         return roomMapper.roomToRoomEntity(createdRoom);
     }
 
@@ -134,11 +131,12 @@ public class RoomService {
         if(members.size() >= 2 && !room.getMultiUser()){
             throw new ValidationException("The room is not multiuser. cannot join");
         }
-        User user = new User();
-        user.setId(userEntity.getId());
-        members.add(user);
+
+        members.add(entityManager.getReference(User.class, userEntity.getId()));
         room.setUsers(members);
         roomRepository.save(room);
+
+        userRoomStatusService.addUserRoomStatus(userEntity.getId(),  room.getId());
     }
 
     @Caching(evict = {
@@ -183,6 +181,8 @@ public class RoomService {
         userModel.setId(user.getId());
         members.add(userModel);
         roomRepository.save(room);
+
+        userRoomStatusService.addUserRoomStatus(user.getId(),  room.getId());
     }
 
 

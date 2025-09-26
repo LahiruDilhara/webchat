@@ -2,8 +2,7 @@ package me.lahirudilhara.webchat.service.api;
 
 import me.lahirudilhara.webchat.common.exceptions.UserNotFoundException;
 import me.lahirudilhara.webchat.entities.UserEntity;
-import me.lahirudilhara.webchat.entities.UserRoomId;
-import me.lahirudilhara.webchat.entities.UserRoomStatus;
+import me.lahirudilhara.webchat.models.UserRoomStatus;
 import me.lahirudilhara.webchat.entities.room.UserRoomStatEntity;
 import me.lahirudilhara.webchat.entityModelMappers.RoomMapper;
 import me.lahirudilhara.webchat.entityModelMappers.UserMapper;

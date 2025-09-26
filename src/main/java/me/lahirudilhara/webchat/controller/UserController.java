@@ -27,6 +27,7 @@ public class UserController {
     @GetMapping("/rooms")
     public List<RoomResponseDTO> getRooms(Principal principal) {
         List<UserRoomStatEntity> userRoomStatEntities = userService.getUserRoomStats(principal.getName());
+        userRoomStatEntities.stream().forEach(e-> System.out.println(e));
         return userRoomStatEntities.stream().map(roomMapper::roomEntityToRoomResponseDTO).toList();
     }
 }

@@ -1,11 +1,12 @@
-package me.lahirudilhara.webchat.entities;
+package me.lahirudilhara.webchat.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.lahirudilhara.webchat.models.Room;
-import me.lahirudilhara.webchat.models.User;
+import me.lahirudilhara.webchat.entities.UserRoomId;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
 
@@ -20,10 +21,12 @@ public class UserRoomStatus {
 
     @ManyToOne
     @MapsId("userId")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @ManyToOne
     @MapsId("roomId")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Room room;
 
     private Instant lastSeenAt;
