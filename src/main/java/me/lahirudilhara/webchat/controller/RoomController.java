@@ -31,16 +31,14 @@ public class RoomController {
     private final RoomManagementService roomManagementService;
     private final MessageMapper messageMapper;
     private final UserMapper userMapper;
-    private final RoomMembershipService roomMembershipService;
     private final RoomQueryService roomQueryService;
     private final MessageService messageService;
 
-    public RoomController(RoomMapper roomMapper, RoomManagementService roomManagementService, MessageMapper messageMapper, UserMapper userMapper, RoomMembershipService roomMembershipService, RoomQueryService roomQueryService, MessageService messageService) {
+    public RoomController(RoomMapper roomMapper, RoomManagementService roomManagementService, MessageMapper messageMapper, UserMapper userMapper,  RoomQueryService roomQueryService, MessageService messageService) {
         this.roomMapper = roomMapper;
         this.roomManagementService = roomManagementService;
         this.messageMapper = messageMapper;
         this.userMapper = userMapper;
-        this.roomMembershipService = roomMembershipService;
         this.roomQueryService = roomQueryService;
         this.messageService = messageService;
     }
@@ -61,12 +59,6 @@ public class RoomController {
         return new ResponseEntity<>(roomMapper.roomEntityToRoomResponseDTO(createdRoom),HttpStatus.CREATED);
     }
 
-    @PostMapping("/{roomId}/join")
-    public ResponseEntity joinToRoom(@PathVariable int roomId, Principal principal){
-        roomMembershipService.joinToRoom(principal.getName(),roomId);
-        return ResponseEntity.noContent().build();
-    }
-
     @GetMapping("/")
     public List<RoomResponseDTO> getRooms(Principal principal){
         List<RoomEntity> roomEntities = roomQueryService.getUserRooms(principal.getName()).getData();
@@ -79,17 +71,6 @@ public class RoomController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{roomId}/add/{username}")
-    public ResponseEntity addUserToRoom(@PathVariable int roomId,@PathVariable String username, Principal principal){
-        roomMembershipService.addUserToRoom(username,roomId,principal.getName());
-        return ResponseEntity.noContent().build();
-    }
-
-    @DeleteMapping("/{roomId}/remove/{username}")
-    public ResponseEntity removeUserFromRoom(@PathVariable int roomId, @PathVariable String username, Principal principal){
-        roomMembershipService.removeUserFromRoom(username,roomId,principal.getName());
-        return ResponseEntity.noContent().build();
-    }
 
     @PatchMapping("/multiUser/{roomId}")
     public RoomResponseDTO updateMultiUserRoom(@PathVariable int roomId, @RequestBody UpdateMultiUserRoomDTO updateMultiUserRoomDTO, Principal principal){
@@ -110,13 +91,8 @@ public class RoomController {
 
     @GetMapping("/{roomId}/users")
     public List<UserResponseDTO> getRoomUsers(@PathVariable int roomId, Principal principal){
-        List<UserEntity> users = roomQueryService.getRoomUsers(roomId,principal.getName());
+        List<UserEntity> users = roomQueryService.getValidatedRoomUsers(roomId,principal.getName());
         return users.stream().map(userMapper::userEntityToUserResponseDTO).toList();
     }
 
-    @PostMapping("/{roomId}/leave")
-    public ResponseEntity leaveRoom(@PathVariable int roomId, Principal principal){
-        roomMembershipService.leaveFromRoom(roomId,principal.getName());
-        return ResponseEntity.noContent().build();
-    }
 }

@@ -43,7 +43,7 @@ public class RoomQueryService {
         this.roomAccessValidator = roomAccessValidator;
     }
 
-    public List<UserEntity> getRoomUsers(int roomId, String username){
+    public List<UserEntity> getValidatedRoomUsers(int roomId, String username){
         if(roomAccessValidator.isNotUserAbleToAccessRoom(username, roomId)) throw new RoomNotFoundException();
         return self.getRoomUsers(roomId).getData();
     }
