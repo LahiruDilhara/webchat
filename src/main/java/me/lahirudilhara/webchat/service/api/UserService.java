@@ -21,6 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,7 @@ public class UserService {
 
     public UserEntity addUser(UserEntity userEntity) {
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
+        userEntity.setLastSeen(Instant.now());
         User user = userRepository.save(userMapper.userEntityToUser(userEntity));
         return userMapper.userToUserEntity(user);
     }
@@ -60,7 +62,6 @@ public class UserService {
     @Cacheable(value = "userServiceUserByUsername",key = "#username")
     public UserEntity getUserByUsername(String username){
         User user = userRepository.findByUsername(username);
-        System.out.println(user);
         if(user == null) throw new UserNotFoundException();
         return userMapper.userToUserEntity(userRepository.findByUsername(username));
     }

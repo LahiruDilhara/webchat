@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.lahirudilhara.webchat.models.message.Message;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,4 +35,7 @@ public class User {
     @ManyToMany(mappedBy = "users")
     @JsonIgnore
     private List<Room> rooms = new ArrayList<>();
+
+    @Column(nullable = false)
+    private Instant lastSeen;
 }
