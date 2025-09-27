@@ -22,7 +22,6 @@ import java.util.List;
 @Service
 public class RoomMembershipService {
 
-    private final UserService userService;
     private final RoomRepository roomRepository;
     private final UserRoomStatusService userRoomStatusService;
     private final UserQueryService userQueryService;
@@ -31,17 +30,16 @@ public class RoomMembershipService {
     private EntityManager entityManager;
 
 
-    public RoomMembershipService(UserService userService, RoomRepository roomRepository, UserRoomStatusService userRoomStatusService, UserQueryService userQueryService) {
-        this.userService = userService;
+    public RoomMembershipService( RoomRepository roomRepository, UserRoomStatusService userRoomStatusService, UserQueryService userQueryService) {
         this.roomRepository = roomRepository;
         this.userRoomStatusService = userRoomStatusService;
         this.userQueryService = userQueryService;
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "roomUsersByRoomId",key = "#roomId"),
-            @CacheEvict(value = "userRoomsByUsername",key = "#username"),
-            @CacheEvict(value = "userJoinedRoomsByUsername",key = "#username"),
+            @CacheEvict(value = RoomCacheNames.ROOM_USERS_BY_ROOM_ID,key = "#roomId"),
+            @CacheEvict(value = RoomCacheNames.USER_OWNED_ROOMS_BY_USERNAME,key = "#username"),
+            @CacheEvict(value = RoomCacheNames.USER_JOINED_ROOMS_BY_USERNAME,key = "#username"),
     })
     public void joinToRoom(String username, int roomId){
         UserEntity userEntity = userQueryService.getUserByUsername(username);
@@ -68,9 +66,9 @@ public class RoomMembershipService {
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "roomUsersByRoomId",key = "#roomId"),
-            @CacheEvict(value = "userRoomsByUsername",key = "#addingUsername"),
-            @CacheEvict(value = "userJoinedRoomsByUsername",key = "#addingUsername"),
+            @CacheEvict(value = RoomCacheNames.ROOM_USERS_BY_ROOM_ID,key = "#roomId"),
+            @CacheEvict(value = RoomCacheNames.USER_OWNED_ROOMS_BY_USERNAME,key = "#addingUsername"),
+            @CacheEvict(value = RoomCacheNames.USER_JOINED_ROOMS_BY_USERNAME,key = "#addingUsername"),
     })
     public void addUserToRoom(String addingUsername, int roomId, String ownerUsername){
         UserEntity owner = userQueryService.getUserByUsername(ownerUsername);
@@ -98,9 +96,9 @@ public class RoomMembershipService {
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "roomUsersByRoomId",key = "#roomId"),
-            @CacheEvict(value = "userRoomsByUsername",key = "#removingUsername"),
-            @CacheEvict(value = "userJoinedRoomsByUsername",key = "#removingUsername"),
+            @CacheEvict(value = RoomCacheNames.ROOM_USERS_BY_ROOM_ID,key = "#roomId"),
+            @CacheEvict(value = RoomCacheNames.USER_OWNED_ROOMS_BY_USERNAME,key = "#removingUsername"),
+            @CacheEvict(value = RoomCacheNames.USER_JOINED_ROOMS_BY_USERNAME,key = "#removingUsername"),
     })
     public void removeUserFromRoom(String removingUsername, int roomId,  String ownerUsername){
         UserEntity owner = userQueryService.getUserByUsername(ownerUsername);
@@ -128,9 +126,9 @@ public class RoomMembershipService {
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "roomUsersByRoomId",key = "#roomId"),
-            @CacheEvict(value = "userRoomsByUsername",key = "#username"),
-            @CacheEvict(value = "userJoinedRoomsByUsername",key = "#username"),
+            @CacheEvict(value = RoomCacheNames.ROOM_USERS_BY_ROOM_ID,key = "#roomId"),
+            @CacheEvict(value = RoomCacheNames.USER_OWNED_ROOMS_BY_USERNAME,key = "#username"),
+            @CacheEvict(value = RoomCacheNames.USER_JOINED_ROOMS_BY_USERNAME,key = "#username"),
     })
     public void leaveFromRoom(int roomId,String username){
         Room room =  roomRepository.findByIdWithUsers(roomId).orElseThrow(RoomNotFoundException::new);
