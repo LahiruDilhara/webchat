@@ -2,7 +2,6 @@ package me.lahirudilhara.webchat.service.api.room;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import me.lahirudilhara.webchat.common.exceptions.ConflictException;
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.common.exceptions.ValidationException;
 import me.lahirudilhara.webchat.common.types.CachableObject;
@@ -34,36 +33,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class RoomService {
+public class RoomManagementService {
     private final RoomRepository roomRepository;
-    private final MessageRepository messageRepository;
     private final RoomMapper roomMapper;
     private final UserService userService;
-    private final UserMapper userMapper;
     private final CacheManager cacheManager;
-    private final MessageMapper messageMapper;
     private final UserRoomStatusService userRoomStatusService;
+    private final RoomQueryService roomQueryService;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    private RoomService self;
-
-    public RoomService(RoomRepository roomRepository, MessageRepository messageRepository, RoomMapper roomMapper, UserService userService, UserMapper userMapper, CacheManager cacheManager, MessageMapper messageMapper,  UserRoomStatusService userRoomStatusService,@Lazy RoomService self) {
+    public RoomManagementService(RoomRepository roomRepository,  RoomMapper roomMapper, UserService userService,  CacheManager cacheManager, MessageMapper messageMapper, UserRoomStatusService userRoomStatusService, RoomQueryService roomQueryService) {
         this.roomRepository = roomRepository;
-        this.messageRepository = messageRepository;
         this.roomMapper = roomMapper;
         this.userService = userService;
-        this.userMapper = userMapper;
         this.cacheManager = cacheManager;
-        this.messageMapper = messageMapper;
         this.userRoomStatusService = userRoomStatusService;
-        this.self = self;
+        this.roomQueryService = roomQueryService;
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "userRoomsByUsername",key = "#roomEntity.createdBy"),
-            @CacheEvict(value = "userJoinedRoomsByUsername",key = "#roomEntity.createdBy"),
+            @CacheEvict(value = RoomCacheNames.USER_OWNED_ROOMS_BY_USERNAME,key = "#roomEntity.createdBy"),
+            @CacheEvict(value = RoomCacheNames.USER_JOINED_ROOMS_BY_USERNAME,key = "#roomEntity.createdBy"),
     })
     public RoomEntity createMultiUserRoom(RoomEntity roomEntity){
         UserEntity userEntity = userService.getUserByUsername(roomEntity.getCreatedBy());
@@ -87,10 +79,10 @@ public class RoomService {
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "userRoomsByUsername",key = "#roomEntity.createdBy"),
-            @CacheEvict(value = "userRoomsByUsername",key = "#nextUsername"),
-            @CacheEvict(value = "userJoinedRoomsByUsername",key = "#roomEntity.createdBy"),
-            @CacheEvict(value = "userJoinedRoomsByUsername",key = "#nextUsername"),
+            @CacheEvict(value = RoomCacheNames.USER_OWNED_ROOMS_BY_USERNAME,key = "#roomEntity.createdBy"),
+            @CacheEvict(value = RoomCacheNames.USER_OWNED_ROOMS_BY_USERNAME,key = "#nextUsername"),
+            @CacheEvict(value = RoomCacheNames.USER_JOINED_ROOMS_BY_USERNAME,key = "#roomEntity.createdBy"),
+            @CacheEvict(value = RoomCacheNames.USER_JOINED_ROOMS_BY_USERNAME,key = "#nextUsername"),
     })
     public RoomEntity createDualUserRoom(RoomEntity roomEntity, String nextUsername){
         UserEntity owner = userService.getUserByUsername(roomEntity.getCreatedBy());
@@ -120,10 +112,10 @@ public class RoomService {
 
 
     @Caching(evict = {
-            @CacheEvict(value = "userRoomsByUsername",key = "#username"),
-            @CacheEvict(value = "userJoinedRoomsByUsername",key = "#username"),
-            @CacheEvict(value = "roomByRoomId",key = "#roomId"),
-            @CacheEvict(value = "roomUsersByRoomId",key = "#roomId")
+            @CacheEvict(value = RoomCacheNames.USER_OWNED_ROOMS_BY_USERNAME,key = "#username"),
+            @CacheEvict(value = RoomCacheNames.USER_JOINED_ROOMS_BY_USERNAME,key = "#username"),
+            @CacheEvict(value = RoomCacheNames.ROOM_BY_ROOM_ID,key = "#roomId"),
+            @CacheEvict(value = RoomCacheNames.ROOM_USERS_BY_ROOM_ID,key = "#roomId")
     })
     public void deleteRoom(String username, int roomId){
         UserEntity userEntity = userService.getUserByUsername(username);
@@ -131,12 +123,12 @@ public class RoomService {
         if(!room.getCreatedBy().getId().equals(userEntity.getId())){
             throw new ValidationException("Only the owner can delete the room");
         }
-        List<UserEntity> roomUsers = self.getRoomUsers(roomId).getData();
+        List<UserEntity> roomUsers = roomQueryService.getRoomUsers(roomId).getData();
         evictRemovedRoomUserCache(roomUsers);
         roomRepository.delete(room);
     }
 
-    @CacheEvict(value = "roomByRoomId",key = "#roomEntity.id")
+    @CacheEvict(value = RoomCacheNames.ROOM_BY_ROOM_ID,key = "#roomEntity.id")
     public RoomEntity updateMultiUserRoom(RoomEntity roomEntity){
         UserEntity user = userService.getUserByUsername(roomEntity.getCreatedBy());
 
@@ -152,53 +144,6 @@ public class RoomService {
         return roomMapper.roomToRoomEntity(roomRepository.save(room));
     }
 
-
-    public List<MessageEntity> getRoomMessages(int roomId, String accessUser, Pageable pageable){
-        if(validateRoomDataAccess(accessUser, roomId)) throw new RoomNotFoundException();
-        Page<Message> page = messageRepository.findByRoomIdOrderByCreatedAtDesc(roomId, pageable);
-
-        // Remove deleted messages and convert
-        return page.getContent().stream().filter(m->!m.getDeleted()).map(messageMapper::messageToMessageEntity).toList();
-    }
-
-
-    public List<UserEntity> getRoomUsers(int roomId, String username){
-        if(validateRoomDataAccess(username, roomId)) throw new RoomNotFoundException();
-        return self.getRoomUsers(roomId).getData();
-    }
-
-    @Cacheable(value = "roomUsersByRoomId",key = "#roomId")
-    public CachableObject<List<UserEntity>> getRoomUsers(int roomId){
-        Room room = roomRepository.findByIdWithUsers(roomId).orElseThrow(RoomNotFoundException::new);
-        return  new CachableObject<>(room.getUsers().stream().map(userMapper::userToUserEntity).toList());
-    }
-
-    @Cacheable(value = "roomByRoomId",key = "#roomId")
-    public RoomEntity getRoom(int roomId){
-        Room room = roomRepository.findByIdWithUsers(roomId).orElseThrow(RoomNotFoundException::new);
-        return roomMapper.roomToRoomEntity(room);
-    }
-
-    @Cacheable(value = "userRoomsByUsername",key = "#username")
-    public CachableObject<List<RoomEntity>> getUserRooms(String username){
-        List<Room> rooms = roomRepository.findByCreatedByUsername(username);
-        return new CachableObject<>(rooms.stream().map(roomMapper::roomToRoomEntity).toList());
-    }
-
-    @Cacheable(value = "userJoinedRoomsByUsername",key = "#username")
-    public CachableObject<List<RoomEntity>> getUserJoinedRooms(String username){
-        List<Room> rooms = roomRepository.findUserJoinedRooms(username);
-        return new CachableObject<>(rooms.stream().map(roomMapper::roomToRoomEntity).toList());
-    }
-
-
-    private boolean validateRoomDataAccess(String currentAccessUser, int roomId){
-        RoomEntity roomEntity = self.getRoom(roomId);
-        if(roomEntity.getCreatedBy().equals(currentAccessUser)) return false;
-        List<UserEntity> roomMembers = self.getRoomUsers(roomId).getData();
-        if(roomMembers.stream().anyMatch(u->u.getUsername().equals(currentAccessUser))) return false;
-        return true;
-    }
 
     private String validateRoomData(Room room){
         int usersCount = room.getUsers().size();

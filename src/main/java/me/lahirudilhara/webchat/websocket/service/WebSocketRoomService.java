@@ -12,8 +12,9 @@ import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.models.message.TextMessage;
 import me.lahirudilhara.webchat.service.MessageService;
-import me.lahirudilhara.webchat.service.api.room.RoomService;
+import me.lahirudilhara.webchat.service.api.room.RoomManagementService;
 import me.lahirudilhara.webchat.service.api.UserService;
+import me.lahirudilhara.webchat.service.api.room.RoomQueryService;
 import me.lahirudilhara.webchat.websocket.entities.BroadcastData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,17 +26,19 @@ import java.util.List;
 @Service
 public class WebSocketRoomService {
     private static final Logger log = LoggerFactory.getLogger(WebSocketRoomService.class);
-    private final RoomService roomService;
+    private final RoomManagementService roomManagementService;
     private final MessageService messageService;
     private final UserService userService;
+    private final RoomQueryService roomQueryService;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public WebSocketRoomService(RoomService roomService, MessageService messageService, UserService userService) {
-        this.roomService = roomService;
+    public WebSocketRoomService(RoomManagementService roomManagementService, MessageService messageService, UserService userService, RoomQueryService roomQueryService) {
+        this.roomManagementService = roomManagementService;
         this.messageService = messageService;
         this.userService = userService;
+        this.roomQueryService = roomQueryService;
     }
 
     private String canUserSendMessageToRoom(List<UserEntity> roomMemebers, String senderUsername){
@@ -45,7 +48,7 @@ public class WebSocketRoomService {
 
     private Either<Failure,List<UserEntity>> getRoomUsers(int roomId){
         try{
-            return Either.right(roomService.getRoomUsers(roomId).getData());
+            return Either.right(roomQueryService.getRoomUsers(roomId).getData());
         }
         catch (RoomNotFoundException e){
             return Either.left(new Failure("Room not found"));

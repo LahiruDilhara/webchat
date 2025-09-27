@@ -13,7 +13,8 @@ import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.repositories.MessageRepository;
 import me.lahirudilhara.webchat.repositories.UserRepository;
 import me.lahirudilhara.webchat.repositories.UserRoomStatusRepository;
-import me.lahirudilhara.webchat.service.api.room.RoomService;
+import me.lahirudilhara.webchat.service.api.room.RoomManagementService;
+import me.lahirudilhara.webchat.service.api.room.RoomQueryService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,24 +29,26 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final RoomService roomService;
+    private final RoomManagementService roomManagementService;
     private final UserRoomStatusRepository userRoomStatusRepository;
     private final MessageRepository messageRepository;
     private final RoomMapper roomMapper;
     private final PasswordEncoder passwordEncoder;
+    private final RoomQueryService roomQueryService;
 
     private UserService self;
     // created for caching, because when use cachable methods inside same class, that not use cache proxy, instead call directly
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, @Lazy RoomService roomService, @Lazy UserService self, UserRoomStatusRepository userRoomStatusRepository, MessageRepository messageRepository, RoomMapper roomMapper, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, @Lazy RoomManagementService roomManagementService, @Lazy UserService self, UserRoomStatusRepository userRoomStatusRepository, MessageRepository messageRepository, RoomMapper roomMapper, PasswordEncoder passwordEncoder, RoomQueryService roomQueryService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
-        this.roomService = roomService;
+        this.roomManagementService = roomManagementService;
         this.self = self;
         this.userRoomStatusRepository = userRoomStatusRepository;
         this.messageRepository = messageRepository;
         this.roomMapper = roomMapper;
         this.passwordEncoder = passwordEncoder;
+        this.roomQueryService = roomQueryService;
     }
 
     public UserEntity addUser(UserEntity userEntity) {
@@ -70,7 +73,7 @@ public class UserService {
 
     public List<UserRoomStatEntity> getUserRoomStats(String username){
         UserEntity user = self.getUserByUsername(username);
-        List<RoomEntity> userRooms = roomService.getUserJoinedRooms(username).getData();
+        List<RoomEntity> userRooms = roomQueryService.getUserJoinedRooms(username).getData();
         List<UserRoomStatus> userRoomStats = userRoomStatusRepository.findAllByRoomIds(userRooms.stream().map(RoomEntity::getId).toList());
 
         List<UserRoomStatEntity> userRoomStatEntities = new ArrayList<>();

@@ -9,7 +9,8 @@ import me.lahirudilhara.webchat.entityModelMappers.MessageMapper;
 import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.models.message.TextMessage;
 import me.lahirudilhara.webchat.repositories.MessageRepository;
-import me.lahirudilhara.webchat.service.api.room.RoomService;
+import me.lahirudilhara.webchat.service.api.room.RoomManagementService;
+import me.lahirudilhara.webchat.service.api.room.RoomQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,12 +23,14 @@ public class MessageService {
     private static final Logger log = LoggerFactory.getLogger(MessageService.class);
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
-    private final RoomService roomService;
+    private final RoomManagementService roomManagementService;
+    private final RoomQueryService roomQueryService;
 
-    public MessageService(MessageRepository messageRepository, MessageMapper messageMapper, RoomService roomService) {
+    public MessageService(MessageRepository messageRepository, MessageMapper messageMapper, RoomManagementService roomManagementService, RoomQueryService roomQueryService) {
         this.messageRepository = messageRepository;
         this.messageMapper = messageMapper;
-        this.roomService = roomService;
+        this.roomManagementService = roomManagementService;
+        this.roomQueryService = roomQueryService;
     }
 
     public MessageEntity addMessageAsync(Message message){
@@ -67,7 +70,7 @@ public class MessageService {
         if(!(message instanceof TextMessage)) throw new ValidationException("Message type not support update");
         if(message.getDeleted()) throw new ValidationException("Message not found");
         if(!message.getSender().getUsername().equals(username)) throw new ValidationException("Message not found");
-        List<UserEntity> roomMembers = roomService.getRoomUsers(roomId).getData();
+        List<UserEntity> roomMembers = roomQueryService.getRoomUsers(roomId).getData();
         if(roomMembers.stream().noneMatch(u->u.getUsername().equals(username))) throw new ValidationException("Room not found");
         return;
     }

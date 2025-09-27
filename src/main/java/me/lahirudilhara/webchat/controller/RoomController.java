@@ -11,7 +11,8 @@ import me.lahirudilhara.webchat.entities.room.RoomEntity;
 import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.entities.message.MessageEntity;
 import me.lahirudilhara.webchat.service.api.room.RoomMembershipService;
-import me.lahirudilhara.webchat.service.api.room.RoomService;
+import me.lahirudilhara.webchat.service.api.room.RoomManagementService;
+import me.lahirudilhara.webchat.service.api.room.RoomQueryService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,24 +27,26 @@ import java.util.List;
 @RequestMapping("/api/v1/rooms")
 public class RoomController {
     private final RoomMapper roomMapper;
-    private final RoomService roomService;
+    private final RoomManagementService roomManagementService;
     private final MessageMapper messageMapper;
     private final UserMapper userMapper;
     private final RoomMembershipService roomMembershipService;
+    private final RoomQueryService roomQueryService;
 
-    public RoomController(RoomMapper roomMapper, RoomService roomService, MessageMapper messageMapper, UserMapper userMapper, RoomMembershipService roomMembershipService) {
+    public RoomController(RoomMapper roomMapper, RoomManagementService roomManagementService, MessageMapper messageMapper, UserMapper userMapper, RoomMembershipService roomMembershipService, RoomQueryService roomQueryService) {
         this.roomMapper = roomMapper;
-        this.roomService = roomService;
+        this.roomManagementService = roomManagementService;
         this.messageMapper = messageMapper;
         this.userMapper = userMapper;
         this.roomMembershipService = roomMembershipService;
+        this.roomQueryService = roomQueryService;
     }
 
     @PostMapping("/multiUser")
     public ResponseEntity<RoomResponseDTO> createMultiUserRoom(@Valid @RequestBody AddMultiUserRoomDTO addMultiUserRoomDTO, Principal principal){
         RoomEntity roomEntity = roomMapper.addMultiUserRoomDtoToRoomEntity(addMultiUserRoomDTO);
         roomEntity.setCreatedBy(principal.getName());
-        RoomEntity createdRoom = roomService.createMultiUserRoom(roomEntity);
+        RoomEntity createdRoom = roomManagementService.createMultiUserRoom(roomEntity);
         return new ResponseEntity<>(roomMapper.roomEntityToRoomResponseDTO(createdRoom),HttpStatus.CREATED);
     }
 
@@ -51,7 +54,7 @@ public class RoomController {
     public ResponseEntity<RoomResponseDTO> createDualUserRoom(@Valid @RequestBody AddDualUserRoomDTO addDualUserRoomDTO, Principal principal){
         RoomEntity roomEntity = roomMapper.addDualUserRoomDtoToRoomEntity(addDualUserRoomDTO);
         roomEntity.setCreatedBy(principal.getName());
-        RoomEntity createdRoom = roomService.createDualUserRoom(roomEntity,addDualUserRoomDTO.getAddingUsername());
+        RoomEntity createdRoom = roomManagementService.createDualUserRoom(roomEntity,addDualUserRoomDTO.getAddingUsername());
         return new ResponseEntity<>(roomMapper.roomEntityToRoomResponseDTO(createdRoom),HttpStatus.CREATED);
     }
 
@@ -63,13 +66,13 @@ public class RoomController {
 
     @GetMapping("/")
     public List<RoomResponseDTO> getRooms(Principal principal){
-        List<RoomEntity> roomEntities = roomService.getUserRooms(principal.getName()).getData();
+        List<RoomEntity> roomEntities = roomQueryService.getUserRooms(principal.getName()).getData();
         return roomEntities.stream().map(roomMapper::roomEntityToRoomResponseDTO).toList();
     }
 
     @DeleteMapping("/{roomId}")
     public ResponseEntity deleteRoom(@PathVariable int roomId, Principal principal){
-        roomService.deleteRoom(principal.getName(),roomId);
+        roomManagementService.deleteRoom(principal.getName(),roomId);
         return ResponseEntity.noContent().build();
     }
 
@@ -90,7 +93,7 @@ public class RoomController {
         RoomEntity roomEntity = roomMapper.updateMultiUserDtoToRoomEntity(updateMultiUserRoomDTO);
         roomEntity.setId(roomId);
         roomEntity.setCreatedBy(principal.getName());
-        RoomEntity updatedRoomEntity = roomService.updateMultiUserRoom(roomEntity);
+        RoomEntity updatedRoomEntity = roomManagementService.updateMultiUserRoom(roomEntity);
         System.out.println(updatedRoomEntity);
         return roomMapper.roomEntityToRoomResponseDTO(updatedRoomEntity);
     }
@@ -98,13 +101,13 @@ public class RoomController {
     @GetMapping("/{roomId}/messages")
     public List<MessageResponseDTO> getMessagesOfRoom(@PathVariable int roomId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "createdAt") String sortBy, Principal principal){
         Pageable pageable = PageRequest.of(page,size, Sort.by(sortBy).descending());
-        List<MessageEntity> messages = roomService.getRoomMessages(roomId,principal.getName(),pageable);
+        List<MessageEntity> messages = roomQueryService.getRoomMessages(roomId,principal.getName(),pageable);
         return messages.stream().map(messageMapper::messageEntityToMessageResponseDTO).toList();
     }
 
     @GetMapping("/{roomId}/users")
     public List<UserResponseDTO> getRoomUsers(@PathVariable int roomId, Principal principal){
-        List<UserEntity> users = roomService.getRoomUsers(roomId,principal.getName());
+        List<UserEntity> users = roomQueryService.getRoomUsers(roomId,principal.getName());
         return users.stream().map(userMapper::userEntityToUserResponseDTO).toList();
     }
 
