@@ -61,7 +61,7 @@ public class RoomQueryService {
     }
 
     @Cacheable(value = RoomCacheNames.USER_OWNED_ROOMS_BY_USERNAME,key = "#username")
-    public CachableObject<List<RoomEntity>> getUserRooms(String username){
+    public CachableObject<List<RoomEntity>> getOwnerRooms(String username){
         List<Room> rooms = roomRepository.findByCreatedByUsername(username);
         return new CachableObject<>(rooms.stream().map(roomMapper::roomToRoomEntity).toList());
     }

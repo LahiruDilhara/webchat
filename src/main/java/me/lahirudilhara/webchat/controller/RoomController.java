@@ -60,8 +60,8 @@ public class RoomController {
     }
 
     @GetMapping("/")
-    public List<RoomResponseDTO> getRooms(Principal principal){
-        List<RoomEntity> roomEntities = roomQueryService.getUserRooms(principal.getName()).getData();
+    public List<RoomResponseDTO> getOwnerRooms(Principal principal){
+        List<RoomEntity> roomEntities = roomQueryService.getOwnerRooms(principal.getName()).getData();
         return roomEntities.stream().map(roomMapper::roomEntityToRoomResponseDTO).toList();
     }
 

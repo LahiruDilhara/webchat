@@ -5,6 +5,7 @@ import me.lahirudilhara.webchat.common.exceptions.UserNotFoundException;
 import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.entities.UserStatEntity;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
+import me.lahirudilhara.webchat.entities.user.BaseUserEntity;
 import me.lahirudilhara.webchat.models.UserRoomStatus;
 import me.lahirudilhara.webchat.entities.room.UserRoomStatEntity;
 import me.lahirudilhara.webchat.entityModelMappers.RoomMapper;
@@ -66,9 +67,9 @@ public class UserService {
     }
 
     @Cacheable(value = "userById",key = "#id")
-    public UserEntity getUserById(int id){
+    public BaseUserEntity getUserById(int id){
         User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
-        return userMapper.userToUserEntity(user);
+        return userMapper.userToBaseUserEntity(user);
     }
 
     public List<UserRoomStatEntity> getUserRoomStats(String username){

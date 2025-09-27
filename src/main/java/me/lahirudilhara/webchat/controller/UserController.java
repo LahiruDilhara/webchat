@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @GetMapping("/me/rooms")
-    public List<RoomResponseDTO> getRooms(Principal principal) {
+    public List<RoomResponseDTO> getUserJoinedRooms(Principal principal) {
         List<UserRoomStatEntity> userRoomStatEntities = userService.getUserRoomStats(principal.getName());
         return userRoomStatEntities.stream().map(roomMapper::roomEntityToRoomResponseDTO).toList();
     }

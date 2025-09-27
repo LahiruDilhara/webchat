@@ -1,18 +1,14 @@
 package me.lahirudilhara.webchat.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import me.lahirudilhara.webchat.entities.user.BaseUserEntity;
 
 import java.time.Instant;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserEntity {
-    private Integer id;
-    private String username;
-    private String password;
+public class UserEntity extends BaseUserEntity {
     private Instant lastSeen;
 }
