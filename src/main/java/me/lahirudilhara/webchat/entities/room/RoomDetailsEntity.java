@@ -4,10 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import me.lahirudilhara.webchat.entities.UserStatEntity;
 import me.lahirudilhara.webchat.entities.user.UserEntity;
 
-import java.time.Instant;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)

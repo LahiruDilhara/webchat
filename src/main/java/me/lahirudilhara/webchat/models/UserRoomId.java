@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.entities;
+package me.lahirudilhara.webchat.models;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;

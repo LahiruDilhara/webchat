@@ -1,11 +1,8 @@
 package me.lahirudilhara.webchat.service.api.room;
 
-import me.lahirudilhara.webchat.entities.UserStatEntity;
 import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.repositories.MessageRepository;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
 
 @Service
 public class RoomMetricsProviderService {

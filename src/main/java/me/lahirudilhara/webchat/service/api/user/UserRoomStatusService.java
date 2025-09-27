@@ -2,7 +2,7 @@ package me.lahirudilhara.webchat.service.api.user;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import me.lahirudilhara.webchat.entities.UserRoomId;
+import me.lahirudilhara.webchat.models.UserRoomId;
 import me.lahirudilhara.webchat.models.UserRoomStatus;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.User;

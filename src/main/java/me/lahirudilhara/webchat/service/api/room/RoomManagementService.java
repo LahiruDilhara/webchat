@@ -5,7 +5,6 @@ import jakarta.persistence.PersistenceContext;
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.common.exceptions.ValidationException;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
-import me.lahirudilhara.webchat.entities.user.BaseUserEntity;
 import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.entityModelMappers.MessageMapper;
 import me.lahirudilhara.webchat.entityModelMappers.RoomMapper;

@@ -4,10 +4,12 @@ import lombok.*;
 
 import java.time.Instant;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserEntity extends BaseUserEntity {
+public class UserEntity {
+    private Integer id;
+    private String username;
+    private String password;
     private Instant lastSeen;
 }

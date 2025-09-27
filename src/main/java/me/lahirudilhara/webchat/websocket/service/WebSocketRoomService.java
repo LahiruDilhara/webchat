@@ -6,7 +6,6 @@ import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.common.exceptions.UserNotFoundException;
 import me.lahirudilhara.webchat.common.types.Either;
 import me.lahirudilhara.webchat.common.types.Failure;
-import me.lahirudilhara.webchat.entities.user.BaseUserEntity;
 import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.entities.message.MessageEntity;
 import me.lahirudilhara.webchat.models.Room;
@@ -14,8 +13,6 @@ import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.models.message.TextMessage;
 import me.lahirudilhara.webchat.service.api.user.UserQueryService;
 import me.lahirudilhara.webchat.service.message.MessageService;
-import me.lahirudilhara.webchat.service.api.room.RoomManagementService;
-import me.lahirudilhara.webchat.service.api.user.UserService;
 import me.lahirudilhara.webchat.service.api.room.RoomQueryService;
 import me.lahirudilhara.webchat.websocket.entities.BroadcastData;
 import org.slf4j.Logger;
@@ -58,7 +55,7 @@ public class WebSocketRoomService {
         }
     }
 
-    private Either<Failure, BaseUserEntity> getUserByUsername(String username){
+    private Either<Failure, UserEntity> getUserByUsername(String username){
         try{
             return Either.right(userQueryService.getUserByUsername(username));
         } catch (UserNotFoundException e) {
@@ -76,7 +73,7 @@ public class WebSocketRoomService {
 
         var userOrError = getUserByUsername(senderUsername);
         if(userOrError.isLeft()) return Either.left(userOrError.getLeft());
-        BaseUserEntity user = userOrError.getRight();
+        UserEntity user = userOrError.getRight();
 
         // populate the message data
         Instant createdTime = Instant.now();

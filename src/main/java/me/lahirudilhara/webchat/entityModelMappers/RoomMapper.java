@@ -1,8 +1,6 @@
 package me.lahirudilhara.webchat.entityModelMappers;
 
-import me.lahirudilhara.webchat.entities.UserStatEntity;
 import me.lahirudilhara.webchat.entities.user.UserEntity;
-import me.lahirudilhara.webchat.models.UserRoomStatus;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
 import me.lahirudilhara.webchat.entities.room.RoomDetailsEntity;
 import me.lahirudilhara.webchat.models.Room;

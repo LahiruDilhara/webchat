@@ -1,10 +1,8 @@
 package me.lahirudilhara.webchat.jwt;
 
-import me.lahirudilhara.webchat.entities.user.BaseUserEntity;
 import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.entityModelMappers.UserMapper;
 import me.lahirudilhara.webchat.service.api.user.UserQueryService;
-import me.lahirudilhara.webchat.service.api.user.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

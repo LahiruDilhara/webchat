@@ -1,6 +1,6 @@
 package me.lahirudilhara.webchat.repositories;
 
-import me.lahirudilhara.webchat.entities.UserRoomId;
+import me.lahirudilhara.webchat.models.UserRoomId;
 import me.lahirudilhara.webchat.models.UserRoomStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

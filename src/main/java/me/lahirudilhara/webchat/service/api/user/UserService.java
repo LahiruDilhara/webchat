@@ -1,24 +1,18 @@
 package me.lahirudilhara.webchat.service.api.user;
 
 import lombok.extern.slf4j.Slf4j;
-import me.lahirudilhara.webchat.common.exceptions.UserNotFoundException;
 import me.lahirudilhara.webchat.entities.room.RoomDetailsEntity;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
-import me.lahirudilhara.webchat.entities.user.BaseUserEntity;
 import me.lahirudilhara.webchat.entities.user.UserEntity;
-import me.lahirudilhara.webchat.entityModelMappers.RoomMapper;
 import me.lahirudilhara.webchat.entityModelMappers.UserMapper;
 import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.repositories.UserRepository;
 import me.lahirudilhara.webchat.service.api.room.RoomDetailsEntityBuilder;
-import me.lahirudilhara.webchat.service.api.room.RoomMetricsProviderService;
 import me.lahirudilhara.webchat.service.api.room.RoomQueryService;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
