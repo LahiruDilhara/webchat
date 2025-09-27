@@ -12,7 +12,7 @@ import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.models.message.TextMessage;
 import me.lahirudilhara.webchat.service.MessageService;
-import me.lahirudilhara.webchat.service.api.RoomService;
+import me.lahirudilhara.webchat.service.api.room.RoomService;
 import me.lahirudilhara.webchat.service.api.UserService;
 import me.lahirudilhara.webchat.websocket.entities.BroadcastData;
 import org.slf4j.Logger;

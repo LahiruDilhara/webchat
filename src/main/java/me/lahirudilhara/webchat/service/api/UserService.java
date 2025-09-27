@@ -9,23 +9,19 @@ import me.lahirudilhara.webchat.models.UserRoomStatus;
 import me.lahirudilhara.webchat.entities.room.UserRoomStatEntity;
 import me.lahirudilhara.webchat.entityModelMappers.RoomMapper;
 import me.lahirudilhara.webchat.entityModelMappers.UserMapper;
-import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.repositories.MessageRepository;
 import me.lahirudilhara.webchat.repositories.UserRepository;
 import me.lahirudilhara.webchat.repositories.UserRoomStatusRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import me.lahirudilhara.webchat.service.api.room.RoomService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service

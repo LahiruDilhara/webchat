@@ -10,7 +10,8 @@ import me.lahirudilhara.webchat.dtoEntityMappers.api.UserMapper;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
 import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.entities.message.MessageEntity;
-import me.lahirudilhara.webchat.service.api.RoomService;
+import me.lahirudilhara.webchat.service.api.room.RoomMembershipService;
+import me.lahirudilhara.webchat.service.api.room.RoomService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,12 +29,14 @@ public class RoomController {
     private final RoomService roomService;
     private final MessageMapper messageMapper;
     private final UserMapper userMapper;
+    private final RoomMembershipService roomMembershipService;
 
-    public RoomController(RoomMapper roomMapper, RoomService roomService,MessageMapper messageMapper, UserMapper userMapper) {
+    public RoomController(RoomMapper roomMapper, RoomService roomService, MessageMapper messageMapper, UserMapper userMapper, RoomMembershipService roomMembershipService) {
         this.roomMapper = roomMapper;
         this.roomService = roomService;
         this.messageMapper = messageMapper;
         this.userMapper = userMapper;
+        this.roomMembershipService = roomMembershipService;
     }
 
     @PostMapping("/multiUser")
@@ -54,7 +57,7 @@ public class RoomController {
 
     @PostMapping("/{roomId}/join")
     public ResponseEntity joinToRoom(@PathVariable int roomId, Principal principal){
-        roomService.joinToRoom(principal.getName(),roomId);
+        roomMembershipService.joinToRoom(principal.getName(),roomId);
         return ResponseEntity.noContent().build();
     }
 
@@ -72,13 +75,13 @@ public class RoomController {
 
     @PostMapping("/{roomId}/add/{username}")
     public ResponseEntity addUserToRoom(@PathVariable int roomId,@PathVariable String username, Principal principal){
-        roomService.addUserToRoom(username,roomId,principal.getName());
+        roomMembershipService.addUserToRoom(username,roomId,principal.getName());
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{roomId}/remove/{username}")
     public ResponseEntity removeUserFromRoom(@PathVariable int roomId, @PathVariable String username, Principal principal){
-        roomService.removeUserFromRoom(username,roomId,principal.getName());
+        roomMembershipService.removeUserFromRoom(username,roomId,principal.getName());
         return ResponseEntity.noContent().build();
     }
 
@@ -107,7 +110,7 @@ public class RoomController {
 
     @PostMapping("/{roomId}/leave")
     public ResponseEntity leaveRoom(@PathVariable int roomId, Principal principal){
-        roomService.leaveFromRoom(roomId,principal.getName());
+        roomMembershipService.leaveFromRoom(roomId,principal.getName());
         return ResponseEntity.noContent().build();
     }
 }

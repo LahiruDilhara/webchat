@@ -9,7 +9,7 @@ import me.lahirudilhara.webchat.entityModelMappers.MessageMapper;
 import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.models.message.TextMessage;
 import me.lahirudilhara.webchat.repositories.MessageRepository;
-import me.lahirudilhara.webchat.service.api.RoomService;
+import me.lahirudilhara.webchat.service.api.room.RoomService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
