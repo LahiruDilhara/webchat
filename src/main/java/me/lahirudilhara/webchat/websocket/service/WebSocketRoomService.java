@@ -12,9 +12,10 @@ import me.lahirudilhara.webchat.entities.message.MessageEntity;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.models.message.TextMessage;
+import me.lahirudilhara.webchat.service.api.user.UserQueryService;
 import me.lahirudilhara.webchat.service.message.MessageService;
 import me.lahirudilhara.webchat.service.api.room.RoomManagementService;
-import me.lahirudilhara.webchat.service.api.UserService;
+import me.lahirudilhara.webchat.service.api.user.UserService;
 import me.lahirudilhara.webchat.service.api.room.RoomQueryService;
 import me.lahirudilhara.webchat.websocket.entities.BroadcastData;
 import org.slf4j.Logger;
@@ -27,19 +28,17 @@ import java.util.List;
 @Service
 public class WebSocketRoomService {
     private static final Logger log = LoggerFactory.getLogger(WebSocketRoomService.class);
-    private final RoomManagementService roomManagementService;
     private final MessageService messageService;
-    private final UserService userService;
     private final RoomQueryService roomQueryService;
+    private final UserQueryService userQueryService;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public WebSocketRoomService(RoomManagementService roomManagementService, MessageService messageService, UserService userService, RoomQueryService roomQueryService) {
-        this.roomManagementService = roomManagementService;
+    public WebSocketRoomService( MessageService messageService,  RoomQueryService roomQueryService, UserQueryService userQueryService) {
         this.messageService = messageService;
-        this.userService = userService;
         this.roomQueryService = roomQueryService;
+        this.userQueryService = userQueryService;
     }
 
     private String canUserSendMessageToRoom(List<UserEntity> roomMembers, String senderUsername){
@@ -61,7 +60,7 @@ public class WebSocketRoomService {
 
     private Either<Failure, BaseUserEntity> getUserByUsername(String username){
         try{
-            return Either.right(userService.getUserByUsername(username));
+            return Either.right(userQueryService.getUserByUsername(username));
         } catch (UserNotFoundException e) {
             return Either.left(new Failure("The user not found"));
         }

@@ -3,7 +3,7 @@ package me.lahirudilhara.webchat.controller;
 import me.lahirudilhara.webchat.dto.api.room.RoomResponseDTO;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.RoomMapper;
 import me.lahirudilhara.webchat.entities.room.RoomDetailsEntity;
-import me.lahirudilhara.webchat.service.api.UserService;
+import me.lahirudilhara.webchat.service.api.user.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

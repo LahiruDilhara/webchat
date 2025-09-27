@@ -21,20 +21,14 @@ import java.util.List;
 @Service
 public class RoomQueryService {
     private final RoomRepository roomRepository;
-    private final UserRepository userRepository;
     private final RoomQueryService self;
-    private final MessageRepository messageRepository;
-    private final MessageMapper messageMapper;
     private final RoomMapper roomMapper;
     private final UserMapper  userMapper;
     private final RoomAccessValidator roomAccessValidator;
 
-    public RoomQueryService(RoomRepository roomRepository, UserRepository userRepository, @Lazy RoomQueryService roomQueryService, MessageRepository messageRepository, MessageMapper messageMapper, RoomMapper roomMapper, UserMapper userMapper, RoomAccessValidator roomAccessValidator) {
+    public RoomQueryService(RoomRepository roomRepository, @Lazy RoomQueryService roomQueryService, RoomMapper roomMapper, UserMapper userMapper, RoomAccessValidator roomAccessValidator) {
         this.roomRepository = roomRepository;
-        this.userRepository = userRepository;
         this.self = roomQueryService;
-        this.messageRepository = messageRepository;
-        this.messageMapper = messageMapper;
         this.roomMapper = roomMapper;
         this.userMapper = userMapper;
         this.roomAccessValidator = roomAccessValidator;

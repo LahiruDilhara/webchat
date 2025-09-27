@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.service.api;
+package me.lahirudilhara.webchat.service.api.user;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
