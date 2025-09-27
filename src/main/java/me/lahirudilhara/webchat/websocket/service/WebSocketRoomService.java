@@ -6,7 +6,8 @@ import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.common.exceptions.UserNotFoundException;
 import me.lahirudilhara.webchat.common.types.Either;
 import me.lahirudilhara.webchat.common.types.Failure;
-import me.lahirudilhara.webchat.entities.UserEntity;
+import me.lahirudilhara.webchat.entities.user.BaseUserEntity;
+import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.entities.message.MessageEntity;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.User;
@@ -41,8 +42,8 @@ public class WebSocketRoomService {
         this.roomQueryService = roomQueryService;
     }
 
-    private String canUserSendMessageToRoom(List<UserEntity> roomMemebers, String senderUsername){
-        if(roomMemebers.stream().noneMatch(u->u.getUsername().equals(senderUsername))) return "User is not a member of the room";
+    private String canUserSendMessageToRoom(List<UserEntity> roomMembers, String senderUsername){
+        if(roomMembers.stream().noneMatch(u->u.getUsername().equals(senderUsername))) return "User is not a member of the room";
         return null;
     }
 
@@ -58,7 +59,7 @@ public class WebSocketRoomService {
         }
     }
 
-    private Either<Failure,UserEntity> getUserByUsername(String username){
+    private Either<Failure, BaseUserEntity> getUserByUsername(String username){
         try{
             return Either.right(userService.getUserByUsername(username));
         } catch (UserNotFoundException e) {
@@ -76,7 +77,7 @@ public class WebSocketRoomService {
 
         var userOrError = getUserByUsername(senderUsername);
         if(userOrError.isLeft()) return Either.left(userOrError.getLeft());
-        UserEntity user = userOrError.getRight();
+        BaseUserEntity user = userOrError.getRight();
 
         // populate the message data
         Instant createdTime = Instant.now();

@@ -1,9 +1,10 @@
 package me.lahirudilhara.webchat.entityModelMappers;
 
 import me.lahirudilhara.webchat.entities.UserStatEntity;
+import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.models.UserRoomStatus;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
-import me.lahirudilhara.webchat.entities.room.UserRoomStatEntity;
+import me.lahirudilhara.webchat.entities.room.RoomDetailsEntity;
 import me.lahirudilhara.webchat.models.Room;
 import org.mapstruct.*;
 
@@ -24,6 +25,5 @@ public interface RoomMapper {
     void mapRoomEntityToRoom(RoomEntity roomEntity,@MappingTarget Room room);
 
     @Mapping(target = "createdBy",source = "roomEntity.createdBy")
-    @Mapping(target = "lastAccessedAt", source = "userRoomStatus.lastSeenAt")
-    UserRoomStatEntity userRoomStatToUserRoomStatEntity(RoomEntity roomEntity, UserRoomStatus userRoomStatus, Integer unreadMessagesCount, Integer memberCount, List<UserStatEntity> memberStats);
+    RoomDetailsEntity userRoomToUserRoomDetailsEntity(RoomEntity roomEntity, Integer unreadMessagesCount, List<UserEntity> roomMembers);
 }

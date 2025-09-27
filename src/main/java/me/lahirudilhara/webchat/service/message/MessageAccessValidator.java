@@ -2,7 +2,7 @@ package me.lahirudilhara.webchat.service.message;
 
 import me.lahirudilhara.webchat.common.exceptions.MessageNotFoundException;
 import me.lahirudilhara.webchat.common.exceptions.ValidationException;
-import me.lahirudilhara.webchat.entities.UserEntity;
+import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.models.message.TextMessage;
 import me.lahirudilhara.webchat.repositories.MessageRepository;

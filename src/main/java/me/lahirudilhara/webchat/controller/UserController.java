@@ -2,7 +2,7 @@ package me.lahirudilhara.webchat.controller;
 
 import me.lahirudilhara.webchat.dto.api.room.RoomResponseDTO;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.RoomMapper;
-import me.lahirudilhara.webchat.entities.room.UserRoomStatEntity;
+import me.lahirudilhara.webchat.entities.room.RoomDetailsEntity;
 import me.lahirudilhara.webchat.service.api.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +25,7 @@ public class UserController {
 
     @GetMapping("/me/rooms")
     public List<RoomResponseDTO> getUserJoinedRooms(Principal principal) {
-        List<UserRoomStatEntity> userRoomStatEntities = userService.getUserRoomStats(principal.getName());
+        List<RoomDetailsEntity> userRoomStatEntities = userService.getUserJoinedRooms(principal.getName());
         return userRoomStatEntities.stream().map(roomMapper::roomEntityToRoomResponseDTO).toList();
     }
 }

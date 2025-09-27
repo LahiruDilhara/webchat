@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import me.lahirudilhara.webchat.entities.UserStatEntity;
+import me.lahirudilhara.webchat.entities.user.UserEntity;
 
 import java.time.Instant;
 import java.util.List;
@@ -13,9 +14,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRoomStatEntity extends RoomEntity {
+public class RoomDetailsEntity extends RoomEntity {
     private Integer unreadMessagesCount;
-    private Instant lastAccessedAt;
-    private Integer memberCount;
-    private List<UserStatEntity> memberStats;
+    private List<UserEntity> roomMembers;
 }

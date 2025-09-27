@@ -2,21 +2,18 @@ package me.lahirudilhara.webchat.service.api.room;
 
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.common.types.CachableObject;
-import me.lahirudilhara.webchat.entities.UserEntity;
-import me.lahirudilhara.webchat.entities.message.MessageEntity;
+import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
 import me.lahirudilhara.webchat.entityModelMappers.MessageMapper;
 import me.lahirudilhara.webchat.entityModelMappers.RoomMapper;
 import me.lahirudilhara.webchat.entityModelMappers.UserMapper;
 import me.lahirudilhara.webchat.models.Room;
-import me.lahirudilhara.webchat.models.message.Message;
+import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.repositories.MessageRepository;
 import me.lahirudilhara.webchat.repositories.RoomRepository;
 import me.lahirudilhara.webchat.repositories.UserRepository;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -70,5 +67,10 @@ public class RoomQueryService {
     public CachableObject<List<RoomEntity>> getUserJoinedRooms(String username){
         List<Room> rooms = roomRepository.findUserJoinedRooms(username);
         return new CachableObject<>(rooms.stream().map(roomMapper::roomToRoomEntity).toList());
+    }
+
+    public List<UserEntity> getRoomMembers(int roomId){
+        Room room = roomRepository.findByIdWithUsers(roomId).orElseThrow(RoomNotFoundException::new);
+        return room.getUsers().stream().map(userMapper::userToUserEntity).toList();
     }
 }

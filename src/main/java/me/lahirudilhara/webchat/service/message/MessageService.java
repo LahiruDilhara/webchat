@@ -2,8 +2,6 @@ package me.lahirudilhara.webchat.service.message;
 
 import me.lahirudilhara.webchat.common.exceptions.MessageNotFoundException;
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
-import me.lahirudilhara.webchat.common.exceptions.ValidationException;
-import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.entities.message.MessageEntity;
 import me.lahirudilhara.webchat.entities.message.TextMessageEntity;
 import me.lahirudilhara.webchat.entityModelMappers.MessageMapper;

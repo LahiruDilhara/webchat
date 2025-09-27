@@ -4,28 +4,20 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.common.exceptions.ValidationException;
-import me.lahirudilhara.webchat.common.types.CachableObject;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
-import me.lahirudilhara.webchat.entities.UserEntity;
-import me.lahirudilhara.webchat.entities.message.MessageEntity;
+import me.lahirudilhara.webchat.entities.user.BaseUserEntity;
+import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.entityModelMappers.MessageMapper;
 import me.lahirudilhara.webchat.entityModelMappers.RoomMapper;
-import me.lahirudilhara.webchat.entityModelMappers.UserMapper;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.User;
-import me.lahirudilhara.webchat.models.message.Message;
-import me.lahirudilhara.webchat.repositories.MessageRepository;
 import me.lahirudilhara.webchat.repositories.RoomRepository;
 import me.lahirudilhara.webchat.service.api.UserRoomStatusService;
 import me.lahirudilhara.webchat.service.api.UserService;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -58,7 +50,7 @@ public class RoomManagementService {
             @CacheEvict(value = RoomCacheNames.USER_JOINED_ROOMS_BY_USERNAME,key = "#roomEntity.createdBy"),
     })
     public RoomEntity createMultiUserRoom(RoomEntity roomEntity){
-        UserEntity userEntity = userService.getUserByUsername(roomEntity.getCreatedBy());
+        BaseUserEntity userEntity = userService.getUserByUsername(roomEntity.getCreatedBy());
         User userRef = entityManager.getReference(User.class, userEntity.getId());
 
         Room room = roomMapper.roomEntityToRoom(roomEntity);
@@ -85,8 +77,8 @@ public class RoomManagementService {
             @CacheEvict(value = RoomCacheNames.USER_JOINED_ROOMS_BY_USERNAME,key = "#nextUsername"),
     })
     public RoomEntity createDualUserRoom(RoomEntity roomEntity, String nextUsername){
-        UserEntity owner = userService.getUserByUsername(roomEntity.getCreatedBy());
-        UserEntity user = userService.getUserByUsername(nextUsername);
+        BaseUserEntity owner = userService.getUserByUsername(roomEntity.getCreatedBy());
+        BaseUserEntity user = userService.getUserByUsername(nextUsername);
 
         User ownerRef = entityManager.getReference(User.class, owner.getId());
         User userRef = entityManager.getReference(User.class, user.getId());
@@ -118,7 +110,7 @@ public class RoomManagementService {
             @CacheEvict(value = RoomCacheNames.ROOM_USERS_BY_ROOM_ID,key = "#roomId")
     })
     public void deleteRoom(String username, int roomId){
-        UserEntity userEntity = userService.getUserByUsername(username);
+        BaseUserEntity userEntity = userService.getUserByUsername(username);
         Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
         if(!room.getCreatedBy().getId().equals(userEntity.getId())){
             throw new ValidationException("Only the owner can delete the room");
@@ -130,7 +122,7 @@ public class RoomManagementService {
 
     @CacheEvict(value = RoomCacheNames.ROOM_BY_ROOM_ID,key = "#roomEntity.id")
     public RoomEntity updateMultiUserRoom(RoomEntity roomEntity){
-        UserEntity user = userService.getUserByUsername(roomEntity.getCreatedBy());
+        BaseUserEntity user = userService.getUserByUsername(roomEntity.getCreatedBy());
 
         Room room = roomRepository.findById(roomEntity.getId()).orElseThrow(RoomNotFoundException::new);
         if(!room.getCreatedBy().getId().equals(user.getId())){

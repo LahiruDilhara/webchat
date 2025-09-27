@@ -7,7 +7,7 @@ import me.lahirudilhara.webchat.dto.api.jwt.JwtResponseDTO;
 import me.lahirudilhara.webchat.dto.api.user.UserResponseDTO;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.AuthMapper;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.UserMapper;
-import me.lahirudilhara.webchat.entities.UserEntity;
+import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.service.api.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

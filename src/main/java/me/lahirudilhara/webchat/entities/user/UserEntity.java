@@ -1,7 +1,6 @@
-package me.lahirudilhara.webchat.entities;
+package me.lahirudilhara.webchat.entities.user;
 
 import lombok.*;
-import me.lahirudilhara.webchat.entities.user.BaseUserEntity;
 
 import java.time.Instant;
 

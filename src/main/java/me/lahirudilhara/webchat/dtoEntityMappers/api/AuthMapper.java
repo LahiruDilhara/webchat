@@ -2,8 +2,7 @@ package me.lahirudilhara.webchat.dtoEntityMappers.api;
 
 import me.lahirudilhara.webchat.dto.api.auth.LoginDTO;
 import me.lahirudilhara.webchat.dto.api.auth.SignUpDTO;
-import me.lahirudilhara.webchat.entities.UserEntity;
-import me.lahirudilhara.webchat.models.User;
+import me.lahirudilhara.webchat.entities.user.UserEntity;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

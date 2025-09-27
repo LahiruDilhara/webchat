@@ -5,7 +5,8 @@ import jakarta.persistence.PersistenceContext;
 import me.lahirudilhara.webchat.common.exceptions.ConflictException;
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.common.exceptions.ValidationException;
-import me.lahirudilhara.webchat.entities.UserEntity;
+import me.lahirudilhara.webchat.entities.user.BaseUserEntity;
+import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.repositories.RoomRepository;
@@ -40,7 +41,7 @@ public class RoomMembershipService {
             @CacheEvict(value = "userJoinedRoomsByUsername",key = "#username"),
     })
     public void joinToRoom(String username, int roomId){
-        UserEntity userEntity = userService.getUserByUsername(username);
+        BaseUserEntity userEntity = userService.getUserByUsername(username);
         Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
         if(!room.getCreatedBy().getId().equals(userEntity.getId())){
             if(room.getClosed()){
@@ -69,7 +70,7 @@ public class RoomMembershipService {
             @CacheEvict(value = "userJoinedRoomsByUsername",key = "#addingUsername"),
     })
     public void addUserToRoom(String addingUsername, int roomId, String ownerUsername){
-        UserEntity owner = userService.getUserByUsername(ownerUsername);
+        BaseUserEntity owner = userService.getUserByUsername(ownerUsername);
         Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
         if(!room.getCreatedBy().getId().equals(owner.getId())){
             throw new ValidationException("Only the owner can add user to the room");
@@ -77,7 +78,7 @@ public class RoomMembershipService {
         if(room.getClosed()){
             throw new ValidationException("The room is closed");
         }
-        UserEntity user = userService.getUserByUsername(addingUsername);
+        BaseUserEntity user = userService.getUserByUsername(addingUsername);
         List<User> members = room.getUsers();
         if(members.contains(user)){
             throw new ConflictException("The user already exists in the room");
@@ -99,7 +100,7 @@ public class RoomMembershipService {
             @CacheEvict(value = "userJoinedRoomsByUsername",key = "#removingUsername"),
     })
     public void removeUserFromRoom(String removingUsername, int roomId,  String ownerUsername){
-        UserEntity owner = userService.getUserByUsername(ownerUsername);
+        BaseUserEntity owner = userService.getUserByUsername(ownerUsername);
         Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
 
         if(!room.getMultiUser()){
@@ -109,7 +110,7 @@ public class RoomMembershipService {
         if(!room.getCreatedBy().getId().equals(owner.getId())){
             throw new ValidationException("Only the owner can remove user from the room");
         }
-        UserEntity user = userService.getUserByUsername(removingUsername);
+        BaseUserEntity user = userService.getUserByUsername(removingUsername);
         if(room.getUsers().stream().noneMatch(u->u.getId().equals(user.getId()))){
             throw new ValidationException("The user is not a member of the room");
         }
@@ -130,7 +131,7 @@ public class RoomMembershipService {
     })
     public void leaveFromRoom(int roomId,String username){
         Room room =  roomRepository.findByIdWithUsers(roomId).orElseThrow(RoomNotFoundException::new);
-        UserEntity user = userService.getUserByUsername(username);
+        BaseUserEntity user = userService.getUserByUsername(username);
 
         if(room.getUsers().stream().noneMatch(u->u.getId().equals(user.getId()))){
             throw new ValidationException("User is not a member of the room");

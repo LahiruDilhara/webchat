@@ -1,6 +1,6 @@
 package me.lahirudilhara.webchat.service.api;
 
-import me.lahirudilhara.webchat.entities.UserEntity;
+import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.jwt.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;

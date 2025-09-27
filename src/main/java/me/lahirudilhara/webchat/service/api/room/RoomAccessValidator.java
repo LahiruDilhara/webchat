@@ -1,6 +1,6 @@
 package me.lahirudilhara.webchat.service.api.room;
 
-import me.lahirudilhara.webchat.entities.UserEntity;
+import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
