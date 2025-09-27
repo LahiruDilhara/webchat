@@ -1,6 +1,7 @@
 package me.lahirudilhara.webchat.service;
 
 import me.lahirudilhara.webchat.common.exceptions.MessageNotFoundException;
+import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.common.exceptions.ValidationException;
 import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.entities.message.MessageEntity;
@@ -9,10 +10,13 @@ import me.lahirudilhara.webchat.entityModelMappers.MessageMapper;
 import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.models.message.TextMessage;
 import me.lahirudilhara.webchat.repositories.MessageRepository;
+import me.lahirudilhara.webchat.service.api.room.RoomAccessValidator;
 import me.lahirudilhara.webchat.service.api.room.RoomManagementService;
 import me.lahirudilhara.webchat.service.api.room.RoomQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -25,12 +29,14 @@ public class MessageService {
     private final MessageMapper messageMapper;
     private final RoomManagementService roomManagementService;
     private final RoomQueryService roomQueryService;
+    private final RoomAccessValidator roomAccessValidator;
 
-    public MessageService(MessageRepository messageRepository, MessageMapper messageMapper, RoomManagementService roomManagementService, RoomQueryService roomQueryService) {
+    public MessageService(MessageRepository messageRepository, MessageMapper messageMapper, RoomManagementService roomManagementService, RoomQueryService roomQueryService, RoomAccessValidator roomAccessValidator) {
         this.messageRepository = messageRepository;
         this.messageMapper = messageMapper;
         this.roomManagementService = roomManagementService;
         this.roomQueryService = roomQueryService;
+        this.roomAccessValidator = roomAccessValidator;
     }
 
     public MessageEntity addMessageAsync(Message message){
@@ -46,6 +52,14 @@ public class MessageService {
     public MessageEntity getMessageById(int id){
         Message message = messageRepository.findByIdWithSenderAndRoom(id).orElseThrow(MessageNotFoundException::new);
         return messageMapper.baseMessageToMessageEntity(message);
+    }
+
+    public List<MessageEntity> getMessagesByRoomId(int roomId, String accessUser, Pageable pageable){
+        if(roomAccessValidator.isNotUserAbleToAccessRoom(accessUser, roomId)) throw new RoomNotFoundException();
+        Page<Message> page = messageRepository.findByRoomIdOrderByCreatedAtDesc(roomId, pageable);
+
+        // Remove deleted messages and convert
+        return page.getContent().stream().filter(m->!m.getDeleted()).map(messageMapper::messageToMessageEntity).toList();
     }
 
 

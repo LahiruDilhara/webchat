@@ -30,8 +30,9 @@ public class RoomQueryService {
     private final MessageMapper messageMapper;
     private final RoomMapper roomMapper;
     private final UserMapper  userMapper;
+    private final RoomAccessValidator roomAccessValidator;
 
-    public RoomQueryService(RoomRepository roomRepository, UserRepository userRepository, @Lazy RoomQueryService roomQueryService, MessageRepository messageRepository, MessageMapper messageMapper, RoomMapper roomMapper, UserMapper userMapper) {
+    public RoomQueryService(RoomRepository roomRepository, UserRepository userRepository, @Lazy RoomQueryService roomQueryService, MessageRepository messageRepository, MessageMapper messageMapper, RoomMapper roomMapper, UserMapper userMapper, RoomAccessValidator roomAccessValidator) {
         this.roomRepository = roomRepository;
         this.userRepository = userRepository;
         this.self = roomQueryService;
@@ -39,19 +40,11 @@ public class RoomQueryService {
         this.messageMapper = messageMapper;
         this.roomMapper = roomMapper;
         this.userMapper = userMapper;
+        this.roomAccessValidator = roomAccessValidator;
     }
-
-    public List<MessageEntity> getRoomMessages(int roomId, String accessUser, Pageable pageable){
-        if(validateRoomDataAccess(accessUser, roomId)) throw new RoomNotFoundException();
-        Page<Message> page = messageRepository.findByRoomIdOrderByCreatedAtDesc(roomId, pageable);
-
-        // Remove deleted messages and convert
-        return page.getContent().stream().filter(m->!m.getDeleted()).map(messageMapper::messageToMessageEntity).toList();
-    }
-
 
     public List<UserEntity> getRoomUsers(int roomId, String username){
-        if(validateRoomDataAccess(username, roomId)) throw new RoomNotFoundException();
+        if(roomAccessValidator.isNotUserAbleToAccessRoom(username, roomId)) throw new RoomNotFoundException();
         return self.getRoomUsers(roomId).getData();
     }
 
@@ -77,14 +70,5 @@ public class RoomQueryService {
     public CachableObject<List<RoomEntity>> getUserJoinedRooms(String username){
         List<Room> rooms = roomRepository.findUserJoinedRooms(username);
         return new CachableObject<>(rooms.stream().map(roomMapper::roomToRoomEntity).toList());
-    }
-
-
-    private boolean validateRoomDataAccess(String currentAccessUser, int roomId){
-        RoomEntity roomEntity = self.getRoom(roomId);
-        if(roomEntity.getCreatedBy().equals(currentAccessUser)) return false;
-        List<UserEntity> roomMembers = self.getRoomUsers(roomId).getData();
-        if(roomMembers.stream().anyMatch(u->u.getUsername().equals(currentAccessUser))) return false;
-        return true;
     }
 }

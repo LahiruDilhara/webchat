@@ -10,6 +10,7 @@ import me.lahirudilhara.webchat.dtoEntityMappers.api.UserMapper;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
 import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.entities.message.MessageEntity;
+import me.lahirudilhara.webchat.service.MessageService;
 import me.lahirudilhara.webchat.service.api.room.RoomMembershipService;
 import me.lahirudilhara.webchat.service.api.room.RoomManagementService;
 import me.lahirudilhara.webchat.service.api.room.RoomQueryService;
@@ -32,14 +33,16 @@ public class RoomController {
     private final UserMapper userMapper;
     private final RoomMembershipService roomMembershipService;
     private final RoomQueryService roomQueryService;
+    private final MessageService messageService;
 
-    public RoomController(RoomMapper roomMapper, RoomManagementService roomManagementService, MessageMapper messageMapper, UserMapper userMapper, RoomMembershipService roomMembershipService, RoomQueryService roomQueryService) {
+    public RoomController(RoomMapper roomMapper, RoomManagementService roomManagementService, MessageMapper messageMapper, UserMapper userMapper, RoomMembershipService roomMembershipService, RoomQueryService roomQueryService, MessageService messageService) {
         this.roomMapper = roomMapper;
         this.roomManagementService = roomManagementService;
         this.messageMapper = messageMapper;
         this.userMapper = userMapper;
         this.roomMembershipService = roomMembershipService;
         this.roomQueryService = roomQueryService;
+        this.messageService = messageService;
     }
 
     @PostMapping("/multiUser")
@@ -101,7 +104,7 @@ public class RoomController {
     @GetMapping("/{roomId}/messages")
     public List<MessageResponseDTO> getMessagesOfRoom(@PathVariable int roomId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "createdAt") String sortBy, Principal principal){
         Pageable pageable = PageRequest.of(page,size, Sort.by(sortBy).descending());
-        List<MessageEntity> messages = roomQueryService.getRoomMessages(roomId,principal.getName(),pageable);
+        List<MessageEntity> messages = messageService.getMessagesByRoomId(roomId,principal.getName(),pageable);
         return messages.stream().map(messageMapper::messageEntityToMessageResponseDTO).toList();
     }
 
