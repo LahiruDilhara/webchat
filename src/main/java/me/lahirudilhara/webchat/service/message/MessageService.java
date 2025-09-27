@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.service;
+package me.lahirudilhara.webchat.service.message;
 
 import me.lahirudilhara.webchat.common.exceptions.MessageNotFoundException;
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
@@ -30,13 +30,15 @@ public class MessageService {
     private final RoomManagementService roomManagementService;
     private final RoomQueryService roomQueryService;
     private final RoomAccessValidator roomAccessValidator;
+    private final MessageAccessValidator messageAccessValidator;
 
-    public MessageService(MessageRepository messageRepository, MessageMapper messageMapper, RoomManagementService roomManagementService, RoomQueryService roomQueryService, RoomAccessValidator roomAccessValidator) {
+    public MessageService(MessageRepository messageRepository, MessageMapper messageMapper, RoomManagementService roomManagementService, RoomQueryService roomQueryService, RoomAccessValidator roomAccessValidator, MessageAccessValidator messageAccessValidator) {
         this.messageRepository = messageRepository;
         this.messageMapper = messageMapper;
         this.roomManagementService = roomManagementService;
         this.roomQueryService = roomQueryService;
         this.roomAccessValidator = roomAccessValidator;
+        this.messageAccessValidator = messageAccessValidator;
     }
 
     public MessageEntity addMessageAsync(Message message){
@@ -64,7 +66,7 @@ public class MessageService {
 
 
     public MessageEntity updateMessage(TextMessageEntity messageEntity, int messageId){
-        validateAlteration(messageEntity.getSenderUsername(),messageEntity.getRoomId(),messageId);
+        messageAccessValidator.validateAlteration(messageEntity.getSenderUsername(),messageEntity.getRoomId(),messageId);
         messageEntity.setEditedAt(Instant.now());
         TextMessage message = (TextMessage) messageRepository.findById(messageId).orElseThrow(MessageNotFoundException::new);
         messageMapper.updateTextMessageEntityToTextMessage(messageEntity,message);
@@ -73,19 +75,9 @@ public class MessageService {
     }
 
     public void deleteMessage(int messageId, int roomId, String ownerName){
-        validateAlteration(ownerName,roomId,messageId);
+        messageAccessValidator.validateAlteration(ownerName,roomId,messageId);
         Message message = messageRepository.findByIdWithSenderAndRoom(messageId).orElseThrow(MessageNotFoundException::new);
         message.setDeleted(true);
         messageRepository.save(message);
-    }
-
-    private void validateAlteration(String username, int roomId, int messageId){
-        Message message = messageRepository.findByIdWithSenderAndRoom(messageId).orElseThrow(MessageNotFoundException::new);
-        if(!(message instanceof TextMessage)) throw new ValidationException("Message type not support update");
-        if(message.getDeleted()) throw new ValidationException("Message not found");
-        if(!message.getSender().getUsername().equals(username)) throw new ValidationException("Message not found");
-        List<UserEntity> roomMembers = roomQueryService.getRoomUsers(roomId).getData();
-        if(roomMembers.stream().noneMatch(u->u.getUsername().equals(username))) throw new ValidationException("Room not found");
-        return;
     }
 }

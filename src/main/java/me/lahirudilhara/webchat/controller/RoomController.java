@@ -10,7 +10,7 @@ import me.lahirudilhara.webchat.dtoEntityMappers.api.UserMapper;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
 import me.lahirudilhara.webchat.entities.UserEntity;
 import me.lahirudilhara.webchat.entities.message.MessageEntity;
-import me.lahirudilhara.webchat.service.MessageService;
+import me.lahirudilhara.webchat.service.message.MessageService;
 import me.lahirudilhara.webchat.service.api.room.RoomMembershipService;
 import me.lahirudilhara.webchat.service.api.room.RoomManagementService;
 import me.lahirudilhara.webchat.service.api.room.RoomQueryService;

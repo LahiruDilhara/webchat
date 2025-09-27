@@ -11,7 +11,7 @@ import me.lahirudilhara.webchat.entities.message.MessageEntity;
 import me.lahirudilhara.webchat.models.Room;
 import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.models.message.TextMessage;
-import me.lahirudilhara.webchat.service.MessageService;
+import me.lahirudilhara.webchat.service.message.MessageService;
 import me.lahirudilhara.webchat.service.api.room.RoomManagementService;
 import me.lahirudilhara.webchat.service.api.UserService;
 import me.lahirudilhara.webchat.service.api.room.RoomQueryService;
