@@ -32,7 +32,7 @@ public class JwtService {
     }
 
     private SecretKey getSecretKey() {
-        byte[] keyBytes = jwtToken.getBytes();;
+        byte[] keyBytes = jwtToken.getBytes();
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

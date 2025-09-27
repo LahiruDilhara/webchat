@@ -1,15 +1,11 @@
 package me.lahirudilhara.webchat.service.api;
 
 import lombok.extern.slf4j.Slf4j;
-import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.common.exceptions.UserNotFoundException;
 import me.lahirudilhara.webchat.entities.room.RoomDetailsEntity;
-import me.lahirudilhara.webchat.entities.user.UserEntity;
-import me.lahirudilhara.webchat.entities.UserStatEntity;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
 import me.lahirudilhara.webchat.entities.user.BaseUserEntity;
-import me.lahirudilhara.webchat.models.Room;
-import me.lahirudilhara.webchat.models.UserRoomStatus;
+import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.entityModelMappers.RoomMapper;
 import me.lahirudilhara.webchat.entityModelMappers.UserMapper;
 import me.lahirudilhara.webchat.models.User;
@@ -43,7 +39,7 @@ public class UserService {
     private final RoomMetricsProviderService roomMetricsProviderService;
     private final RoomRepository roomRepository;
 
-    private UserService self;
+    private final UserService self;
     // created for caching, because when use cachable methods inside same class, that not use cache proxy, instead call directly
 
     public UserService(UserRepository userRepository, UserMapper userMapper, @Lazy RoomManagementService roomManagementService, @Lazy UserService self, UserRoomStatusRepository userRoomStatusRepository, MessageRepository messageRepository, RoomMapper roomMapper, PasswordEncoder passwordEncoder, RoomQueryService roomQueryService, RoomMetricsProviderService roomMetricsProviderService, RoomRepository roomRepository) {

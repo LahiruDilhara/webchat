@@ -10,7 +10,7 @@ import java.util.Collections;
 
 // Used only for security
 public class SecureUserDetails implements UserDetails {
-    private User user;
+    private final User user;
 
     public SecureUserDetails(User user) {
         this.user = user;

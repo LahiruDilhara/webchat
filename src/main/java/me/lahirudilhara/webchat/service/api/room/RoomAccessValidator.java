@@ -20,7 +20,6 @@ public class RoomAccessValidator {
         RoomEntity roomEntity = roomQueryService.getRoom(roomId);
         if(roomEntity.getCreatedBy().equals(currentAccessUser)) return false;
         List<UserEntity> roomMembers = roomQueryService.getRoomUsers(roomId).getData();
-        if (roomMembers.stream().anyMatch(u -> u.getUsername().equals(currentAccessUser))) return false;
-        return true;
+        return roomMembers.stream().noneMatch(u -> u.getUsername().equals(currentAccessUser));
     }
 }
