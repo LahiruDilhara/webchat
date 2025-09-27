@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,17 +30,17 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
     private final UserMapper userMapper;
     private final RoomService roomService;
     private final UserRoomStatusRepository userRoomStatusRepository;
     private final MessageRepository messageRepository;
     private final RoomMapper roomMapper;
+    private final PasswordEncoder passwordEncoder;
 
     private UserService self;
     // created for caching, because when use cachable methods inside same class, that not use cache proxy, instead call directly
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, @Lazy RoomService roomService, @Lazy UserService self, UserRoomStatusRepository userRoomStatusRepository, MessageRepository messageRepository, RoomMapper roomMapper) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, @Lazy RoomService roomService, @Lazy UserService self, UserRoomStatusRepository userRoomStatusRepository, MessageRepository messageRepository, RoomMapper roomMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.roomService = roomService;
@@ -47,10 +48,11 @@ public class UserService {
         this.userRoomStatusRepository = userRoomStatusRepository;
         this.messageRepository = messageRepository;
         this.roomMapper = roomMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserEntity addUser(UserEntity userEntity) {
-        userEntity.setPassword(bCryptPasswordEncoder.encode(userEntity.getPassword()));
+        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
         User user = userRepository.save(userMapper.userEntityToUser(userEntity));
         return userMapper.userToUserEntity(user);
     }
