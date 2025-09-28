@@ -31,4 +31,8 @@ public class UserRoomStatusService {
         userRoomStatus.setLastSeenAt(Instant.now());
         return userRoomStatusRepository.save(userRoomStatus);
     }
+
+    public UserRoomStatus getUserRoomStatus(Integer userId, Integer roomId) {
+        return userRoomStatusRepository.getReferenceById(new UserRoomId(userId, roomId));
+    }
 }
