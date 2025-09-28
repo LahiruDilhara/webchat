@@ -28,7 +28,6 @@ import java.util.List;
 public class RoomManagementService {
     private final RoomRepository roomRepository;
     private final RoomMapper roomMapper;
-    private final UserService userService;
     private final CacheManager cacheManager;
     private final UserRoomStatusService userRoomStatusService;
     private final RoomQueryService roomQueryService;
@@ -37,10 +36,9 @@ public class RoomManagementService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public RoomManagementService(RoomRepository roomRepository, RoomMapper roomMapper, UserService userService, CacheManager cacheManager, MessageMapper messageMapper, UserRoomStatusService userRoomStatusService, RoomQueryService roomQueryService, UserQueryService userQueryService) {
+    public RoomManagementService(RoomRepository roomRepository, RoomMapper roomMapper, CacheManager cacheManager, UserRoomStatusService userRoomStatusService, RoomQueryService roomQueryService, UserQueryService userQueryService) {
         this.roomRepository = roomRepository;
         this.roomMapper = roomMapper;
-        this.userService = userService;
         this.cacheManager = cacheManager;
         this.userRoomStatusService = userRoomStatusService;
         this.roomQueryService = roomQueryService;
@@ -62,10 +60,6 @@ public class RoomManagementService {
         members.add(userRef);
         room.setUsers(members);
         room.setMultiUser(true);
-        String error = validateRoomData(room);
-        if (error != null) {
-            throw new ValidationException(error);
-        }
         Room createdRoom = roomRepository.save(room);
 
         userRoomStatusService.addUserRoomStatus(userRef.getId(),  createdRoom.getId());
@@ -92,10 +86,6 @@ public class RoomManagementService {
         room.setMultiUser(false);
         room.setUsers(List.of(ownerRef,userRef));
         room.setClosed(true);
-        String error = validateRoomData(room);
-        if (error != null) {
-            throw new ValidationException(error);
-        }
         Room createdRoom = roomRepository.save(room);
 
         userRoomStatusService.addUserRoomStatus(owner.getId(),  createdRoom.getId());
@@ -131,23 +121,7 @@ public class RoomManagementService {
             throw new ValidationException("Only the owner can update the room");
         }
         roomMapper.mapRoomEntityToRoom(roomEntity,room);
-        String error = validateRoomData(room);
-        if(error != null){
-            throw new ValidationException(error);
-        }
         return roomMapper.roomToRoomEntity(roomRepository.save(room));
-    }
-
-
-    private String validateRoomData(Room room){
-        int usersCount = room.getUsers().size();
-        if(!room.getMultiUser() && usersCount > 2){
-            return "Cannot create non multi user room with more than two users";
-        }
-        if(!room.getMultiUser() && !room.getIsPrivate()){
-            return "Cannot make non multi user room public";
-        }
-        return null;
     }
 
     private void evictRemovedRoomUserCache(List<UserEntity> users){

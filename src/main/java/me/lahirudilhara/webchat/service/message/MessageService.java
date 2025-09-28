@@ -8,7 +8,7 @@ import me.lahirudilhara.webchat.entityModelMappers.MessageMapper;
 import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.models.message.TextMessage;
 import me.lahirudilhara.webchat.repositories.MessageRepository;
-import me.lahirudilhara.webchat.service.api.room.RoomAccessValidator;
+import me.lahirudilhara.webchat.service.api.room.RoomValidator;
 import me.lahirudilhara.webchat.service.api.room.RoomManagementService;
 import me.lahirudilhara.webchat.service.api.room.RoomQueryService;
 import org.slf4j.Logger;
@@ -27,15 +27,15 @@ public class MessageService {
     private final MessageMapper messageMapper;
     private final RoomManagementService roomManagementService;
     private final RoomQueryService roomQueryService;
-    private final RoomAccessValidator roomAccessValidator;
+    private final RoomValidator roomValidator;
     private final MessageAccessValidator messageAccessValidator;
 
-    public MessageService(MessageRepository messageRepository, MessageMapper messageMapper, RoomManagementService roomManagementService, RoomQueryService roomQueryService, RoomAccessValidator roomAccessValidator, MessageAccessValidator messageAccessValidator) {
+    public MessageService(MessageRepository messageRepository, MessageMapper messageMapper, RoomManagementService roomManagementService, RoomQueryService roomQueryService, RoomValidator roomValidator, MessageAccessValidator messageAccessValidator) {
         this.messageRepository = messageRepository;
         this.messageMapper = messageMapper;
         this.roomManagementService = roomManagementService;
         this.roomQueryService = roomQueryService;
-        this.roomAccessValidator = roomAccessValidator;
+        this.roomValidator = roomValidator;
         this.messageAccessValidator = messageAccessValidator;
     }
 
@@ -55,7 +55,7 @@ public class MessageService {
     }
 
     public List<MessageEntity> getMessagesByRoomId(int roomId, String accessUser, Pageable pageable){
-        if(roomAccessValidator.isNotUserAbleToAccessRoom(accessUser, roomId)) throw new RoomNotFoundException();
+        if(roomValidator.isNotUserAbleToAccessRoom(accessUser, roomId)) throw new RoomNotFoundException();
         Page<Message> page = messageRepository.findByRoomIdOrderByCreatedAtDesc(roomId, pageable);
 
         // Remove deleted messages and convert

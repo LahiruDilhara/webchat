@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class RoomAccessValidator {
+public class RoomValidator {
 
     private final RoomQueryService roomQueryService;
 
-    public RoomAccessValidator(@Lazy RoomQueryService roomQueryService) {
+    public RoomValidator(@Lazy RoomQueryService roomQueryService) {
         this.roomQueryService = roomQueryService;
     }
 

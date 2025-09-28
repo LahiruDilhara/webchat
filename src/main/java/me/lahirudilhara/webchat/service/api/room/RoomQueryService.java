@@ -4,14 +4,10 @@ import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.common.types.CachableObject;
 import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
-import me.lahirudilhara.webchat.entityModelMappers.MessageMapper;
 import me.lahirudilhara.webchat.entityModelMappers.RoomMapper;
 import me.lahirudilhara.webchat.entityModelMappers.UserMapper;
 import me.lahirudilhara.webchat.models.Room;
-import me.lahirudilhara.webchat.models.User;
-import me.lahirudilhara.webchat.repositories.MessageRepository;
 import me.lahirudilhara.webchat.repositories.RoomRepository;
-import me.lahirudilhara.webchat.repositories.UserRepository;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -24,18 +20,18 @@ public class RoomQueryService {
     private final RoomQueryService self;
     private final RoomMapper roomMapper;
     private final UserMapper  userMapper;
-    private final RoomAccessValidator roomAccessValidator;
+    private final RoomValidator roomValidator;
 
-    public RoomQueryService(RoomRepository roomRepository, @Lazy RoomQueryService roomQueryService, RoomMapper roomMapper, UserMapper userMapper, RoomAccessValidator roomAccessValidator) {
+    public RoomQueryService(RoomRepository roomRepository, @Lazy RoomQueryService roomQueryService, RoomMapper roomMapper, UserMapper userMapper, RoomValidator roomValidator) {
         this.roomRepository = roomRepository;
         this.self = roomQueryService;
         this.roomMapper = roomMapper;
         this.userMapper = userMapper;
-        this.roomAccessValidator = roomAccessValidator;
+        this.roomValidator = roomValidator;
     }
 
     public List<UserEntity> getValidatedRoomUsers(int roomId, String username){
-        if(roomAccessValidator.isNotUserAbleToAccessRoom(username, roomId)) throw new RoomNotFoundException();
+        if(roomValidator.isNotUserAbleToAccessRoom(username, roomId)) throw new RoomNotFoundException();
         return self.getRoomUsers(roomId).getData();
     }
 
