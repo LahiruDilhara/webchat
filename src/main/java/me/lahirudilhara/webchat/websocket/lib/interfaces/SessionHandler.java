@@ -2,7 +2,6 @@ package me.lahirudilhara.webchat.websocket.lib.interfaces;
 
 import org.springframework.web.socket.WebSocketSession;
 
-import java.net.http.WebSocket;
 import java.util.List;
 
 public interface SessionHandler {

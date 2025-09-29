@@ -2,7 +2,7 @@ package me.lahirudilhara.webchat.websocket.lib.transport;
 
 import lombok.extern.slf4j.Slf4j;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.ConnectionLostHandler;
-import me.lahirudilhara.webchat.websocket.lib.interfaces.MessageHandler;
+import me.lahirudilhara.webchat.websocket.lib.interfaces.IncomingMessageHandler;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.SessionErrorHandler;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.SessionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +14,13 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 @Component
 public class WebSocketHandler extends TextWebSocketHandler {
     private final SessionHandler sessionHandler;
-    private final MessageHandler messageHandler;
+    private final IncomingMessageHandler incomingMessageHandler;
     private final SessionErrorHandler sessionErrorHandler;
     private final ConnectionLostHandler  connectionLostHandler;
 
-    public WebSocketHandler(@Autowired(required = false) SessionHandler sessionHandler, @Autowired(required = false) MessageHandler messageHandler, @Autowired(required = false) SessionErrorHandler sessionErrorHandler, @Autowired(required = false) ConnectionLostHandler connectionLostHandler) {
+    public WebSocketHandler(@Autowired(required = false) SessionHandler sessionHandler, @Autowired(required = false) IncomingMessageHandler incomingMessageHandler, @Autowired(required = false) SessionErrorHandler sessionErrorHandler, @Autowired(required = false) ConnectionLostHandler connectionLostHandler) {
         this.sessionHandler = sessionHandler;
-        this.messageHandler = messageHandler;
+        this.incomingMessageHandler = incomingMessageHandler;
         this.sessionErrorHandler = sessionErrorHandler;
         this.connectionLostHandler = connectionLostHandler;
     }
@@ -41,12 +41,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message){
-        if (sessionHandler == null || messageHandler == null) return;
+        if (sessionHandler == null || incomingMessageHandler == null) return;
         if (session.getPrincipal() == null || session.getPrincipal().getName() == null) {
             handleUnAuthorized(session);
         }
         try{
-            messageHandler.handleMessage(session,message.getPayload());
+            incomingMessageHandler.handleMessage(session,message.getPayload());
         }
         catch (Exception e) {
             log.error(e.getMessage(), e);

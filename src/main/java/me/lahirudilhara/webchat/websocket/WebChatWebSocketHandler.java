@@ -5,11 +5,11 @@ import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import me.lahirudilhara.webchat.common.util.JsonUtil;
 import me.lahirudilhara.webchat.common.util.SchemaValidator;
-import me.lahirudilhara.webchat.dto.wc.WebSocketError;
-import me.lahirudilhara.webchat.dto.wc.WebSocketMessageDTO;
-import me.lahirudilhara.webchat.websocket.events.ClientErrorEvent;
-import me.lahirudilhara.webchat.websocket.events.ClientMessageEvent;
-import me.lahirudilhara.webchat.websocket.session.SessionManager;
+import me.lahirudilhara.webchat.websocket.dto.WebSocketError;
+import me.lahirudilhara.webchat.websocket.dto.WebSocketMessageDTO;
+import me.lahirudilhara.webchat.websocket.refactor.events.ClientErrorEvent;
+import me.lahirudilhara.webchat.websocket.refactor.events.ClientMessageEvent;
+import me.lahirudilhara.webchat.websocket.refactor.session.SessionManager;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -20,7 +20,6 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.util.Objects;
 
 @Slf4j
-@Component
 public class WebChatWebSocketHandler extends TextWebSocketHandler {
     private final ApplicationEventPublisher applicationEventPublisher;
     private final SessionManager sessionManager;
