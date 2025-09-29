@@ -9,4 +9,5 @@ public interface SessionHandler {
     void onSessionDisconnect(WebSocketSession session) throws Exception;
     WebSocketSession getSessionById(String sessionId);
     List<WebSocketSession> getSessionsByUser(String username);
+    Boolean isUserOnline(String username);
 }

@@ -61,5 +61,8 @@ public class InMemorySessionManager implements SessionHandler {
         return sessions.get(username);
     }
 
-
+    @Override
+    public Boolean isUserOnline(String username) {
+        return sessions.containsKey(username);
+    }
 }

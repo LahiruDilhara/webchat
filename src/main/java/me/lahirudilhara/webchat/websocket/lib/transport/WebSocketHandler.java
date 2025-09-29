@@ -30,6 +30,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         if (sessionHandler == null) return;
         if (session.getPrincipal() == null || session.getPrincipal().getName() == null) {
             handleUnAuthorized(session);
+            return;
         }
         try{
             sessionHandler.onSessionConnect(session);
@@ -44,6 +45,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         if (sessionHandler == null || incomingMessageHandler == null) return;
         if (session.getPrincipal() == null || session.getPrincipal().getName() == null) {
             handleUnAuthorized(session);
+            return;
         }
         try{
             incomingMessageHandler.handleMessage(session,message.getPayload());
@@ -73,6 +75,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         if (sessionHandler == null) return;
         if (session.getPrincipal() == null || session.getPrincipal().getName() == null) {
             handleUnAuthorized(session);
+            return;
         }
         try{
             sessionHandler.onSessionDisconnect(session);
