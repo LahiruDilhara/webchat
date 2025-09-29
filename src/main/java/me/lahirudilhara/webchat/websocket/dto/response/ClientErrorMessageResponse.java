@@ -7,8 +7,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder
-public class NewRoomUserResponse extends ClientMessage {
-    private String username;
-    private Integer roomId;
-    private final String type = "NewRoomUser";
+public class ClientErrorMessageResponse extends ClientMessage {
+    private String error;
+    private final String type = "Error";
 }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import me.lahirudilhara.webchat.common.util.JsonUtil;
 import me.lahirudilhara.webchat.websocket.dto.WebSocketError;
-import me.lahirudilhara.webchat.websocket.dto.response.ClientErrorMessage;
+import me.lahirudilhara.webchat.websocket.dto.response.ClientErrorMessageResponse;
 import me.lahirudilhara.webchat.websocket.interfaces.ClientErrorHandler;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.MessageSender;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.SessionHandler;
@@ -40,10 +40,8 @@ public class SessionErrorHandler implements me.lahirudilhara.webchat.websocket.l
     public void sendMessageErrorToSession(String sessionId, String message, String uuid) {
         WebSocketSession session =  sessionHandler.getSessionById(sessionId);
         if(session == null) return;
-        ClientErrorMessage clientErrorMessage = new ClientErrorMessage();
-        clientErrorMessage.setUuid(uuid);
-        clientErrorMessage.setError(message);
-        sendError(session, clientErrorMessage);
+        ClientErrorMessageResponse clientErrorMessageResponse = ClientErrorMessageResponse.builder().uuid(uuid).error(message).build();
+        sendError(session, clientErrorMessageResponse);
     }
 
     private void sendError(WebSocketSession session, Object data) {

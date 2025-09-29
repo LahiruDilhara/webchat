@@ -2,6 +2,7 @@ package me.lahirudilhara.webchat.websocket.dispatcher.handlers;
 
 import me.lahirudilhara.webchat.websocket.dto.JoinRoomMessageDTO;
 import me.lahirudilhara.webchat.websocket.dispatcher.MessageHandler;
+import me.lahirudilhara.webchat.websocket.dto.response.NewDeviceConnectedWithRoomResponse;
 import me.lahirudilhara.webchat.websocket.dto.response.NewRoomUserResponse;
 import me.lahirudilhara.webchat.websocket.interfaces.ClientErrorHandler;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.MessageBroker;
@@ -40,12 +41,13 @@ public class JoinRoomRequestMessageHandler implements MessageHandler<JoinRoomMes
             clientErrorHandler.sendMessageErrorToSession(sessionId,"Invalid join room",message.getUuid());
         }
         if (!roomBroker.isUserInRoom(message.getRoomId(), senderUsername)) {
-            NewRoomUserResponse newRoomUserResponse = new NewRoomUserResponse();
-            newRoomUserResponse.setUuid(message.getUuid());
-            newRoomUserResponse.setRoomId(message.getRoomId());
-            newRoomUserResponse.setUsername(senderUsername);
-            messageBroker.sendMessageToRoom(message.getRoomId(), newRoomUserResponse);
+            handleNewUserRoomJoin(message.getRoomId(), senderUsername, message.getUuid());
         }
         roomBroker.addSessionToRoom(message.getRoomId(), sessionId, senderUsername);
+        messageBroker.sendMessageToUser(senderUsername, NewDeviceConnectedWithRoomResponse.builder().uuid(message.getUuid()).build());
+    }
+
+    private void handleNewUserRoomJoin(int roomId,String username, String uuid){
+        messageBroker.sendMessageToRoom(roomId, NewRoomUserResponse.builder().uuid(uuid).roomId(roomId).username(username).build());
     }
 }
