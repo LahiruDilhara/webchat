@@ -1,6 +1,7 @@
 package me.lahirudilhara.webchat.websocket.lib.broker;
 
 import lombok.extern.slf4j.Slf4j;
+import me.lahirudilhara.webchat.websocket.lib.interfaces.RoomBroker;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.SessionHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
@@ -15,6 +16,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class InMemorySessionManager implements SessionHandler {
     private final Map<String, List<WebSocketSession>> sessions = new ConcurrentHashMap<>();
     private final Map<String,WebSocketSession> sessionsById = new ConcurrentHashMap<>();
+    private final RoomBroker roomBroker;
+
+    public InMemorySessionManager(RoomBroker roomBroker) {
+        this.roomBroker = roomBroker;
+    }
 
     @Override
     public void onSessionConnect(WebSocketSession session) {
@@ -47,6 +53,7 @@ public class InMemorySessionManager implements SessionHandler {
             sessions.remove(username);
         }
         sessionsById.remove(session.getId());
+        roomBroker.removeFromAllRooms(session.getId());
     }
 
     @Override

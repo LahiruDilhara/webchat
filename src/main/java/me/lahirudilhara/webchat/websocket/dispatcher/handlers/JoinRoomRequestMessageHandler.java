@@ -14,14 +14,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class JoinRoomRequestMessageHandler implements MessageHandler<JoinRoomMessageDTO> {
     private final JoinRoomValidator joinRoomValidator;
-    private final SessionErrorHandler sessionErrorHandler;
     private final RoomBroker roomBroker;
     private final MessageBroker messageBroker;
     private final ClientErrorHandler clientErrorHandler;
 
-    public JoinRoomRequestMessageHandler(JoinRoomValidator joinRoomValidator, SessionErrorHandler sessionErrorHandler, RoomBroker roomBroker, MessageBroker messageBroker, ClientErrorHandler clientErrorHandler) {
+    public JoinRoomRequestMessageHandler(JoinRoomValidator joinRoomValidator, RoomBroker roomBroker, MessageBroker messageBroker, ClientErrorHandler clientErrorHandler) {
         this.joinRoomValidator = joinRoomValidator;
-        this.sessionErrorHandler = sessionErrorHandler;
         this.roomBroker = roomBroker;
         this.messageBroker = messageBroker;
         this.clientErrorHandler = clientErrorHandler;
@@ -34,17 +32,33 @@ public class JoinRoomRequestMessageHandler implements MessageHandler<JoinRoomMes
 
     @Override
     public void handleMessage(JoinRoomMessageDTO message, String senderUsername, String sessionId) {
-        System.out.println("Called the handleMessage");
-        System.out.println(sessionId);
         var validation = joinRoomValidator.validateJoinRoom(senderUsername, message.getRoomId());
         if (validation.isLeft()) {
             clientErrorHandler.sendMessageErrorToSession(sessionId,"Invalid join room",message.getUuid());
         }
-        if (!roomBroker.isUserInRoom(message.getRoomId(), senderUsername)) {
-            handleNewUserRoomJoin(message.getRoomId(), senderUsername, message.getUuid());
+        if(roomBroker.isSessionInRoom(message.getRoomId(), sessionId)){
+            handleAlreadyJoinedRoom(message.getUuid(),sessionId);
+            return;
         }
+        if(roomBroker.isUserInRoom(message.getRoomId(), senderUsername)){
+            handleNewDeviceJoin(message,senderUsername,sessionId);
+            return;
+        }
+        handleNewUserRoomJoin(message,senderUsername,sessionId);
+    }
+
+    private void handleAlreadyJoinedRoom(String uuid, String sessionId){
+        clientErrorHandler.sendMessageErrorToSession(sessionId,"You are already joined",uuid);
+    }
+
+    private void handleNewDeviceJoin(JoinRoomMessageDTO message, String senderUsername, String sessionId){
         roomBroker.addSessionToRoom(message.getRoomId(), sessionId, senderUsername);
         messageBroker.sendMessageToUser(senderUsername, NewDeviceConnectedWithRoomResponse.builder().uuid(message.getUuid()).build());
+    }
+
+    private void handleNewUserRoomJoin(JoinRoomMessageDTO message, String senderUsername, String sessionId){
+        messageBroker.sendMessageToRoom(message.getRoomId(), NewRoomUserResponse.builder().uuid(message.getUuid()).roomId(message.getRoomId()).username(senderUsername).build());
+        roomBroker.addSessionToRoom(message.getRoomId(), sessionId, senderUsername);
     }
 
     private void handleNewUserRoomJoin(int roomId,String username, String uuid){

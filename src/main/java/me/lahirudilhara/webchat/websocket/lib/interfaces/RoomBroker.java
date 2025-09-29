@@ -8,4 +8,6 @@ public interface RoomBroker {
     boolean isRoomExists(Integer roomId);
     List<String> getSessions(Integer roomId);
     boolean isUserInRoom(Integer roomId, String username);
+    void removeFromAllRooms(String sessionId);
+    boolean isSessionInRoom(Integer roomId, String sessionId);
 }
