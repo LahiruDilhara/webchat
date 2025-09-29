@@ -2,30 +2,62 @@ package me.lahirudilhara.webchat.service.api.room;
 
 import me.lahirudilhara.webchat.entities.room.DualUserRoomEntity;
 import me.lahirudilhara.webchat.entities.room.MultiUserRoomEntity;
-import me.lahirudilhara.webchat.entityModelMappers.RoomMapper;
-import me.lahirudilhara.webchat.models.User;
+import me.lahirudilhara.webchat.entities.room.RoomDetailsEntity;
+import me.lahirudilhara.webchat.entities.user.UserEntity;
+import me.lahirudilhara.webchat.models.UserRoomStatus;
 import me.lahirudilhara.webchat.models.room.DualUserRoom;
 import me.lahirudilhara.webchat.models.room.MultiUserRoom;
+import me.lahirudilhara.webchat.models.room.Room;
+import me.lahirudilhara.webchat.service.api.user.UserRoomStatusService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class RoomBuilder {
-    private final RoomMapper roomMapper;
+    private final RoomQueryService roomQueryService;
+    private final RoomMetricsProviderService roomMetricsProviderService;
+    private final UserRoomStatusService userRoomStatusService;
 
-    public RoomBuilder(RoomMapper roomMapper) {
-        this.roomMapper = roomMapper;
+    public RoomBuilder(@Lazy RoomQueryService roomQueryService, RoomMetricsProviderService roomMetricsProviderService, UserRoomStatusService userRoomStatusService) {
+        this.roomQueryService = roomQueryService;
+        this.roomMetricsProviderService = roomMetricsProviderService;
+        this.userRoomStatusService = userRoomStatusService;
     }
 
-    public MultiUserRoomEntity MultiUserRoomEntityFromMultiUserRoom (MultiUserRoom room){
-        int userCount = room.getUsers().size();
-        return roomMapper.multiUserRoomToMultiUserRoomEntity(room,userCount);
+    public RoomDetailsEntity buildRoomDetailsEntity(Room room,Integer userId) {
+        if(room instanceof MultiUserRoom mRoom) {
+            return MultiUserRoomEntityFromMultiUserRoom(mRoom,userId);
+        }
+        else if(room instanceof DualUserRoom dRoom) {
+            return DualUserRoomEntityFromDualUserRoom(dRoom,userId);
+        }
+        return null;
     }
 
-    public DualUserRoomEntity  DualUserRoomEntityFromDualUserRoom (DualUserRoom room){
-        List<User> users = room.getUsers();
-        if(users.size() != 2) throw new  IllegalArgumentException("Wrong number of users");
-        return roomMapper.dualUserRoomToDualUserRoomEntity(room, users.get(0).getUsername(),users.get(1).getUsername());
+    public MultiUserRoomEntity MultiUserRoomEntityFromMultiUserRoom (MultiUserRoom room,Integer userId){
+        MultiUserRoomEntity multiUserRoomEntity = new MultiUserRoomEntity();
+        roomToRoomEntity(room,userId,multiUserRoomEntity);
+        multiUserRoomEntity.setClosed(room.getClosed());
+        multiUserRoomEntity.setIsPrivate(room.getIsPrivate());
+        return multiUserRoomEntity;
+    }
+
+    public DualUserRoomEntity  DualUserRoomEntityFromDualUserRoom (DualUserRoom room, Integer userId){
+        return roomToRoomEntity(room,userId,new DualUserRoomEntity());
+    }
+
+    public <T extends RoomDetailsEntity> T roomToRoomEntity(Room room, Integer userId, T entity){
+        List<UserEntity> roomUsers = roomQueryService.getRoomMembers(room.getId());
+        UserRoomStatus userRoomStatus = userRoomStatusService.getUserRoomStatus(userId, room.getId());
+        int unreadMessageCountByUser = roomMetricsProviderService.roomUnreadMessageCountByUser(userRoomStatus, room.getId());
+        entity.setCreatedAt(room.getCreatedAt());
+        entity.setRoomMembers(roomUsers);
+        entity.setId(room.getId());
+        entity.setName(room.getName());
+        entity.setCreatedBy(room.getCreatedBy().getUsername());
+        entity.setUnreadMessagesCount(unreadMessageCountByUser);
+        return entity;
     }
 }

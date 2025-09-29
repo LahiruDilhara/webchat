@@ -1,9 +1,6 @@
 package me.lahirudilhara.webchat.entities.room;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import me.lahirudilhara.webchat.entities.user.UserEntity;
 
 import java.util.List;
@@ -12,6 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(callSuper = true)
 public class RoomDetailsEntity extends RoomEntity {
     private Integer unreadMessagesCount;
     private List<UserEntity> roomMembers;

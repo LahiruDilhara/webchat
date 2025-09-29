@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MultiUserRoomResponseDTO extends RoomResponseDTO{
+public class MultiUserRoomDetailsResponseDTO extends RoomDetailsResponseDTO {
     private Boolean closed;
-    private Integer memberCount;
+    private Boolean isPrivate;
     private String type = "MultiUserRoom";
 }

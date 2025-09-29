@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DualUserRoomResponseDTO extends RoomResponseDTO {
-    private String user1Name;
-    private String user2Name;
+public class DualUserRoomDetailsResponseDTO extends RoomDetailsResponseDTO {
     private String type = "DualUserRoom";
 }

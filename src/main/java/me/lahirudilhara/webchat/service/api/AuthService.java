@@ -31,7 +31,7 @@ public class AuthService {
     }
 
     public UserEntity signUpUser(UserEntity userEntity) {
-        return userService.addUser(userEntity);
+        return userService.addUser( userEntity);
     }
 
     private boolean verify(UserEntity userEntity) {

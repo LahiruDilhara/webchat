@@ -69,7 +69,7 @@ public class RoomManagementService {
         MultiUserRoom createdRoom = multiUserRoomRepository.save(room);
 
         userRoomStatusService.addUserRoomStatus(userRef.getId(),  createdRoom.getId());
-        return roomBuilder.MultiUserRoomEntityFromMultiUserRoom(createdRoom);
+        return roomBuilder.MultiUserRoomEntityFromMultiUserRoom(createdRoom,userEntity.getId());
     }
 
     @Caching(evict = {
@@ -95,7 +95,7 @@ public class RoomManagementService {
         userRoomStatusService.addUserRoomStatus(user.getId(),  createdRoom.getId());
 
 
-        return roomBuilder.DualUserRoomEntityFromDualUserRoom(room);
+        return roomBuilder.DualUserRoomEntityFromDualUserRoom(room,owner.getId());
     }
 
 
@@ -117,15 +117,19 @@ public class RoomManagementService {
     }
 
     @CacheEvict(value = RoomCacheNames.ROOM_BY_ROOM_ID,key = "#roomEntity.id")
-    public MultiUserRoomEntity updateMultiUserRoom(RoomEntity roomEntity){
+    public MultiUserRoomEntity updateMultiUserRoom(MultiUserRoomEntity roomEntity){
         UserEntity user = userQueryService.getUserByUsername(roomEntity.getCreatedBy());
 
         MultiUserRoom room = multiUserRoomRepository.findById(roomEntity.getId()).orElseThrow(RoomNotFoundException::new);
         if(!room.getCreatedBy().getId().equals(user.getId())){
             throw new ValidationException("Only the owner can update the room");
         }
-        roomMapper.mapRoomEntityToRoom(roomEntity,room);
-        return roomBuilder.MultiUserRoomEntityFromMultiUserRoom(roomRepository.save(room));
+        System.out.println(room.getName());
+        System.out.println(roomEntity.getName());
+        roomMapper.mapMultiUserRoomEntityToMultiUserRoom(roomEntity,room);
+        System.out.println(room.getName());
+        MultiUserRoom updatedRoom = roomRepository.save(room);
+        return roomBuilder.MultiUserRoomEntityFromMultiUserRoom(updatedRoom,user.getId());
     }
 
     private void evictRemovedRoomUserCache(List<UserEntity> users){

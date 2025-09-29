@@ -8,7 +8,5 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
-public class DualUserRoomEntity extends RoomEntity{
-    private String user1Name;
-    private String user2Name;
+public class DualUserRoomEntity extends RoomDetailsEntity{
 }

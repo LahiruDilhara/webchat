@@ -16,6 +16,4 @@ public class RoomEntity {
     private String name;
     private Instant createdAt;
     private String createdBy;
-    private Integer unreadMessagesCount;
-    private List<UserEntity> roomMembers;
 }

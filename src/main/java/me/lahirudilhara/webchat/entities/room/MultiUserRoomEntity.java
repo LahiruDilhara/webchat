@@ -1,15 +1,13 @@
 package me.lahirudilhara.webchat.entities.room;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MultiUserRoomEntity extends RoomEntity{
+@ToString(callSuper = true)
+public class MultiUserRoomEntity extends RoomDetailsEntity{
     private Boolean closed;
-    private Integer memberCount;
+    private Boolean isPrivate;
 }
