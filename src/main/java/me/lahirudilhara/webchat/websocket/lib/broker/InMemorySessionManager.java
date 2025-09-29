@@ -49,5 +49,17 @@ public class InMemorySessionManager implements SessionHandler {
         sessionsById.remove(session.getId());
     }
 
+    @Override
+    public WebSocketSession getSessionById(String sessionId) {
+        if(!sessionsById.containsKey(sessionId)) return null;
+        return sessionsById.get(sessionId);
+    }
+
+    @Override
+    public List<WebSocketSession> getSessionsByUser(String username) {
+        if(!sessions.containsKey(username)) return null;
+        return sessions.get(username);
+    }
+
 
 }
