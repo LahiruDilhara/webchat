@@ -1,10 +1,10 @@
-package me.lahirudilhara.webchat.models;
+package me.lahirudilhara.webchat.models.room;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.models.message.Message;
 
 import java.time.Instant;
@@ -22,13 +22,7 @@ public class Room {
 
     private String name;
 
-    private Boolean isPrivate;
-
     private Instant createdAt;
-
-    private Boolean closed = false;
-
-    private Boolean multiUser;
 
     @ManyToOne
     @JoinColumn(name = "createdRooms")

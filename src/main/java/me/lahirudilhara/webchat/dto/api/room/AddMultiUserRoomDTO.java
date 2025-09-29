@@ -13,6 +13,9 @@ public class AddMultiUserRoomDTO {
     @NotNull(message = "isPrivate is required")
     private Boolean isPrivate;
 
+    @NotNull(message = "closed is required")
+    private Boolean closed;
+
     @NotBlank(message = "The room name cannot be blank")
     private String name;
 }

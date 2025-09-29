@@ -1,6 +1,8 @@
 package me.lahirudilhara.webchat.dtoEntityMappers.api;
 
 import me.lahirudilhara.webchat.dto.api.room.*;
+import me.lahirudilhara.webchat.entities.room.DualUserRoomEntity;
+import me.lahirudilhara.webchat.entities.room.MultiUserRoomEntity;
 import me.lahirudilhara.webchat.entities.room.RoomDetailsEntity;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
 import org.mapstruct.*;
@@ -8,15 +10,20 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface RoomMapper {
 
-    RoomEntity addMultiUserRoomDtoToRoomEntity(AddMultiUserRoomDTO addMultiUserRoomDTO);
+    MultiUserRoomEntity addMultiUserRoomDTOToMultiUserRoomEntity(AddMultiUserRoomDTO addMultiUserRoomDTO);
 
-    RoomEntity addDualUserRoomDtoToRoomEntity(AddDualUserRoomDTO addDualUserRoomDTO);
+    @Mapping(target = "user2Name",source = "addingUsername")
+    DualUserRoomEntity addDualUserRoomDTOToDualUserRoomEntity(AddDualUserRoomDTO addDualUserRoomDTO);
 
     @SubclassMapping(source = RoomDetailsEntity.class,target = RoomDetailsResponseDTO.class)
-    RoomResponseDTO roomEntityToRoomResponseDTO(RoomEntity roomEntity);
+    @SubclassMapping(source = DualUserRoomEntity.class,target = DualUserRoomResponseDTO.class)
+    @SubclassMapping(source = MultiUserRoomEntity.class,target = MultiUserRoomResponseDTO.class)
+    RoomResponseDTO roomEntityToRoomResponseDTO(RoomEntity roomEntity,RoomDetailsEntity roomDetailsEntity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     RoomEntity updateMultiUserDtoToRoomEntity(UpdateMultiUserRoomDTO updateMultiUserRoomDTO);
 
-    RoomDetailsResponseDTO roomDetailsEntityToRoomDetailsResponseDTO(RoomDetailsEntity roomDetailsEntity);
+    DualUserRoomResponseDTO dualUserRoomEntityToDualUserRoomResponseDTO(DualUserRoomEntity dualUserRoomEntity);
+
+    MultiUserRoomResponseDTO multiUserRoomEntityToMultiUserRoomResponseDTO(MultiUserRoomEntity  multiUserRoomEntity);
 }

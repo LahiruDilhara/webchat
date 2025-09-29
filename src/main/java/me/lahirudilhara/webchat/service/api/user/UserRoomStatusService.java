@@ -4,7 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import me.lahirudilhara.webchat.models.UserRoomId;
 import me.lahirudilhara.webchat.models.UserRoomStatus;
-import me.lahirudilhara.webchat.models.Room;
+import me.lahirudilhara.webchat.models.room.Room;
 import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.repositories.UserRoomStatusRepository;
 import org.springframework.stereotype.Service;

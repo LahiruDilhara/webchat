@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.lahirudilhara.webchat.models.message.Message;
+import me.lahirudilhara.webchat.models.room.Room;
 
 import java.time.Instant;
 import java.util.ArrayList;

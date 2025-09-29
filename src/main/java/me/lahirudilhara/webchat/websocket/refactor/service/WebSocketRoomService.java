@@ -8,7 +8,7 @@ import me.lahirudilhara.webchat.common.types.Either;
 import me.lahirudilhara.webchat.common.types.Failure;
 import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.entities.message.MessageEntity;
-import me.lahirudilhara.webchat.models.Room;
+import me.lahirudilhara.webchat.models.room.Room;
 import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.models.message.TextMessage;
 import me.lahirudilhara.webchat.service.api.user.UserQueryService;
@@ -17,7 +17,6 @@ import me.lahirudilhara.webchat.service.api.room.RoomQueryService;
 import me.lahirudilhara.webchat.websocket.refactor.entities.BroadcastData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;

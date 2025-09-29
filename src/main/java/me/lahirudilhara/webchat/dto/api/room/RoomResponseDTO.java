@@ -14,9 +14,8 @@ import java.util.List;
 public class RoomResponseDTO {
     private Integer id;
     private String name;
-    private Boolean isPrivate;
     private Instant createdAt;
-    private Boolean closed;
     private String createdBy;
-    private Boolean multiUser;
+    private Integer unreadMessagesCount;
+    private List<UserResponseDTO> roomMembers;
 }

@@ -7,6 +7,8 @@ import me.lahirudilhara.webchat.dto.message.MessageResponseDTO;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.MessageMapper;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.RoomMapper;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.UserMapper;
+import me.lahirudilhara.webchat.entities.room.DualUserRoomEntity;
+import me.lahirudilhara.webchat.entities.room.MultiUserRoomEntity;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
 import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.entities.message.MessageEntity;
@@ -44,7 +46,7 @@ public class RoomController {
 
     @PostMapping("/multiUser")
     public ResponseEntity<RoomResponseDTO> createMultiUserRoom(@Valid @RequestBody AddMultiUserRoomDTO addMultiUserRoomDTO, Principal principal){
-        RoomEntity roomEntity = roomMapper.addMultiUserRoomDtoToRoomEntity(addMultiUserRoomDTO);
+        MultiUserRoomEntity roomEntity = roomMapper.addMultiUserRoomDTOToMultiUserRoomEntity(addMultiUserRoomDTO);
         roomEntity.setCreatedBy(principal.getName());
         RoomEntity createdRoom = roomManagementService.createMultiUserRoom(roomEntity);
         return new ResponseEntity<>(roomMapper.roomEntityToRoomResponseDTO(createdRoom),HttpStatus.CREATED);
@@ -52,7 +54,7 @@ public class RoomController {
 
     @PostMapping("/dualUser")
     public ResponseEntity<RoomResponseDTO> createDualUserRoom(@Valid @RequestBody AddDualUserRoomDTO addDualUserRoomDTO, Principal principal){
-        RoomEntity roomEntity = roomMapper.addDualUserRoomDtoToRoomEntity(addDualUserRoomDTO);
+        DualUserRoomEntity roomEntity = roomMapper.addDualUserRoomDTOToDualUserRoomEntity(addDualUserRoomDTO);
         roomEntity.setCreatedBy(principal.getName());
         RoomEntity createdRoom = roomManagementService.createDualUserRoom(roomEntity,addDualUserRoomDTO.getAddingUsername());
         return new ResponseEntity<>(roomMapper.roomEntityToRoomResponseDTO(createdRoom),HttpStatus.CREATED);
