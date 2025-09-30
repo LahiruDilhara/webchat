@@ -1,8 +1,8 @@
 package me.lahirudilhara.webchat.websocket.lib.broker;
 
 import lombok.extern.slf4j.Slf4j;
-import me.lahirudilhara.webchat.websocket.listners.events.NewUserJoinedEvent;
-import me.lahirudilhara.webchat.websocket.listners.events.UserDisconnectedEvent;
+import me.lahirudilhara.webchat.websocket.lib.events.NewUserJoinedEvent;
+import me.lahirudilhara.webchat.websocket.lib.events.UserDisconnectedEvent;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.RoomBroker;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.SessionHandler;
 import org.springframework.context.ApplicationEventPublisher;

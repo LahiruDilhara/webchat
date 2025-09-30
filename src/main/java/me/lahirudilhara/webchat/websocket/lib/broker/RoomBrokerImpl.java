@@ -1,7 +1,10 @@
 package me.lahirudilhara.webchat.websocket.lib.broker;
 
 import lombok.extern.slf4j.Slf4j;
+import me.lahirudilhara.webchat.websocket.lib.events.UserJoinedRoomEvent;
+import me.lahirudilhara.webchat.websocket.lib.events.UserLeaveRoomEvent;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.RoomBroker;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -12,6 +15,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RoomBrokerImpl implements RoomBroker {
     private final Map<Integer, List<BrokerSession>> rooms = new ConcurrentHashMap<>();
     private final Map<String, Set<Integer>> sessionIdsToRoomIds = new ConcurrentHashMap<>();
+    private final ApplicationEventPublisher applicationEventPublisher;
+
+    public RoomBrokerImpl(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
 
     @Override
     public void addSessionToRoom(Integer roomId, String sessionId, String username) {
@@ -24,6 +32,7 @@ public class RoomBrokerImpl implements RoomBroker {
         }
         sessionIdsToRoomIds.get(sessionId).add(roomId);
         log.debug("Adding session to room {} with sessionId {}", roomId, sessionId);
+        applicationEventPublisher.publishEvent(new UserJoinedRoomEvent(roomId, username));
     }
 
     @Override
@@ -37,6 +46,7 @@ public class RoomBrokerImpl implements RoomBroker {
             sessionIdsToRoomIds.get(sessionId).remove(roomId);
         }
         log.debug("Removing session from room {} with sessionId {}", roomId, sessionId);
+        applicationEventPublisher.publishEvent(new UserLeaveRoomEvent(roomId, sessionId));
     }
 
     @Override

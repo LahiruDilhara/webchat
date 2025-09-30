@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.websocket.listners.events;
+package me.lahirudilhara.webchat.websocket.lib.events;
 
 public record SessionErrorEvent(String sessionId, String message) {
 }

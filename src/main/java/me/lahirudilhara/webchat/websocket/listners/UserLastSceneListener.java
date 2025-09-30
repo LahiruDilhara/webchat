@@ -2,8 +2,8 @@ package me.lahirudilhara.webchat.websocket.listners;
 
 import lombok.extern.slf4j.Slf4j;
 import me.lahirudilhara.webchat.service.api.user.UserService;
-import me.lahirudilhara.webchat.websocket.listners.events.NewUserJoinedEvent;
-import me.lahirudilhara.webchat.websocket.listners.events.UserDisconnectedEvent;
+import me.lahirudilhara.webchat.websocket.lib.events.NewUserJoinedEvent;
+import me.lahirudilhara.webchat.websocket.lib.events.UserDisconnectedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;

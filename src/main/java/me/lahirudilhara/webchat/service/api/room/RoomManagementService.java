@@ -54,7 +54,6 @@ public class RoomManagementService {
 
     @Caching(evict = {
             @CacheEvict(value = RoomCacheNames.USER_OWNED_ROOMS_BY_USERNAME,key = "#roomEntity.createdBy"),
-            @CacheEvict(value = RoomCacheNames.USER_JOINED_ROOMS_BY_USERNAME,key = "#roomEntity.createdBy"),
     })
     public RoomEntity createMultiUserRoom(MultiUserRoomEntity roomEntity) {
         UserEntity userEntity = userQueryService.getUserByUsername(roomEntity.getCreatedBy());
@@ -75,8 +74,6 @@ public class RoomManagementService {
     @Caching(evict = {
             @CacheEvict(value = RoomCacheNames.USER_OWNED_ROOMS_BY_USERNAME,key = "#roomEntity.createdBy"),
             @CacheEvict(value = RoomCacheNames.USER_OWNED_ROOMS_BY_USERNAME,key = "#nextUsername"),
-            @CacheEvict(value = RoomCacheNames.USER_JOINED_ROOMS_BY_USERNAME,key = "#roomEntity.createdBy"),
-            @CacheEvict(value = RoomCacheNames.USER_JOINED_ROOMS_BY_USERNAME,key = "#nextUsername"),
     })
     public DualUserRoomEntity createDualUserRoom(DualUserRoomEntity roomEntity, String nextUsername){
         UserEntity owner = userQueryService.getUserByUsername(roomEntity.getCreatedBy());
@@ -101,7 +98,6 @@ public class RoomManagementService {
 
     @Caching(evict = {
             @CacheEvict(value = RoomCacheNames.USER_OWNED_ROOMS_BY_USERNAME,key = "#username"),
-            @CacheEvict(value = RoomCacheNames.USER_JOINED_ROOMS_BY_USERNAME,key = "#username"),
             @CacheEvict(value = RoomCacheNames.ROOM_BY_ROOM_ID,key = "#roomId"),
             @CacheEvict(value = RoomCacheNames.ROOM_USERS_BY_ROOM_ID,key = "#roomId")
     })
