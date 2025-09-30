@@ -83,12 +83,7 @@ public class RoomController {
         return roomMapper.roomEntityToRoomResponseDTO(updatedRoomEntity);
     }
 
-    @GetMapping("/{roomId}/messages")
-    public List<MessageResponseDTO> getMessagesOfRoom(@PathVariable int roomId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "createdAt") String sortBy, Principal principal){
-        Pageable pageable = PageRequest.of(page,size, Sort.by(sortBy).descending());
-        List<MessageEntity> messages = messageService.getMessagesByRoomId(roomId,principal.getName(),pageable);
-        return messages.stream().map(messageMapper::messageEntityToMessageResponseDTO).toList();
-    }
+
 
     @GetMapping("/{roomId}/users")
     public List<UserResponseDTO> getRoomUsers(@PathVariable int roomId, Principal principal){

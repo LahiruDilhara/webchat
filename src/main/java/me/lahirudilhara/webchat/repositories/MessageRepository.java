@@ -21,4 +21,10 @@ public interface MessageRepository extends JpaRepository<Message,Integer> {
 
     @Query("SELECT COUNT(m) from message m JOIN m.sender s JOIN m.room r WHERE r.id = :roomId AND m.createdAt > :lastAccessedAt AND s.id <> :userId")
     long countUnreadMessagesForUser(@Param("roomId") Integer roomId, @Param("lastAccessedAt")Instant lastAccessedAt, @Param("userId") Integer userId);
+
+    List<Message> findTop10ByRoomIdOrderByIdDesc(Integer roomId);
+
+    List<Message> findByRoomIdAndIdGreaterThanOrderByIdAsc(Integer roomId, Integer id);
+
+    List<Message> findTop15ByRoomIdAndIdLessThanOrderByIdDesc(Integer roomId, Integer lastMessageId);
 }

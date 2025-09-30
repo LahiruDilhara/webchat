@@ -35,6 +35,7 @@ public class JoinRoomRequestMessageHandler implements MessageHandler<JoinRoomMes
         var validation = joinRoomValidator.validateJoinRoom(senderUsername, message.getRoomId());
         if (validation.isLeft()) {
             clientErrorHandler.sendMessageErrorToSession(sessionId,"Invalid join room",message.getUuid());
+            return;
         }
         if(roomBroker.isSessionInRoom(message.getRoomId(), sessionId)){
             handleAlreadyJoinedRoom(message.getUuid(),sessionId);

@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -60,6 +61,27 @@ public class MessageService {
 
         // Remove deleted messages and convert
         return page.getContent().stream().filter(m->!m.getDeleted()).map(messageMapper::messageToMessageEntity).toList();
+    }
+
+    public List<MessageEntity> getLast10MessagesInRoom(int roomId, String accessUser){
+        if(roomValidator.isNotUserAbleToAccessRoom(accessUser, roomId)) throw new RoomNotFoundException();
+        List<Message> messages = messageRepository.findTop10ByRoomIdOrderByIdDesc(roomId);
+        if(messages.isEmpty()) return Collections.emptyList();
+        return messages.stream().filter(m->!m.getDeleted()).map(messageMapper::messageToMessageEntity).toList();
+    }
+
+    public List<MessageEntity> get15MessagesBeforeGivenMessageIdInRoom(int roomId, int messageId, String accessUser){
+        if(roomValidator.isNotUserAbleToAccessRoom(accessUser, roomId)) throw new RoomNotFoundException();
+        List<Message> messages = messageRepository.findTop15ByRoomIdAndIdLessThanOrderByIdDesc(roomId, messageId);
+        if(messages.isEmpty()) return Collections.emptyList();
+        return messages.stream().filter(m->!m.getDeleted()).map(messageMapper::messageToMessageEntity).toList();
+    }
+
+    public List<MessageEntity> getMessagesAfterGivenMessageIdInRoom(int roomId, int messageId, String accessUser){
+        if(roomValidator.isNotUserAbleToAccessRoom(accessUser, roomId)) throw new RoomNotFoundException();
+        List<Message> messages = messageRepository.findByRoomIdAndIdGreaterThanOrderByIdAsc(roomId, messageId);
+        if(messages.isEmpty()) return Collections.emptyList();
+        return messages.stream().filter(m->!m.getDeleted()).map(messageMapper::messageToMessageEntity).toList();
     }
 
 
