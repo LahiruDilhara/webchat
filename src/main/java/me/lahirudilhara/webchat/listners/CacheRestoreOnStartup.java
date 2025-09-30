@@ -1,11 +1,13 @@
 package me.lahirudilhara.webchat.listners;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class CacheRestoreOnStartup {
     private final RedisCacheManager cacheManager;
@@ -18,7 +20,7 @@ public class CacheRestoreOnStartup {
 
     @EventListener(ApplicationReadyEvent.class)
     public void clearAllCache(){
-        System.out.println("Clearing all caches");
+        log.info("Clearing all caches");
         assert redisTemplate.getConnectionFactory() != null;
         redisTemplate.getConnectionFactory().getConnection().flushDb();
     }

@@ -30,7 +30,6 @@ public class MessageBrokerImpl implements MessageBroker {
     @Override
     public void sendMessageToRoom(Integer roomId, Object message) {
         List<String> sessionIds = roomBroker.getSessions(roomId);
-        System.out.println(sessionIds);
         List<WebSocketSession> sessions = sessionIds.stream().map(sessionHandler::getSessionById).toList();
 
         String jsonMessage = objectToJson(message);
@@ -44,6 +43,15 @@ public class MessageBrokerImpl implements MessageBroker {
         String jsonMessage = objectToJson(message);
         if (jsonMessage == null) return;
         sessions.forEach(ws -> messageSender.sendMessage(jsonMessage, ws));
+    }
+
+    @Override
+    public void sendMessageToSession(String sessionId, Object message) {
+        WebSocketSession session = sessionHandler.getSessionById(sessionId);
+        if (session == null) return;
+        String jsonMessage = objectToJson(message);
+        if (jsonMessage == null) return;
+        messageSender.sendMessage(jsonMessage, session);
     }
 
     private String objectToJson(Object data) {
