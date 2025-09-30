@@ -14,4 +14,5 @@ import java.time.Instant;
 public class TextMessageResponseDTO extends MessageResponseDTO {
     private String content;
     private Instant editedAt;
+    private final String type = "TextMessage";
 }

@@ -21,17 +21,11 @@ public class MessageManagementService {
     private static final Logger log = LoggerFactory.getLogger(MessageManagementService.class);
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
-    private final RoomManagementService roomManagementService;
-    private final RoomQueryService roomQueryService;
-    private final RoomValidator roomValidator;
     private final MessageAccessValidator messageAccessValidator;
 
-    public MessageManagementService(MessageRepository messageRepository, MessageMapper messageMapper, RoomManagementService roomManagementService, RoomQueryService roomQueryService, RoomValidator roomValidator, MessageAccessValidator messageAccessValidator) {
+    public MessageManagementService(MessageRepository messageRepository, MessageMapper messageMapper, MessageAccessValidator messageAccessValidator) {
         this.messageRepository = messageRepository;
         this.messageMapper = messageMapper;
-        this.roomManagementService = roomManagementService;
-        this.roomQueryService = roomQueryService;
-        this.roomValidator = roomValidator;
         this.messageAccessValidator = messageAccessValidator;
     }
 
@@ -49,8 +43,6 @@ public class MessageManagementService {
         Message message = messageRepository.findByIdWithSenderAndRoom(id).orElseThrow(MessageNotFoundException::new);
         return messageMapper.baseMessageToMessageEntity(message);
     }
-
-
 
 
     public MessageEntity updateMessage(TextMessageEntity messageEntity, int messageId){

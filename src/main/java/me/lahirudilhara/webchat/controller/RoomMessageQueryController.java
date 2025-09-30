@@ -43,7 +43,7 @@ public class RoomMessageQueryController {
         return messages.stream().map(messageMapper::messageEntityToMessageResponseDTO).toList();
     }
 
-    @GetMapping("/{roomid}/messages/after/{messageId}")
+    @GetMapping("/{roomId}/messages/after/{messageId}")
     public List<MessageResponseDTO> getMessagesAfterMessageId(@PathVariable int roomId, @PathVariable int messageId, Principal principal){
         List<MessageEntity> messages = roomMessageQueryService.getMessagesAfterGivenMessageIdInRoom(roomId,messageId,principal.getName());
         return messages.stream().map(messageMapper::messageEntityToMessageResponseDTO).toList();
