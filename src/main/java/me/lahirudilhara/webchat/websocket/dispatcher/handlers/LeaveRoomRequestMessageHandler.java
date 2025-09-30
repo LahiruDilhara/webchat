@@ -39,7 +39,6 @@ public class LeaveRoomRequestMessageHandler implements MessageHandler<LeaveRoomM
         }
         roomBroker.removeSessionFromRoom(message.getRoomId(), sessionId);
         if(roomBroker.isUserInRoom(message.getRoomId(), senderUsername)) {
-            messageBroker.sendMessageToUserExceptSessions(senderUsername, List.of(sessionId), DeviceDisconnectedResponse.builder().uuid(message.getUuid()).build());
             return;
         }
         messageBroker.sendMessageToRoom(message.getRoomId(), RoomUserLeftResponse.builder().uuid(message.getUuid()).username(senderUsername).build());

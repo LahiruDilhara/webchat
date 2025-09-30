@@ -13,7 +13,8 @@ import java.io.IOException;
 public class WebSocketMessageSender implements MessageSender {
     @Override
     public void sendMessage(String message, WebSocketSession session) {
-        if(!session.isOpen()) return;
+        if(message == null || message.isEmpty()) return;
+        if (session == null || !session.isOpen()) return;
         try{
             session.sendMessage(new TextMessage(message));
         } catch (IOException e) {

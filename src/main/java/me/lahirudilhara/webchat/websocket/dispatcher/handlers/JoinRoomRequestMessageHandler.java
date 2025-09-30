@@ -55,7 +55,6 @@ public class JoinRoomRequestMessageHandler implements MessageHandler<JoinRoomMes
 
     private void handleNewDeviceJoin(JoinRoomMessageDTO message, String senderUsername, String sessionId){
         roomBroker.addSessionToRoom(message.getRoomId(), sessionId, senderUsername);
-        messageBroker.sendMessageToUserExceptSessions(senderUsername, List.of(sessionId), NewDeviceConnectedWithRoomResponse.builder().uuid(message.getUuid()).build());
     }
 
     private void handleNewUserRoomJoin(JoinRoomMessageDTO message, String senderUsername, String sessionId){
