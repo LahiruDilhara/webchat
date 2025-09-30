@@ -1,6 +1,5 @@
 package me.lahirudilhara.webchat.configuration;
 
-import me.lahirudilhara.webchat.websocket.WebChatWebSocketHandler;
 import me.lahirudilhara.webchat.websocket.lib.transport.WebSocketHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
