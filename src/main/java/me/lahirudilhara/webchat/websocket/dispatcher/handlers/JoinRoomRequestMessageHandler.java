@@ -60,8 +60,4 @@ public class JoinRoomRequestMessageHandler implements MessageHandler<JoinRoomMes
         messageBroker.sendMessageToRoom(message.getRoomId(), NewRoomUserResponse.builder().uuid(message.getUuid()).roomId(message.getRoomId()).username(senderUsername).build());
         roomBroker.addSessionToRoom(message.getRoomId(), sessionId, senderUsername);
     }
-
-    private void handleNewUserRoomJoin(int roomId,String username, String uuid){
-        messageBroker.sendMessageToRoom(roomId, NewRoomUserResponse.builder().uuid(uuid).roomId(roomId).username(username).build());
-    }
 }
