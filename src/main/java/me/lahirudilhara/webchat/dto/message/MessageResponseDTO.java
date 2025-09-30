@@ -12,7 +12,6 @@ import java.time.Instant;
 public class MessageResponseDTO {
     private Integer id;
     private Instant createdAt;
-    private Boolean deleted;
     private Integer senderId;
     private String senderUsername;
     private Integer roomId;

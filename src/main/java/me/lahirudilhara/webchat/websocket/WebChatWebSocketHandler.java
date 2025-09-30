@@ -50,15 +50,12 @@ public class WebChatWebSocketHandler extends TextWebSocketHandler {
             applicationEventPublisher.publishEvent(new ClientMessageEvent(session.getPrincipal().getName(), session.getId(), baseRequestMessageDTO));
         }
         catch(JsonProcessingException e){
-            System.out.println(e.getMessage());
             applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError("The message json is not in correct format"),username,session.getId()));
         }
         catch(ValidationException e){
-            System.out.println(e.getMessage());
             applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError(e.getMessage()),username,session.getId()));
         }
         catch (Exception e) {
-            System.out.println(e.getMessage());
             applicationEventPublisher.publishEvent(new ClientErrorEvent(new WebSocketError("Unknown error occurred"),username,session.getId()));
         }
     }

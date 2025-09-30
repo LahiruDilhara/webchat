@@ -1,18 +1,25 @@
 package me.lahirudilhara.webchat.service.message;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import me.lahirudilhara.webchat.common.exceptions.MessageNotFoundException;
 import me.lahirudilhara.webchat.entities.message.MessageEntity;
 import me.lahirudilhara.webchat.entities.message.TextMessageEntity;
+import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.entityModelMappers.MessageMapper;
+import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.models.message.TextMessage;
+import me.lahirudilhara.webchat.models.room.Room;
 import me.lahirudilhara.webchat.repositories.MessageRepository;
 import me.lahirudilhara.webchat.service.api.room.RoomValidator;
 import me.lahirudilhara.webchat.service.api.room.RoomManagementService;
 import me.lahirudilhara.webchat.service.api.room.RoomQueryService;
+import me.lahirudilhara.webchat.service.api.user.UserQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
@@ -22,11 +29,16 @@ public class MessageManagementService {
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
     private final MessageAccessValidator messageAccessValidator;
+    private final UserQueryService userQueryService;
 
-    public MessageManagementService(MessageRepository messageRepository, MessageMapper messageMapper, MessageAccessValidator messageAccessValidator) {
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public MessageManagementService(MessageRepository messageRepository, MessageMapper messageMapper, MessageAccessValidator messageAccessValidator, UserQueryService userQueryService) {
         this.messageRepository = messageRepository;
         this.messageMapper = messageMapper;
         this.messageAccessValidator = messageAccessValidator;
+        this.userQueryService = userQueryService;
     }
 
     public MessageEntity addMessageAsync(Message message){
@@ -42,6 +54,21 @@ public class MessageManagementService {
     public MessageEntity getMessageById(int id){
         Message message = messageRepository.findByIdWithSenderAndRoom(id).orElseThrow(MessageNotFoundException::new);
         return messageMapper.baseMessageToMessageEntity(message);
+    }
+
+    @Transactional
+    public MessageEntity addTextMessage(TextMessageEntity textMessageEntity, int roomId){
+        UserEntity userEntity =userQueryService.getUserByUsername(textMessageEntity.getSenderUsername());
+        TextMessage textMessage = new TextMessage();
+        textMessage.setSender(entityManager.getReference(User.class,userEntity.getId()));
+        textMessage.setRoom(entityManager.getReference(Room.class,roomId));
+        textMessage.setContent(textMessageEntity.getContent());
+        Instant now = Instant.now();
+        textMessage.setCreatedAt(now);
+        textMessage.setEditedAt(now);
+        textMessage.setDeleted(false);
+        Message message = messageRepository.save(textMessage);
+        return messageMapper.messageToMessageEntity(message);
     }
 
 

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TextMessageDTO extends BaseRequestMessageDTO {
+public class TextMessageDTO extends MessageDTO {
     @NotNull(message = "The message cannot be null")
     @NotEmpty(message = "The message cannot be empty")
     @Size(min = 1, max = 2000,message = "The message size should be between 1 and 2000")

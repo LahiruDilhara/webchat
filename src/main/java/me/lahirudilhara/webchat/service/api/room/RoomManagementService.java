@@ -124,10 +124,7 @@ public class RoomManagementService {
         if(!room.getCreatedBy().getId().equals(user.getId())){
             throw new ValidationException("Only the owner can update the room");
         }
-        System.out.println(room.getName());
-        System.out.println(roomEntity.getName());
         roomMapper.mapMultiUserRoomEntityToMultiUserRoom(roomEntity,room);
-        System.out.println(room.getName());
         MultiUserRoom updatedRoom = roomRepository.save(room);
         return roomBuilder.MultiUserRoomEntityFromMultiUserRoom(updatedRoom,user.getId());
     }
