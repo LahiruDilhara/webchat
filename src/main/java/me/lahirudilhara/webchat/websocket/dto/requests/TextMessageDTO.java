@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.websocket.dto;
+package me.lahirudilhara.webchat.websocket.dto.requests;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TextMessageDTO extends WebSocketMessageDTO {
+public class TextMessageDTO extends BaseRequestMessageDTO {
     @NotNull(message = "The message cannot be null")
     @NotEmpty(message = "The message cannot be empty")
     @Size(min = 1, max = 2000,message = "The message size should be between 1 and 2000")

@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.websocket.dto;
+package me.lahirudilhara.webchat.websocket.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

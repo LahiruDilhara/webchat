@@ -1,13 +1,12 @@
 package me.lahirudilhara.webchat.websocket.dispatcher.handlers;
 
-import me.lahirudilhara.webchat.websocket.dto.JoinRoomMessageDTO;
+import me.lahirudilhara.webchat.websocket.dto.requests.JoinRoomMessageDTO;
 import me.lahirudilhara.webchat.websocket.dispatcher.MessageHandler;
 import me.lahirudilhara.webchat.websocket.dto.response.NewDeviceConnectedWithRoomResponse;
 import me.lahirudilhara.webchat.websocket.dto.response.NewRoomUserResponse;
 import me.lahirudilhara.webchat.websocket.interfaces.ClientErrorHandler;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.MessageBroker;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.RoomBroker;
-import me.lahirudilhara.webchat.websocket.lib.interfaces.SessionErrorHandler;
 import me.lahirudilhara.webchat.websocket.services.JoinRoomValidator;
 import org.springframework.stereotype.Component;
 

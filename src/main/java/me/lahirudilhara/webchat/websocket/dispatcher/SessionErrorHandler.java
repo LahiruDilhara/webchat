@@ -3,7 +3,7 @@ package me.lahirudilhara.webchat.websocket.dispatcher;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import me.lahirudilhara.webchat.common.util.JsonUtil;
-import me.lahirudilhara.webchat.websocket.dto.WebSocketError;
+import me.lahirudilhara.webchat.websocket.dto.response.WebSocketError;
 import me.lahirudilhara.webchat.websocket.dto.response.ClientErrorMessageResponse;
 import me.lahirudilhara.webchat.websocket.interfaces.ClientErrorHandler;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.MessageSender;

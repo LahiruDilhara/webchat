@@ -1,6 +1,6 @@
 package me.lahirudilhara.webchat.dtoEntityMappers.websocket;
 
-import me.lahirudilhara.webchat.websocket.dto.TextMessageDTO;
+import me.lahirudilhara.webchat.websocket.dto.requests.TextMessageDTO;
 import me.lahirudilhara.webchat.models.message.TextMessage;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;

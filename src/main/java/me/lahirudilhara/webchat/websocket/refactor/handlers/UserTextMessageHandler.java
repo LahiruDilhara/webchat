@@ -1,8 +1,8 @@
 package me.lahirudilhara.webchat.websocket.refactor.handlers;
 
 import me.lahirudilhara.webchat.dto.message.MessageResponseDTO;
-import me.lahirudilhara.webchat.websocket.dto.TextMessageDTO;
-import me.lahirudilhara.webchat.websocket.dto.WebSocketError;
+import me.lahirudilhara.webchat.websocket.dto.requests.TextMessageDTO;
+import me.lahirudilhara.webchat.websocket.dto.response.WebSocketError;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.MessageMapper;
 import me.lahirudilhara.webchat.dtoEntityMappers.websocket.WebSocketMessageMapper;
 import me.lahirudilhara.webchat.entities.message.MessageEntity;
@@ -14,7 +14,6 @@ import me.lahirudilhara.webchat.websocket.refactor.events.UnicastDataEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 

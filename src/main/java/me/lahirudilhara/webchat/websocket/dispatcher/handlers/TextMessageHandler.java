@@ -1,7 +1,7 @@
 package me.lahirudilhara.webchat.websocket.dispatcher.handlers;
 
 import me.lahirudilhara.webchat.websocket.dispatcher.MessageHandler;
-import me.lahirudilhara.webchat.websocket.dto.TextMessageDTO;
+import me.lahirudilhara.webchat.websocket.dto.requests.TextMessageDTO;
 import org.springframework.stereotype.Component;
 
 @Component

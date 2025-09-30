@@ -1,7 +1,7 @@
 package me.lahirudilhara.webchat.websocket.refactor.dispatcher;
 
-import me.lahirudilhara.webchat.websocket.dto.WebSocketError;
-import me.lahirudilhara.webchat.websocket.dto.WebSocketMessageDTO;
+import me.lahirudilhara.webchat.websocket.dto.response.WebSocketError;
+import me.lahirudilhara.webchat.websocket.dto.requests.BaseRequestMessageDTO;
 import me.lahirudilhara.webchat.websocket.refactor.events.ClientErrorEvent;
 import me.lahirudilhara.webchat.websocket.refactor.events.ClientMessageEvent;
 import me.lahirudilhara.webchat.websocket.refactor.handlers.MessageHandler;
@@ -20,16 +20,16 @@ import java.util.Map;
 public class WebSocketMessageDispatcher {
     private final ApplicationEventPublisher applicationEventPublisher;
     private static final Logger log = LoggerFactory.getLogger(WebSocketMessageDispatcher.class);
-    private final Map<Class<? extends WebSocketMessageDTO>, MessageHandler<? extends WebSocketMessageDTO>> userMessageHandlerMap = new HashMap<>();
+    private final Map<Class<? extends BaseRequestMessageDTO>, MessageHandler<? extends BaseRequestMessageDTO>> userMessageHandlerMap = new HashMap<>();
 
-    public WebSocketMessageDispatcher(List<MessageHandler<? extends WebSocketMessageDTO>> messageHandlers, ApplicationEventPublisher applicationEventPublisher) {
+    public WebSocketMessageDispatcher(List<MessageHandler<? extends BaseRequestMessageDTO>> messageHandlers, ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
-        for (MessageHandler<? extends WebSocketMessageDTO> messageHandler : messageHandlers) {
+        for (MessageHandler<? extends BaseRequestMessageDTO> messageHandler : messageHandlers) {
             userMessageHandlerMap.put(messageHandler.getMessageType(), messageHandler);
         }
     }
 
-    public <T extends WebSocketMessageDTO> void dispatch(T message, String senderUsername, String sessionId) {
+    public <T extends BaseRequestMessageDTO> void dispatch(T message, String senderUsername, String sessionId) {
         MessageHandler<T> messageHandler = (MessageHandler<T>) userMessageHandlerMap.get(message.getClass());
         if (messageHandler == null) {
             log.error("The message handler not found. The username is {}. The message class is {}",senderUsername,message.getClass());

@@ -3,7 +3,7 @@ package me.lahirudilhara.webchat.websocket.dispatcher;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.ValidationException;
 import me.lahirudilhara.webchat.common.util.SchemaValidator;
-import me.lahirudilhara.webchat.websocket.dto.WebSocketMessageDTO;
+import me.lahirudilhara.webchat.websocket.dto.requests.BaseRequestMessageDTO;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.IncomingMessageHandler;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.SessionErrorHandler;
 import me.lahirudilhara.webchat.websocket.lib.utils.JsonUtils;
@@ -22,23 +22,23 @@ public class MessageParser implements IncomingMessageHandler {
 
     @Override
     public void handleMessage(WebSocketSession session, String message) throws Exception {
-        WebSocketMessageDTO webSocketMessageDTO = null;
+        BaseRequestMessageDTO baseRequestMessageDTO = null;
         try {
-            webSocketMessageDTO = JsonUtils.jsonToObject(message, WebSocketMessageDTO.class);
+            baseRequestMessageDTO = JsonUtils.jsonToObject(message, BaseRequestMessageDTO.class);
         } catch (JsonProcessingException e) {
             sessionErrorHandler.sendErrorToSession(session, "Message in the wrong format");
             return;
         }
-        if (webSocketMessageDTO == null) {
+        if (baseRequestMessageDTO == null) {
             sessionErrorHandler.sendErrorToSession(session,"Message is empty");
             return;
         }
         try{
-            SchemaValidator.validate(webSocketMessageDTO);
+            SchemaValidator.validate(baseRequestMessageDTO);
         } catch (ValidationException e) {
             sessionErrorHandler.sendErrorToSession(session,e.getMessage());
             return;
         }
-        messageDispatcher.dispatch(webSocketMessageDTO,session.getPrincipal().getName(),session.getId());
+        messageDispatcher.dispatch(baseRequestMessageDTO,session.getPrincipal().getName(),session.getId());
     }
 }

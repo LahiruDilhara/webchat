@@ -5,13 +5,12 @@ import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import me.lahirudilhara.webchat.common.util.JsonUtil;
 import me.lahirudilhara.webchat.common.util.SchemaValidator;
-import me.lahirudilhara.webchat.websocket.dto.WebSocketError;
-import me.lahirudilhara.webchat.websocket.dto.WebSocketMessageDTO;
+import me.lahirudilhara.webchat.websocket.dto.response.WebSocketError;
+import me.lahirudilhara.webchat.websocket.dto.requests.BaseRequestMessageDTO;
 import me.lahirudilhara.webchat.websocket.refactor.events.ClientErrorEvent;
 import me.lahirudilhara.webchat.websocket.refactor.events.ClientMessageEvent;
 import me.lahirudilhara.webchat.websocket.refactor.session.SessionManager;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -46,9 +45,9 @@ public class WebChatWebSocketHandler extends TextWebSocketHandler {
         String username = Objects.requireNonNull(session.getPrincipal()).getName();
         if(username == null) return;
         try{
-            WebSocketMessageDTO webSocketMessageDTO = JsonUtil.jsonToObject(message.getPayload(), WebSocketMessageDTO.class);
-            SchemaValidator.validate(webSocketMessageDTO);
-            applicationEventPublisher.publishEvent(new ClientMessageEvent(session.getPrincipal().getName(), session.getId(),webSocketMessageDTO));
+            BaseRequestMessageDTO baseRequestMessageDTO = JsonUtil.jsonToObject(message.getPayload(), BaseRequestMessageDTO.class);
+            SchemaValidator.validate(baseRequestMessageDTO);
+            applicationEventPublisher.publishEvent(new ClientMessageEvent(session.getPrincipal().getName(), session.getId(), baseRequestMessageDTO));
         }
         catch(JsonProcessingException e){
             System.out.println(e.getMessage());

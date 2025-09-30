@@ -1,7 +1,6 @@
 package me.lahirudilhara.webchat.websocket.refactor.handlers;
 
-import me.lahirudilhara.webchat.websocket.dto.JoinRoomMessageDTO;
-import org.springframework.stereotype.Service;
+import me.lahirudilhara.webchat.websocket.dto.requests.JoinRoomMessageDTO;
 
 public class JoinRoomRequestMessageHandler implements MessageHandler<JoinRoomMessageDTO> {
     @Override

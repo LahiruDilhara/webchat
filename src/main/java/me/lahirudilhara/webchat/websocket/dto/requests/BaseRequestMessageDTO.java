@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.websocket.dto;
+package me.lahirudilhara.webchat.websocket.dto.requests;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.lahirudilhara.webchat.websocket.refactor.dispatcher.PacketType;
+import me.lahirudilhara.webchat.websocket.dispatcher.PacketType;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -19,12 +19,13 @@ import me.lahirudilhara.webchat.websocket.refactor.dispatcher.PacketType;
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = TextMessageDTO.class, name = "Text"),
-        @JsonSubTypes.Type(value = JoinRoomMessageDTO.class, name = "Join")
+        @JsonSubTypes.Type(value = JoinRoomMessageDTO.class, name = "Join"),
+        @JsonSubTypes.Type(value = RemainMessageDTO.class, name = "RemainMessage"),
 })
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class WebSocketMessageDTO {
+public class BaseRequestMessageDTO {
     @NotNull(message = "The type cannot be null")
     private PacketType type;
 
