@@ -1,8 +1,8 @@
 package me.lahirudilhara.webchat.websocket.lib.broker;
 
 import lombok.extern.slf4j.Slf4j;
-import me.lahirudilhara.webchat.websocket.lib.events.NewUserJoinedEvent;
-import me.lahirudilhara.webchat.websocket.lib.events.UserDisconnectedEvent;
+import me.lahirudilhara.webchat.websocket.lib.events.NewSessionEvent;
+import me.lahirudilhara.webchat.websocket.lib.events.SessionDisconnectedEvent;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.RoomBroker;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.SessionHandler;
 import org.springframework.context.ApplicationEventPublisher;
@@ -19,11 +19,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class InMemorySessionManager implements SessionHandler {
     private final Map<String, List<WebSocketSession>> sessions = new ConcurrentHashMap<>();
     private final Map<String,WebSocketSession> sessionsById = new ConcurrentHashMap<>();
-    private final RoomBroker roomBroker;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public InMemorySessionManager(RoomBroker roomBroker, ApplicationEventPublisher applicationEventPublisher) {
-        this.roomBroker = roomBroker;
+    public InMemorySessionManager( ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
@@ -43,7 +41,7 @@ public class InMemorySessionManager implements SessionHandler {
         if (!sessions.get(username).contains(session)) {
             sessions.get(username).add(session);
         }
-        applicationEventPublisher.publishEvent(new NewUserJoinedEvent(username));
+        applicationEventPublisher.publishEvent(new NewSessionEvent(username,session.getId()));
     }
 
     @Override
@@ -59,8 +57,7 @@ public class InMemorySessionManager implements SessionHandler {
             sessions.remove(username);
         }
         sessionsById.remove(session.getId());
-        roomBroker.removeFromAllRooms(session.getId());
-        applicationEventPublisher.publishEvent(new UserDisconnectedEvent(username));
+        applicationEventPublisher.publishEvent(new SessionDisconnectedEvent(username,session.getId()));
     }
 
     @Override

@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RoomBrokerImpl implements RoomBroker {
     private final Map<Integer, List<BrokerSession>> rooms = new ConcurrentHashMap<>();
     private final Map<String, Set<Integer>> sessionIdsToRoomIds = new ConcurrentHashMap<>();
+    private final Map<String, List<Integer>> userJoinedRoomIds = new ConcurrentHashMap<>();
     private final ApplicationEventPublisher applicationEventPublisher;
 
     public RoomBrokerImpl(ApplicationEventPublisher applicationEventPublisher) {
@@ -26,11 +27,17 @@ public class RoomBrokerImpl implements RoomBroker {
         if (!rooms.containsKey(roomId)) {
             rooms.put(roomId, new ArrayList<>());
         }
-        rooms.get(roomId).add(new BrokerSession( username, sessionId));
+        rooms.get(roomId).add(new BrokerSession(username, sessionId));
         if (!sessionIdsToRoomIds.containsKey(sessionId)) {
             sessionIdsToRoomIds.put(sessionId, new HashSet<>());
         }
         sessionIdsToRoomIds.get(sessionId).add(roomId);
+        if(!userJoinedRoomIds.containsKey(username)) {
+            userJoinedRoomIds.put(username, new ArrayList<>());
+        }
+        if(!userJoinedRoomIds.get(username).contains(roomId)) {
+            userJoinedRoomIds.get(username).add(roomId);
+        }
         log.debug("Adding session to room {} with sessionId {}", roomId, sessionId);
         applicationEventPublisher.publishEvent(new UserJoinedRoomEvent(roomId, username));
     }
@@ -38,13 +45,25 @@ public class RoomBrokerImpl implements RoomBroker {
     @Override
     public void removeSessionFromRoom(Integer roomId, String sessionId) {
         if (!rooms.containsKey(roomId)) return;
-        BrokerSession brokerSession = rooms.get(roomId).stream().filter(bs->bs.sessionId().equals(sessionId)).findFirst().orElse(null);
+        BrokerSession brokerSession = rooms.get(roomId).stream().filter(bs -> bs.sessionId().equals(sessionId)).findFirst().orElse(null);
         if (brokerSession == null) return;
+        String username = brokerSession.username();
         rooms.get(roomId).remove(brokerSession);
         if (rooms.get(roomId).isEmpty()) {
             rooms.remove(roomId);
         }
-        if(sessionIdsToRoomIds.containsKey(sessionId)){
+        else if(userJoinedRoomIds.containsKey(username)){
+            List<BrokerSession> sessions = rooms.get(roomId).stream().filter(bs->bs.username().equals(username)).toList();
+            if(sessions.isEmpty()) {
+                if(userJoinedRoomIds.get(username).contains(roomId)) {
+                    userJoinedRoomIds.get(username).remove(roomId);
+                }
+                if(userJoinedRoomIds.get(username).isEmpty()){
+                    userJoinedRoomIds.remove(username);
+                }
+            }
+        }
+        if (sessionIdsToRoomIds.containsKey(sessionId)) {
             sessionIdsToRoomIds.get(sessionId).remove(roomId);
         }
         log.debug("Removing session from room {} with sessionId {}", roomId, sessionId);
@@ -70,7 +89,7 @@ public class RoomBrokerImpl implements RoomBroker {
 
     @Override
     public void removeFromAllRooms(String sessionId) {
-        if(!sessionIdsToRoomIds.containsKey(sessionId)) return;
+        if (!sessionIdsToRoomIds.containsKey(sessionId)) return;
         Set<Integer> roomIds = sessionIdsToRoomIds.get(sessionId);
         roomIds.forEach(roomId -> {
             removeSessionFromRoom(roomId, sessionId);
@@ -80,11 +99,24 @@ public class RoomBrokerImpl implements RoomBroker {
 
     @Override
     public boolean isSessionInRoom(Integer roomId, String sessionId) {
-        if(rooms.get(roomId) == null) return false;
-        if(rooms.get(roomId).isEmpty()) return false;
+        if (rooms.get(roomId) == null) return false;
+        if (rooms.get(roomId).isEmpty()) return false;
         if (!rooms.containsKey(roomId)) return false;
-        if(rooms.get(roomId).stream().map(BrokerSession::sessionId).noneMatch(s -> s.equals(sessionId))) return false;
+        if (rooms.get(roomId).stream().map(BrokerSession::sessionId).noneMatch(s -> s.equals(sessionId))) return false;
         return true;
+    }
+
+    @Override
+    public List<Integer> getUserOnlineRooms(String username) {
+        List<Integer> roomIds= userJoinedRoomIds.get(username);
+        if(roomIds==null) return new ArrayList<>();
+        return roomIds;
+    }
+
+    @Override
+    public List<BrokerSession> getBrokerSessionsInRoom(Integer roomId) {
+        if(!rooms.containsKey(roomId)) return new ArrayList<>();
+        return rooms.get(roomId);
     }
 
 }
