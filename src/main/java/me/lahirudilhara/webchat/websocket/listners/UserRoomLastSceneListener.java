@@ -25,7 +25,7 @@ public class UserRoomLastSceneListener {
             userRoomStatusService.updateUserRoomLastScene(event.username(),event.roomId());
         }
         catch (Exception e){
-            log.error("Error while updating userRoom last scene in new room join", e);
+            log.error("Error while updating userRoom last scene in new room join. Username is {}",event.username(), e);
         }
     }
 
@@ -36,7 +36,7 @@ public class UserRoomLastSceneListener {
             userRoomStatusService.updateUserRoomLastScene(event.username(),event.roomId());
         }
         catch (Exception e){
-            log.error("Error while updating userRoom last scene in leave room", e);
+            log.error("Error while updating userRoom last scene in leave room.Username is {}",event.username(), e);
         }
     }
 

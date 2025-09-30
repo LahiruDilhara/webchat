@@ -38,7 +38,9 @@ public class RoomBrokerImpl implements RoomBroker {
     @Override
     public void removeSessionFromRoom(Integer roomId, String sessionId) {
         if (!rooms.containsKey(roomId)) return;
-        rooms.get(roomId).remove(sessionId);
+        BrokerSession brokerSession = rooms.get(roomId).stream().filter(bs->bs.sessionId().equals(sessionId)).findFirst().orElse(null);
+        if (brokerSession == null) return;
+        rooms.get(roomId).remove(brokerSession);
         if (rooms.get(roomId).isEmpty()) {
             rooms.remove(roomId);
         }
@@ -46,7 +48,7 @@ public class RoomBrokerImpl implements RoomBroker {
             sessionIdsToRoomIds.get(sessionId).remove(roomId);
         }
         log.debug("Removing session from room {} with sessionId {}", roomId, sessionId);
-        applicationEventPublisher.publishEvent(new UserLeaveRoomEvent(roomId, sessionId));
+        applicationEventPublisher.publishEvent(new UserLeaveRoomEvent(roomId, brokerSession.username()));
     }
 
     @Override
@@ -71,9 +73,7 @@ public class RoomBrokerImpl implements RoomBroker {
         if(!sessionIdsToRoomIds.containsKey(sessionId)) return;
         Set<Integer> roomIds = sessionIdsToRoomIds.get(sessionId);
         roomIds.forEach(roomId -> {
-            if(!rooms.containsKey(roomId)) return;
-            rooms.get(roomId).remove(sessionId);
-            if(rooms.get(roomId).isEmpty()) rooms.remove(roomId);
+            removeSessionFromRoom(roomId, sessionId);
         });
         sessionIdsToRoomIds.remove(sessionId);
     }

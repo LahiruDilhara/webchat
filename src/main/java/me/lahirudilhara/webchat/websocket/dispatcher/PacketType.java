@@ -5,5 +5,6 @@ public enum PacketType {
     Join,
     File,
     Typing,
-    RemainMessage
+    RemainMessage,
+    Leave;
 }

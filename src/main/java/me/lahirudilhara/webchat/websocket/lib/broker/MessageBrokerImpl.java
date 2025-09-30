@@ -46,6 +46,14 @@ public class MessageBrokerImpl implements MessageBroker {
     }
 
     @Override
+    public void sendMessageToUserExceptSessions(String username, List<String> sessionIds, Object message) {
+        List<WebSocketSession> sessions = sessionHandler.getSessionsByUser(username).stream().filter(ws-> !sessionIds.contains(ws.getId())).toList();
+        String jsonMessage = objectToJson(message);
+        if (jsonMessage == null) return;
+        sessions.forEach(ws -> messageSender.sendMessage(jsonMessage, ws));
+    }
+
+    @Override
     public void sendMessageToSession(String sessionId, Object message) {
         WebSocketSession session = sessionHandler.getSessionById(sessionId);
         if (session == null) return;

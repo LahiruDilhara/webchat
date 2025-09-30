@@ -10,6 +10,8 @@ import me.lahirudilhara.webchat.websocket.lib.interfaces.RoomBroker;
 import me.lahirudilhara.webchat.websocket.services.JoinRoomValidator;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class JoinRoomRequestMessageHandler implements MessageHandler<JoinRoomMessageDTO> {
     private final JoinRoomValidator joinRoomValidator;
@@ -53,7 +55,7 @@ public class JoinRoomRequestMessageHandler implements MessageHandler<JoinRoomMes
 
     private void handleNewDeviceJoin(JoinRoomMessageDTO message, String senderUsername, String sessionId){
         roomBroker.addSessionToRoom(message.getRoomId(), sessionId, senderUsername);
-        messageBroker.sendMessageToUser(senderUsername, NewDeviceConnectedWithRoomResponse.builder().uuid(message.getUuid()).build());
+        messageBroker.sendMessageToUserExceptSessions(senderUsername, List.of(sessionId), NewDeviceConnectedWithRoomResponse.builder().uuid(message.getUuid()).build());
     }
 
     private void handleNewUserRoomJoin(JoinRoomMessageDTO message, String senderUsername, String sessionId){
