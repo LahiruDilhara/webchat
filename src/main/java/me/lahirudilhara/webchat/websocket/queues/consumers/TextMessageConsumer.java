@@ -43,7 +43,7 @@ public class TextMessageConsumer {
     }
 
     @Async
-    @EventListener
+    @EventListener(ApplicationReadyEvent.class)
     public void consume(ApplicationReadyEvent applicationReadyEvent) {
         log.info("TextMessageConsumer started");
         while (true) {

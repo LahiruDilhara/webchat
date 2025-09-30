@@ -29,6 +29,12 @@ public class UserService {
         User user = userRepository.save(userMapper.userEntityToUser(userEntity));
         return userMapper.userToUserEntity(user);
     }
+
+    public void updateUserLastScene(String username) {
+        User user = userRepository.findByUsername(username);
+        user.setLastSeen(Instant.now());
+        userRepository.save(user);
+    }
 }
 
 //SRP says: a method (or class) should have only one reason to change.
