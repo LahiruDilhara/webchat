@@ -12,7 +12,7 @@ import me.lahirudilhara.webchat.models.room.Room;
 import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.models.message.TextMessage;
 import me.lahirudilhara.webchat.service.api.user.UserQueryService;
-import me.lahirudilhara.webchat.service.message.MessageService;
+import me.lahirudilhara.webchat.service.message.MessageManagementService;
 import me.lahirudilhara.webchat.service.api.room.RoomQueryService;
 import me.lahirudilhara.webchat.websocket.refactor.entities.BroadcastData;
 import org.slf4j.Logger;
@@ -23,15 +23,15 @@ import java.util.List;
 
 public class WebSocketRoomService {
     private static final Logger log = LoggerFactory.getLogger(WebSocketRoomService.class);
-    private final MessageService messageService;
+    private final MessageManagementService messageManagementService;
     private final RoomQueryService roomQueryService;
     private final UserQueryService userQueryService;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public WebSocketRoomService( MessageService messageService,  RoomQueryService roomQueryService, UserQueryService userQueryService) {
-        this.messageService = messageService;
+    public WebSocketRoomService(MessageManagementService messageManagementService, RoomQueryService roomQueryService, UserQueryService userQueryService) {
+        this.messageManagementService = messageManagementService;
         this.roomQueryService = roomQueryService;
         this.userQueryService = userQueryService;
     }
@@ -83,7 +83,7 @@ public class WebSocketRoomService {
         textMessage.setCreatedAt(createdTime);
         textMessage.setEditedAt(createdTime);
 
-        MessageEntity addedMessage = messageService.addMessageAsync(textMessage);
+        MessageEntity addedMessage = messageManagementService.addMessageAsync(textMessage);
 
         List<String> receivers = roomUsers.stream().map(UserEntity::getUsername).toList();
         return Either.right(new BroadcastData<>(receivers,addedMessage));

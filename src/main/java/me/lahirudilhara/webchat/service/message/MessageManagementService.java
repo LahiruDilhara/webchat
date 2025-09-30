@@ -1,7 +1,6 @@
 package me.lahirudilhara.webchat.service.message;
 
 import me.lahirudilhara.webchat.common.exceptions.MessageNotFoundException;
-import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.entities.message.MessageEntity;
 import me.lahirudilhara.webchat.entities.message.TextMessageEntity;
 import me.lahirudilhara.webchat.entityModelMappers.MessageMapper;
@@ -13,17 +12,13 @@ import me.lahirudilhara.webchat.service.api.room.RoomManagementService;
 import me.lahirudilhara.webchat.service.api.room.RoomQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.Collections;
-import java.util.List;
 
 @Service
-public class MessageService {
-    private static final Logger log = LoggerFactory.getLogger(MessageService.class);
+public class MessageManagementService {
+    private static final Logger log = LoggerFactory.getLogger(MessageManagementService.class);
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
     private final RoomManagementService roomManagementService;
@@ -31,7 +26,7 @@ public class MessageService {
     private final RoomValidator roomValidator;
     private final MessageAccessValidator messageAccessValidator;
 
-    public MessageService(MessageRepository messageRepository, MessageMapper messageMapper, RoomManagementService roomManagementService, RoomQueryService roomQueryService, RoomValidator roomValidator, MessageAccessValidator messageAccessValidator) {
+    public MessageManagementService(MessageRepository messageRepository, MessageMapper messageMapper, RoomManagementService roomManagementService, RoomQueryService roomQueryService, RoomValidator roomValidator, MessageAccessValidator messageAccessValidator) {
         this.messageRepository = messageRepository;
         this.messageMapper = messageMapper;
         this.roomManagementService = roomManagementService;
@@ -55,34 +50,7 @@ public class MessageService {
         return messageMapper.baseMessageToMessageEntity(message);
     }
 
-    public List<MessageEntity> getMessagesByRoomId(int roomId, String accessUser, Pageable pageable){
-        if(roomValidator.isNotUserAbleToAccessRoom(accessUser, roomId)) throw new RoomNotFoundException();
-        Page<Message> page = messageRepository.findByRoomIdOrderByCreatedAtDesc(roomId, pageable);
 
-        // Remove deleted messages and convert
-        return page.getContent().stream().filter(m->!m.getDeleted()).map(messageMapper::messageToMessageEntity).toList();
-    }
-
-    public List<MessageEntity> getLast10MessagesInRoom(int roomId, String accessUser){
-        if(roomValidator.isNotUserAbleToAccessRoom(accessUser, roomId)) throw new RoomNotFoundException();
-        List<Message> messages = messageRepository.findTop10ByRoomIdOrderByIdDesc(roomId);
-        if(messages.isEmpty()) return Collections.emptyList();
-        return messages.stream().filter(m->!m.getDeleted()).map(messageMapper::messageToMessageEntity).toList();
-    }
-
-    public List<MessageEntity> get15MessagesBeforeGivenMessageIdInRoom(int roomId, int messageId, String accessUser){
-        if(roomValidator.isNotUserAbleToAccessRoom(accessUser, roomId)) throw new RoomNotFoundException();
-        List<Message> messages = messageRepository.findTop15ByRoomIdAndIdLessThanOrderByIdDesc(roomId, messageId);
-        if(messages.isEmpty()) return Collections.emptyList();
-        return messages.stream().filter(m->!m.getDeleted()).map(messageMapper::messageToMessageEntity).toList();
-    }
-
-    public List<MessageEntity> getMessagesAfterGivenMessageIdInRoom(int roomId, int messageId, String accessUser){
-        if(roomValidator.isNotUserAbleToAccessRoom(accessUser, roomId)) throw new RoomNotFoundException();
-        List<Message> messages = messageRepository.findByRoomIdAndIdGreaterThanOrderByIdAsc(roomId, messageId);
-        if(messages.isEmpty()) return Collections.emptyList();
-        return messages.stream().filter(m->!m.getDeleted()).map(messageMapper::messageToMessageEntity).toList();
-    }
 
 
     public MessageEntity updateMessage(TextMessageEntity messageEntity, int messageId){

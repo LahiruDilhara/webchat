@@ -3,7 +3,6 @@ package me.lahirudilhara.webchat.controller;
 import jakarta.validation.Valid;
 import me.lahirudilhara.webchat.dto.api.room.*;
 import me.lahirudilhara.webchat.dto.api.user.UserResponseDTO;
-import me.lahirudilhara.webchat.dto.message.MessageResponseDTO;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.MessageMapper;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.RoomMapper;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.UserMapper;
@@ -12,13 +11,9 @@ import me.lahirudilhara.webchat.entities.room.MultiUserRoomEntity;
 import me.lahirudilhara.webchat.entities.room.RoomDetailsEntity;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
 import me.lahirudilhara.webchat.entities.user.UserEntity;
-import me.lahirudilhara.webchat.entities.message.MessageEntity;
-import me.lahirudilhara.webchat.service.message.MessageService;
+import me.lahirudilhara.webchat.service.message.MessageManagementService;
 import me.lahirudilhara.webchat.service.api.room.RoomManagementService;
 import me.lahirudilhara.webchat.service.api.room.RoomQueryService;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,15 +29,15 @@ public class RoomController {
     private final MessageMapper messageMapper;
     private final UserMapper userMapper;
     private final RoomQueryService roomQueryService;
-    private final MessageService messageService;
+    private final MessageManagementService messageManagementService;
 
-    public RoomController(RoomMapper roomMapper, RoomManagementService roomManagementService, MessageMapper messageMapper, UserMapper userMapper,  RoomQueryService roomQueryService, MessageService messageService) {
+    public RoomController(RoomMapper roomMapper, RoomManagementService roomManagementService, MessageMapper messageMapper, UserMapper userMapper,  RoomQueryService roomQueryService, MessageManagementService messageManagementService) {
         this.roomMapper = roomMapper;
         this.roomManagementService = roomManagementService;
         this.messageMapper = messageMapper;
         this.userMapper = userMapper;
         this.roomQueryService = roomQueryService;
-        this.messageService = messageService;
+        this.messageManagementService = messageManagementService;
     }
 
     @PostMapping("/multiUser")
