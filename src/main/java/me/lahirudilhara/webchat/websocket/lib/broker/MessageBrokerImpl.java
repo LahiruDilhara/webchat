@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -51,6 +52,17 @@ public class MessageBrokerImpl implements MessageBroker {
         String jsonMessage = objectToJson(message);
         if (jsonMessage == null) return;
         sessions.forEach(ws -> messageSender.sendMessage(jsonMessage, ws));
+    }
+
+    @Override
+    public void sendMessageToRoomExceptUsers(Integer roomId, List<String> usernames, Object message) {
+        List<String> sessionIds = roomBroker.getSessions(roomId);
+        List<String> userSessionIds = usernames.stream().map(sessionHandler::getSessionsByUser).filter(Objects::nonNull).flatMap(List::stream).map(WebSocketSession::getId).toList();
+        List<String> filteredSessions = sessionIds.stream().filter(sessionId -> !userSessionIds.contains(sessionId)).toList();
+        List<WebSocketSession> sessions = filteredSessions.stream().map(sessionHandler::getSessionById).toList();
+        String jsonMessage = objectToJson(message);
+        if (jsonMessage == null) return;
+        sessions.forEach(ws->messageSender.sendMessage(jsonMessage, ws));
     }
 
     @Override

@@ -22,6 +22,7 @@ import me.lahirudilhara.webchat.websocket.dispatcher.PacketType;
         @JsonSubTypes.Type(value = JoinRoomMessageDTO.class, name = "Join"),
         @JsonSubTypes.Type(value = RemainMessageDTO.class, name = "RemainMessage"),
         @JsonSubTypes.Type(value = LeaveRoomMessageDTO.class, name = "Leave"),
+        @JsonSubTypes.Type(value = TypingMessageDTO.class, name = "Typing"),
 })
 @Data
 @NoArgsConstructor
