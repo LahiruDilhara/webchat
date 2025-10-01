@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -179,6 +180,13 @@ public class ApiExceptionHandler {
         log.warn("Bad credentials on path: {}", request.getRequestURI());
 
         ErrorResponse error = new ErrorResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    public ResponseEntity<ErrorResponse> handleInternalAuthenticationService(InternalAuthenticationServiceException ex, HttpServletRequest request) {
+        log.warn("Internal authentication service on path: {}", request.getRequestURI());
+        ErrorResponse error = new ErrorResponse(ex.getMessage(),HttpStatus.UNAUTHORIZED);
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
