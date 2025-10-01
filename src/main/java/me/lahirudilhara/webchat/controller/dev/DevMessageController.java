@@ -11,6 +11,7 @@ import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.models.message.TextMessage;
 import me.lahirudilhara.webchat.models.room.Room;
 import me.lahirudilhara.webchat.service.api.user.UserQueryService;
+import me.lahirudilhara.webchat.service.api.user.UserRoomStatusService;
 import me.lahirudilhara.webchat.service.message.MessageManagementService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.*;
@@ -27,14 +28,16 @@ public class DevMessageController {
     private final MessageManagementService messageManagementService;
     private final MessageMapper  messageMapper;
     private final me.lahirudilhara.webchat.entityModelMappers.MessageMapper emMessageMapper;
+    private final UserRoomStatusService userRoomStatusService;
     @PersistenceContext
     private EntityManager entityManager;
 
-    public DevMessageController(UserQueryService userQueryService, MessageManagementService messageManagementService, MessageMapper messageMapper, me.lahirudilhara.webchat.entityModelMappers.MessageMapper emMessageMapper) {
+    public DevMessageController(UserQueryService userQueryService, MessageManagementService messageManagementService, MessageMapper messageMapper, me.lahirudilhara.webchat.entityModelMappers.MessageMapper emMessageMapper, UserRoomStatusService userRoomStatusService) {
         this.userQueryService = userQueryService;
         this.messageManagementService = messageManagementService;
         this.messageMapper = messageMapper;
         this.emMessageMapper = emMessageMapper;
+        this.userRoomStatusService = userRoomStatusService;
     }
 
 
@@ -54,5 +57,10 @@ public class DevMessageController {
         Message addedMessage = messageManagementService.addMessage(message);
 
         return messageMapper.messageEntityToMessageResponseDTO(emMessageMapper.messageToMessageEntity(addedMessage));
+    }
+
+    @PostMapping("/update/{roomId}")
+    public void updateUserRoomLastSeen(@PathVariable int roomId, Principal principal) {
+        userRoomStatusService.updateUserRoomLastScene(principal.getName(),roomId);
     }
 }

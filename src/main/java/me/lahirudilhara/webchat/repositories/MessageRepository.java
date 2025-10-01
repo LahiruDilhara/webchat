@@ -1,5 +1,6 @@
 package me.lahirudilhara.webchat.repositories;
 
+import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.models.message.Message;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,4 +28,7 @@ public interface MessageRepository extends JpaRepository<Message,Integer> {
     List<Message> findByRoomIdAndIdGreaterThanOrderByIdAsc(Integer roomId, Integer id);
 
     List<Message> findTop15ByRoomIdAndIdLessThanOrderByIdDesc(Integer roomId, Integer lastMessageId);
+
+    @Query("SELECT urs.user FROM UserRoomStatus urs JOIN urs.room r JOIN message m ON m.room = r WHERE m.id = :messageId AND r.id = :roomId AND urs.lastSeenAt > m.createdAt")
+    List<User> findTheUsersWhoSawTheMessage(@Param("roomId") Integer roomId,@Param("messageId")  Integer messageId);
 }

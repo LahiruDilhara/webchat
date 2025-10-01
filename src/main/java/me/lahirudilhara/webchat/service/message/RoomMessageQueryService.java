@@ -2,7 +2,10 @@ package me.lahirudilhara.webchat.service.message;
 
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.entities.message.MessageEntity;
+import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.entityModelMappers.MessageMapper;
+import me.lahirudilhara.webchat.entityModelMappers.UserMapper;
+import me.lahirudilhara.webchat.models.User;
 import me.lahirudilhara.webchat.models.message.Message;
 import me.lahirudilhara.webchat.repositories.MessageRepository;
 import me.lahirudilhara.webchat.service.api.room.RoomValidator;
@@ -19,11 +22,13 @@ public class RoomMessageQueryService {
     private final RoomValidator roomValidator;
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
+    private final UserMapper userMapper;
 
-    public RoomMessageQueryService(RoomValidator roomValidator, MessageRepository messageRepository, MessageMapper messageMapper) {
+    public RoomMessageQueryService(RoomValidator roomValidator, MessageRepository messageRepository, MessageMapper messageMapper, UserMapper userMapper) {
         this.roomValidator = roomValidator;
         this.messageRepository = messageRepository;
         this.messageMapper = messageMapper;
+        this.userMapper = userMapper;
     }
 
     public List<MessageEntity> getMessagesByRoomId(int roomId, String accessUser, Pageable pageable){
@@ -53,5 +58,12 @@ public class RoomMessageQueryService {
         List<Message> messages = messageRepository.findByRoomIdAndIdGreaterThanOrderByIdAsc(roomId, messageId);
         if(messages.isEmpty()) return Collections.emptyList();
         return messages.stream().filter(m->!m.getDeleted()).map(messageMapper::messageToMessageEntity).toList();
+    }
+
+    public List<UserEntity> getMessageViewUsersInRoom(int roomId, int messageId, String accessUser){
+        if(roomValidator.isNotUserAbleToAccessRoom(accessUser, roomId)) throw new RoomNotFoundException();
+        List<User> messageSeenUsers = messageRepository.findTheUsersWhoSawTheMessage(roomId,messageId);
+        if(messageSeenUsers.isEmpty()) return Collections.emptyList();
+        return messageSeenUsers.stream().map(userMapper::userToUserEntity).toList();
     }
 }
