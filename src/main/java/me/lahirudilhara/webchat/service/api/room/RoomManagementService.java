@@ -3,6 +3,7 @@ package me.lahirudilhara.webchat.service.api.room;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
+import me.lahirudilhara.webchat.common.exceptions.UserNotFoundException;
 import me.lahirudilhara.webchat.common.exceptions.ValidationException;
 import me.lahirudilhara.webchat.entities.room.DualUserRoomEntity;
 import me.lahirudilhara.webchat.entities.room.MultiUserRoomEntity;
@@ -23,6 +24,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
+import java.net.UnknownServiceException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +80,7 @@ public class RoomManagementService {
     public DualUserRoomEntity createDualUserRoom(DualUserRoomEntity roomEntity, String nextUsername){
         UserEntity owner = userQueryService.getUserByUsername(roomEntity.getCreatedBy());
         UserEntity user = userQueryService.getUserByUsername(nextUsername);
+        if(owner.getUsername().equals(user.getUsername())) throw new UserNotFoundException();
 
         User ownerRef = entityManager.getReference(User.class, owner.getId());
         User userRef = entityManager.getReference(User.class, user.getId());

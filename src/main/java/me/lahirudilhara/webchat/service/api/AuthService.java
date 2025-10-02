@@ -1,5 +1,6 @@
 package me.lahirudilhara.webchat.service.api;
 
+import lombok.extern.slf4j.Slf4j;
 import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.jwt.JwtService;
 import me.lahirudilhara.webchat.service.api.user.UserService;
@@ -9,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class AuthService {
     private final UserService userService;
@@ -35,7 +37,12 @@ public class AuthService {
     }
 
     private boolean verify(UserEntity userEntity) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userEntity.getUsername(),userEntity.getPassword()));
-        return authentication.isAuthenticated();
+        try{
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userEntity.getUsername(),userEntity.getPassword()));
+            return authentication.isAuthenticated();
+        } catch (Exception e) {
+            throw new BadCredentialsException("Invalid username or password");
+        }
+
     }
 }
