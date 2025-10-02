@@ -25,13 +25,20 @@ public class JwtConfiguration {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @Autowired
+    private WcAuthenticationEntryPoint authenticationEntryPoint;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(customizer -> customizer.disable());
+        http.cors(Customizer.withDefaults());
         http.authorizeHttpRequests(authorizeRequests -> authorizeRequests.requestMatchers("/api/v1/auth/**").permitAll().anyRequest().authenticated());
         http.formLogin(Customizer.withDefaults());
         http.httpBasic(Customizer.withDefaults());
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.formLogin(form->form.disable());
+        http.httpBasic(basic->basic.disable());
+        http.exceptionHandling(ex->ex.authenticationEntryPoint(authenticationEntryPoint));
 
         return http.build();
     }

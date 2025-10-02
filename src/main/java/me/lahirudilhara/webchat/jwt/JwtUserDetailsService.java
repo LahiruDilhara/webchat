@@ -1,5 +1,6 @@
 package me.lahirudilhara.webchat.jwt;
 
+import me.lahirudilhara.webchat.common.exceptions.UserNotFoundException;
 import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.entityModelMappers.UserMapper;
 import me.lahirudilhara.webchat.service.api.user.UserQueryService;
@@ -20,8 +21,17 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = userQueryService.getUserByUsername(username);
-        UserDetails userDetails = new SecureUserDetails(userMapper.userEntityToUser(userEntity));
-        return userDetails;
+        try{
+            UserEntity userEntity = userQueryService.getUserByUsername(username);
+            UserDetails userDetails = new SecureUserDetails(userMapper.userEntityToUser(userEntity));
+            return userDetails;
+        }
+        catch (UserNotFoundException e){
+            throw new UsernameNotFoundException(e.getMessage());
+        }
+        catch (Exception e){
+            throw e;
+        }
+
     }
 }

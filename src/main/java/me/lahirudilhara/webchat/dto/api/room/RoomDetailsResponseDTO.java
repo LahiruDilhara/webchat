@@ -18,4 +18,5 @@ public class RoomDetailsResponseDTO {
     private String createdBy;
     private Integer unreadMessagesCount;
     private List<UserResponseDTO> roomMembers;
+    private String type = "RoomDetails";
 }

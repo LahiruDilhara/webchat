@@ -2,6 +2,7 @@ package me.lahirudilhara.webchat.configuration;
 
 import jakarta.servlet.http.HttpServletRequest;
 import me.lahirudilhara.webchat.common.exceptions.BaseException;
+import me.lahirudilhara.webchat.common.exceptions.UserNotFoundException;
 import me.lahirudilhara.webchat.common.types.ErrorResponse;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -187,6 +189,20 @@ public class ApiExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInternalAuthenticationService(InternalAuthenticationServiceException ex, HttpServletRequest request) {
         log.warn("Internal authentication service on path: {}", request.getRequestURI());
         ErrorResponse error = new ErrorResponse(ex.getMessage(),HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public  ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException ex, HttpServletRequest request) {
+        log.warn("User not found on path: {}", request.getRequestURI());
+        ErrorResponse error = new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUsernameNotFound(UsernameNotFoundException ex, HttpServletRequest request) {
+        log.warn("Username not found on path: {}", request.getRequestURI());
+        ErrorResponse error = new ErrorResponse("You are unauthenticated", HttpStatus.UNAUTHORIZED);
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
