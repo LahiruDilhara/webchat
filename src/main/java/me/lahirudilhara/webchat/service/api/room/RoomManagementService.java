@@ -5,8 +5,8 @@ import jakarta.persistence.PersistenceContext;
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.common.exceptions.UserNotFoundException;
 import me.lahirudilhara.webchat.common.exceptions.ValidationException;
-import me.lahirudilhara.webchat.entities.room.DualUserRoomEntity;
-import me.lahirudilhara.webchat.entities.room.MultiUserRoomEntity;
+import me.lahirudilhara.webchat.entities.room.DualUserRoomDetailsEntity;
+import me.lahirudilhara.webchat.entities.room.MultiUserRoomDetailsEntity;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
 import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.entityModelMappers.RoomMapper;
@@ -24,7 +24,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
-import java.net.UnknownServiceException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +56,7 @@ public class RoomManagementService {
     @Caching(evict = {
             @CacheEvict(value = RoomCacheNames.USER_OWNED_ROOMS_BY_USERNAME,key = "#roomEntity.createdBy"),
     })
-    public RoomEntity createMultiUserRoom(MultiUserRoomEntity roomEntity) {
+    public RoomEntity createMultiUserRoom(MultiUserRoomDetailsEntity roomEntity) {
         UserEntity userEntity = userQueryService.getUserByUsername(roomEntity.getCreatedBy());
         User userRef = entityManager.getReference(User.class, userEntity.getId());
 
@@ -77,7 +76,7 @@ public class RoomManagementService {
             @CacheEvict(value = RoomCacheNames.USER_OWNED_ROOMS_BY_USERNAME,key = "#roomEntity.createdBy"),
             @CacheEvict(value = RoomCacheNames.USER_OWNED_ROOMS_BY_USERNAME,key = "#nextUsername"),
     })
-    public DualUserRoomEntity createDualUserRoom(DualUserRoomEntity roomEntity, String nextUsername){
+    public DualUserRoomDetailsEntity createDualUserRoom(DualUserRoomDetailsEntity roomEntity, String nextUsername){
         UserEntity owner = userQueryService.getUserByUsername(roomEntity.getCreatedBy());
         UserEntity user = userQueryService.getUserByUsername(nextUsername);
         if(owner.getUsername().equals(user.getUsername())) throw new UserNotFoundException();
@@ -116,7 +115,7 @@ public class RoomManagementService {
     }
 
     @CacheEvict(value = RoomCacheNames.ROOM_BY_ROOM_ID,key = "#roomEntity.id")
-    public MultiUserRoomEntity updateMultiUserRoom(MultiUserRoomEntity roomEntity){
+    public MultiUserRoomDetailsEntity updateMultiUserRoom(MultiUserRoomDetailsEntity roomEntity){
         UserEntity user = userQueryService.getUserByUsername(roomEntity.getCreatedBy());
 
         MultiUserRoom room = multiUserRoomRepository.findById(roomEntity.getId()).orElseThrow(RoomNotFoundException::new);

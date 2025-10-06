@@ -2,16 +2,21 @@ package me.lahirudilhara.webchat.service.api.room;
 
 import me.lahirudilhara.webchat.common.exceptions.RoomNotFoundException;
 import me.lahirudilhara.webchat.common.types.CachableObject;
+import me.lahirudilhara.webchat.entities.room.MultiUserRoomEntity;
 import me.lahirudilhara.webchat.entities.room.RoomDetailsEntity;
 import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
 import me.lahirudilhara.webchat.entityModelMappers.RoomMapper;
 import me.lahirudilhara.webchat.entityModelMappers.UserMapper;
+import me.lahirudilhara.webchat.models.room.MultiUserRoom;
 import me.lahirudilhara.webchat.models.room.Room;
+import me.lahirudilhara.webchat.repositories.room.MultiUserRoomRepository;
 import me.lahirudilhara.webchat.repositories.room.RoomRepository;
 import me.lahirudilhara.webchat.service.api.user.UserQueryService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,8 +30,9 @@ public class RoomQueryService {
     private final RoomValidator roomValidator;
     private final UserQueryService userQueryService;
     private final RoomBuilder roomBuilder;
+    private final MultiUserRoomRepository multiUserRoomRepository;
 
-    public RoomQueryService(RoomRepository roomRepository, @Lazy RoomQueryService roomQueryService, RoomMapper roomMapper, UserMapper userMapper, RoomValidator roomValidator, UserQueryService userQueryService, RoomBuilder roomBuilder) {
+    public RoomQueryService(RoomRepository roomRepository, @Lazy RoomQueryService roomQueryService, RoomMapper roomMapper, UserMapper userMapper, RoomValidator roomValidator, UserQueryService userQueryService, RoomBuilder roomBuilder, MultiUserRoomRepository multiUserRoomRepository) {
         this.roomRepository = roomRepository;
         this.self = roomQueryService;
         this.roomMapper = roomMapper;
@@ -34,6 +40,7 @@ public class RoomQueryService {
         this.roomValidator = roomValidator;
         this.userQueryService = userQueryService;
         this.roomBuilder = roomBuilder;
+        this.multiUserRoomRepository = multiUserRoomRepository;
     }
 
     public List<UserEntity> getValidatedRoomUsers(int roomId, String username){
@@ -57,6 +64,11 @@ public class RoomQueryService {
     public CachableObject<List<RoomEntity>> getOwnerRooms(String username){
         List<Room> rooms = roomRepository.findByCreatedByUsername(username);
         return new CachableObject<>(rooms.stream().map(roomMapper::roomToRoomEntity).toList());
+    }
+
+    public List<MultiUserRoomEntity> getPublicMultiUserRooms(String name, Pageable pageable){
+        Page<MultiUserRoom> rooms= multiUserRoomRepository.getPublicMultiUserRooms(name,pageable);
+        return rooms.map(rm->roomMapper.multiUserRoomToMultiUserRoomEntity(rm,rm.getUsers().size())).toList();
     }
 
     public CachableObject<List<RoomDetailsEntity>> getUserJoinedRooms(String username){

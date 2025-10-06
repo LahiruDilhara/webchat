@@ -1,7 +1,7 @@
 package me.lahirudilhara.webchat.service.api.room;
 
-import me.lahirudilhara.webchat.entities.room.DualUserRoomEntity;
-import me.lahirudilhara.webchat.entities.room.MultiUserRoomEntity;
+import me.lahirudilhara.webchat.entities.room.DualUserRoomDetailsEntity;
+import me.lahirudilhara.webchat.entities.room.MultiUserRoomDetailsEntity;
 import me.lahirudilhara.webchat.entities.room.RoomDetailsEntity;
 import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.models.UserRoomStatus;
@@ -36,16 +36,16 @@ public class RoomBuilder {
         return null;
     }
 
-    public MultiUserRoomEntity MultiUserRoomEntityFromMultiUserRoom (MultiUserRoom room,Integer userId){
-        MultiUserRoomEntity multiUserRoomEntity = new MultiUserRoomEntity();
-        roomToRoomEntity(room,userId,multiUserRoomEntity);
-        multiUserRoomEntity.setClosed(room.getClosed());
-        multiUserRoomEntity.setIsPrivate(room.getIsPrivate());
-        return multiUserRoomEntity;
+    public MultiUserRoomDetailsEntity MultiUserRoomEntityFromMultiUserRoom (MultiUserRoom room, Integer userId){
+        MultiUserRoomDetailsEntity multiUserRoomDetailsEntity = new MultiUserRoomDetailsEntity();
+        roomToRoomEntity(room,userId, multiUserRoomDetailsEntity);
+        multiUserRoomDetailsEntity.setClosed(room.getClosed());
+        multiUserRoomDetailsEntity.setIsPrivate(room.getIsPrivate());
+        return multiUserRoomDetailsEntity;
     }
 
-    public DualUserRoomEntity  DualUserRoomEntityFromDualUserRoom (DualUserRoom room, Integer userId){
-        return roomToRoomEntity(room,userId,new DualUserRoomEntity());
+    public DualUserRoomDetailsEntity DualUserRoomEntityFromDualUserRoom (DualUserRoom room, Integer userId){
+        return roomToRoomEntity(room,userId,new DualUserRoomDetailsEntity());
     }
 
     public <T extends RoomDetailsEntity> T roomToRoomEntity(Room room, Integer userId, T entity){

@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(callSuper = true)
-public class MultiUserRoomEntity extends RoomEntity {
+public class MultiUserRoomDetailsEntity extends RoomDetailsEntity{
     private Boolean closed;
     private Boolean isPrivate;
 }

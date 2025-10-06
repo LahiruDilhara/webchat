@@ -6,14 +6,12 @@ import me.lahirudilhara.webchat.dto.api.user.UserResponseDTO;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.MessageMapper;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.RoomMapper;
 import me.lahirudilhara.webchat.dtoEntityMappers.api.UserMapper;
-import me.lahirudilhara.webchat.entities.room.DualUserRoomEntity;
-import me.lahirudilhara.webchat.entities.room.MultiUserRoomEntity;
-import me.lahirudilhara.webchat.entities.room.RoomDetailsEntity;
-import me.lahirudilhara.webchat.entities.room.RoomEntity;
+import me.lahirudilhara.webchat.entities.room.*;
 import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.service.message.MessageManagementService;
 import me.lahirudilhara.webchat.service.api.room.RoomManagementService;
 import me.lahirudilhara.webchat.service.api.room.RoomQueryService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,24 +40,24 @@ public class RoomController {
 
     @PostMapping("/multiUser")
     public ResponseEntity<RoomDetailsResponseDTO> createMultiUserRoom(@Valid @RequestBody AddMultiUserRoomDTO addMultiUserRoomDTO, Principal principal){
-        MultiUserRoomEntity roomEntity = roomMapper.addMultiUserRoomDTOToMultiUserRoomEntity(addMultiUserRoomDTO);
+        MultiUserRoomDetailsEntity roomEntity = roomMapper.addMultiUserRoomDTOToMultiUserRoomEntity(addMultiUserRoomDTO);
         roomEntity.setCreatedBy(principal.getName());
         RoomEntity createdRoom = roomManagementService.createMultiUserRoom(roomEntity);
-        return new ResponseEntity<>(roomMapper.roomEntityToRoomResponseDTO(createdRoom),HttpStatus.CREATED);
+        return new ResponseEntity<>(roomMapper.roomEntityToRoomDetailsResponseDTO(createdRoom),HttpStatus.CREATED);
     }
 
     @PostMapping("/dualUser")
     public ResponseEntity<RoomDetailsResponseDTO> createDualUserRoom(@Valid @RequestBody AddDualUserRoomDTO addDualUserRoomDTO, Principal principal){
-        DualUserRoomEntity roomEntity = roomMapper.addDualUserRoomDTOToDualUserRoomEntity(addDualUserRoomDTO);
+        DualUserRoomDetailsEntity roomEntity = roomMapper.addDualUserRoomDTOToDualUserRoomEntity(addDualUserRoomDTO);
         roomEntity.setCreatedBy(principal.getName());
         RoomEntity createdRoom = roomManagementService.createDualUserRoom(roomEntity,addDualUserRoomDTO.getAddingUsername());
-        return new ResponseEntity<>(roomMapper.roomEntityToRoomResponseDTO(createdRoom),HttpStatus.CREATED);
+        return new ResponseEntity<>(roomMapper.roomEntityToRoomDetailsResponseDTO(createdRoom),HttpStatus.CREATED);
     }
 
     @GetMapping("/")
     public List<RoomDetailsResponseDTO> getUserJoinedRooms(Principal principal){
         List<RoomDetailsEntity> roomEntities = roomQueryService.getUserJoinedRooms(principal.getName()).getData();
-        return roomEntities.stream().map(roomMapper::roomEntityToRoomResponseDTO).toList();
+        return roomEntities.stream().map(roomMapper::roomEntityToRoomDetailsResponseDTO).toList();
     }
 
     @DeleteMapping("/{roomId}")
@@ -71,13 +69,12 @@ public class RoomController {
 
     @PatchMapping("/multiUser/{roomId}")
     public RoomDetailsResponseDTO updateMultiUserRoom(@PathVariable int roomId, @RequestBody UpdateMultiUserRoomDTO updateMultiUserRoomDTO, Principal principal){
-        MultiUserRoomEntity roomEntity = roomMapper.updateMultiUserDtoToMultiUserRoomEntity(updateMultiUserRoomDTO);
+        MultiUserRoomDetailsEntity roomEntity = roomMapper.updateMultiUserDtoToMultiUserRoomEntity(updateMultiUserRoomDTO);
         roomEntity.setId(roomId);
         roomEntity.setCreatedBy(principal.getName());
         RoomEntity updatedRoomEntity = roomManagementService.updateMultiUserRoom(roomEntity);
-        return roomMapper.roomEntityToRoomResponseDTO(updatedRoomEntity);
+        return roomMapper.roomEntityToRoomDetailsResponseDTO(updatedRoomEntity);
     }
-
 
 
     @GetMapping("/{roomId}/users")
@@ -86,4 +83,10 @@ public class RoomController {
         return users.stream().map(userMapper::userEntityToUserResponseDTO).toList();
     }
 
+    @GetMapping("/public")
+    public List<MultiUserRoomResponseDTO> getPublicRooms(@RequestParam(required = false) String roomName,Pageable pageable, Principal principal){
+        if (roomName == null) roomName = "";
+        List<MultiUserRoomEntity> roomEntities = roomQueryService.getPublicMultiUserRooms(roomName,pageable);
+        return roomEntities.stream().map(roomMapper::multiUserRoomEntityToMultiUserRoomResponseDTO).toList();
+    }
 }

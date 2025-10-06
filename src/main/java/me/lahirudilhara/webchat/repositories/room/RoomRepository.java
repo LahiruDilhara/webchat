@@ -1,6 +1,7 @@
 package me.lahirudilhara.webchat.repositories.room;
 
 import me.lahirudilhara.webchat.models.room.Room;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,4 +21,5 @@ public interface RoomRepository extends JpaRepository<Room,Integer> {
 
     @Query("SELECT r FROM room r JOIN r.users u WHERE u.username = :username")
     List<Room> findUserJoinedRooms(@Param("username") String username);
+
 }

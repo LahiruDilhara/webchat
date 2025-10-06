@@ -1,7 +1,8 @@
 package me.lahirudilhara.webchat.dtoEntityMappers.api;
 
 import me.lahirudilhara.webchat.dto.api.room.*;
-import me.lahirudilhara.webchat.entities.room.DualUserRoomEntity;
+import me.lahirudilhara.webchat.entities.room.DualUserRoomDetailsEntity;
+import me.lahirudilhara.webchat.entities.room.MultiUserRoomDetailsEntity;
 import me.lahirudilhara.webchat.entities.room.MultiUserRoomEntity;
 import me.lahirudilhara.webchat.entities.room.RoomEntity;
 import org.mapstruct.*;
@@ -9,18 +10,23 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface RoomMapper {
 
-    MultiUserRoomEntity addMultiUserRoomDTOToMultiUserRoomEntity(AddMultiUserRoomDTO addMultiUserRoomDTO);
+    MultiUserRoomDetailsEntity addMultiUserRoomDTOToMultiUserRoomEntity(AddMultiUserRoomDTO addMultiUserRoomDTO);
 
-    DualUserRoomEntity addDualUserRoomDTOToDualUserRoomEntity(AddDualUserRoomDTO addDualUserRoomDTO);
+    DualUserRoomDetailsEntity addDualUserRoomDTOToDualUserRoomEntity(AddDualUserRoomDTO addDualUserRoomDTO);
 
-    @SubclassMapping(source = DualUserRoomEntity.class,target = DualUserRoomDetailsResponseDTO.class)
-    @SubclassMapping(source = MultiUserRoomEntity.class,target = MultiUserRoomDetailsResponseDTO.class)
-    RoomDetailsResponseDTO roomEntityToRoomResponseDTO(RoomEntity roomEntity);
+    @SubclassMapping(source = DualUserRoomDetailsEntity.class,target = DualUserRoomDetailsResponseDTO.class)
+    @SubclassMapping(source = MultiUserRoomDetailsEntity.class,target = MultiUserRoomDetailsResponseDTO.class)
+    RoomDetailsResponseDTO roomEntityToRoomDetailsResponseDTO(RoomEntity roomEntity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    MultiUserRoomEntity updateMultiUserDtoToMultiUserRoomEntity(UpdateMultiUserRoomDTO updateMultiUserRoomDTO);
+    MultiUserRoomDetailsEntity updateMultiUserDtoToMultiUserRoomEntity(UpdateMultiUserRoomDTO updateMultiUserRoomDTO);
 
-    DualUserRoomDetailsResponseDTO dualUserRoomEntityToDualUserRoomResponseDTO(DualUserRoomEntity dualUserRoomEntity);
+    DualUserRoomDetailsResponseDTO dualUserRoomEntityToDualUserRoomResponseDTO(DualUserRoomDetailsEntity dualUserRoomDetailsEntity);
 
-    MultiUserRoomDetailsResponseDTO multiUserRoomEntityToMultiUserRoomResponseDTO(MultiUserRoomEntity  multiUserRoomEntity);
+    MultiUserRoomDetailsResponseDTO multiUserRoomEntityToMultiUserRoomDetailsResponseDTO(MultiUserRoomDetailsEntity multiUserRoomDetailsEntity);
+
+    @SubclassMapping(source = MultiUserRoomEntity.class,target = MultiUserRoomResponseDTO.class)
+    RoomResponseDTO roomEntityToRoomResponseDTO(RoomEntity roomEntity);
+
+    MultiUserRoomResponseDTO multiUserRoomEntityToMultiUserRoomResponseDTO(MultiUserRoomEntity multiUserRoomEntity);
 }
