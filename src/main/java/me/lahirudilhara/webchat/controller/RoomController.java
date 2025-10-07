@@ -86,7 +86,7 @@ public class RoomController {
     @GetMapping("/public")
     public List<MultiUserRoomResponseDTO> getPublicRooms(@RequestParam(required = false) String roomName,Pageable pageable, Principal principal){
         if (roomName == null) roomName = "";
-        List<MultiUserRoomEntity> roomEntities = roomQueryService.getPublicMultiUserRooms(roomName,pageable);
+        List<MultiUserRoomEntity> roomEntities = roomQueryService.getPublicMultiUserRooms(roomName,principal.getName(),pageable);
         return roomEntities.stream().map(roomMapper::multiUserRoomEntityToMultiUserRoomResponseDTO).toList();
     }
 }

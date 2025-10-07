@@ -8,6 +8,7 @@ import me.lahirudilhara.webchat.common.exceptions.ValidationException;
 import me.lahirudilhara.webchat.entities.user.UserEntity;
 import me.lahirudilhara.webchat.models.room.MultiUserRoom;
 import me.lahirudilhara.webchat.models.User;
+import me.lahirudilhara.webchat.models.room.Room;
 import me.lahirudilhara.webchat.repositories.room.MultiUserRoomRepository;
 import me.lahirudilhara.webchat.repositories.room.RoomRepository;
 import me.lahirudilhara.webchat.service.api.user.UserQueryService;
@@ -74,7 +75,7 @@ public class RoomMembershipService {
         }
         UserEntity user = userQueryService.getUserByUsername(addingUsername);
         List<User> members = room.getUsers();
-        if(members.contains(user)){
+        if(members.stream().anyMatch(u -> u.getId().equals(user.getId()))){
             throw new ConflictException("The user already exists in the room");
         }
         User userModel = new User();
@@ -115,18 +116,36 @@ public class RoomMembershipService {
             @CacheEvict(value = RoomCacheNames.USER_OWNED_ROOMS_BY_USERNAME,key = "#username"),
     })
     public void leaveFromRoom(int roomId,String username){
-        MultiUserRoom room =  multiUserRoomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
+        Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
         UserEntity user = userQueryService.getUserByUsername(username);
 
         if(room.getUsers().stream().noneMatch(u->u.getId().equals(user.getId()))){
             throw new ValidationException("User is not a member of the room");
         }
+
+        if(room instanceof MultiUserRoom){
+            leaveFromMultiUser(room,user);
+        }
+        else{
+            leaveFromDualUser(room,user);
+        }
+    }
+
+    private void leaveFromDualUser(Room room,UserEntity user){
+        roomRepository.delete(room);
+    }
+
+    private void leaveFromMultiUser(Room room,UserEntity user){
         if(room.getCreatedBy().getId().equals(user.getId())){
-            throw new ValidationException("The owner cannot be left the room");
+            if(room.getUsers().size() > 1){
+                throw new ValidationException("The owner cannot be left the room while there are members. First need to remove all members");
+            }
+            roomRepository.delete(room);
+            return;
         }
         List<User> users = room.getUsers();
         users.removeIf(u->u.getId().equals(user.getId()));
-        multiUserRoomRepository.save(room);
+        roomRepository.save(room);
     }
 
 }

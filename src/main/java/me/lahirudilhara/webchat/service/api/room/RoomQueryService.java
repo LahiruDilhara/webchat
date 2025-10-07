@@ -66,8 +66,8 @@ public class RoomQueryService {
         return new CachableObject<>(rooms.stream().map(roomMapper::roomToRoomEntity).toList());
     }
 
-    public List<MultiUserRoomEntity> getPublicMultiUserRooms(String name, Pageable pageable){
-        Page<MultiUserRoom> rooms= multiUserRoomRepository.getPublicMultiUserRooms(name,pageable);
+    public List<MultiUserRoomEntity> getPublicMultiUserRooms(String roomName, String username, Pageable pageable){
+        Page<MultiUserRoom> rooms= multiUserRoomRepository.getPublicMultiUserRooms(roomName,username,pageable);
         return rooms.map(rm->roomMapper.multiUserRoomToMultiUserRoomEntity(rm,rm.getUsers().size())).toList();
     }
 
