@@ -50,7 +50,8 @@ public class JoinRoomRequestMessageHandler implements MessageHandler<JoinRoomMes
     }
 
     private void handleAlreadyJoinedRoom(String uuid, String sessionId){
-        clientErrorHandler.sendMessageErrorToSession(sessionId,"You are already joined",uuid);
+//        clientErrorHandler.sendMessageErrorToSession(sessionId,"You are already joined",uuid);
+
     }
 
     private void handleNewDeviceJoin(JoinRoomMessageDTO message, String senderUsername, String sessionId){

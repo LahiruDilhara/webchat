@@ -16,4 +16,5 @@ public class MessageResponseDTO {
     private String senderUsername;
     private Integer roomId;
     private String uuid;
+    private final String type = "Message";
 }

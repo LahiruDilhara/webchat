@@ -41,6 +41,6 @@ public class LeaveRoomRequestMessageHandler implements MessageHandler<LeaveRoomM
         if(roomBroker.isUserInRoom(message.getRoomId(), senderUsername)) {
             return;
         }
-        messageBroker.sendMessageToRoom(message.getRoomId(), RoomUserLeftResponse.builder().uuid(message.getUuid()).username(senderUsername).build());
+        messageBroker.sendMessageToRoom(message.getRoomId(), RoomUserLeftResponse.builder().uuid(message.getUuid()).roomId(message.getRoomId()).username(senderUsername).build());
     }
 }

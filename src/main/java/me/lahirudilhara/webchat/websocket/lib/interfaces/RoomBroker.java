@@ -13,5 +13,7 @@ public interface RoomBroker {
     void removeFromAllRooms(String sessionId);
     boolean isSessionInRoom(Integer roomId, String sessionId);
     List<Integer> getUserOnlineRooms(String username);
+    List<Integer> getSessionOnlineRooms(String sessionId);
     List<BrokerSession> getBrokerSessionsInRoom(Integer roomId);
+    List<String> getRoomConnectedUsersSessions(Integer roomId,String username);
 }

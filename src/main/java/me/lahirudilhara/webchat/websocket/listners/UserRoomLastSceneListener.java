@@ -2,8 +2,8 @@ package me.lahirudilhara.webchat.websocket.listners;
 
 import lombok.extern.slf4j.Slf4j;
 import me.lahirudilhara.webchat.service.api.user.UserRoomStatusService;
+import me.lahirudilhara.webchat.websocket.lib.events.SessionLeaveRoomEvent;
 import me.lahirudilhara.webchat.websocket.lib.events.UserJoinedRoomEvent;
-import me.lahirudilhara.webchat.websocket.lib.events.UserLeaveRoomEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -30,8 +30,8 @@ public class UserRoomLastSceneListener {
     }
 
     @Async
-    @EventListener(UserLeaveRoomEvent.class)
-    public void onUserLeaveRoomEvent(UserLeaveRoomEvent event) {
+    @EventListener(SessionLeaveRoomEvent.class)
+    public void onUserLeaveRoomEvent(SessionLeaveRoomEvent event) {
         try{
             userRoomStatusService.updateUserRoomLastScene(event.username(),event.roomId());
         }

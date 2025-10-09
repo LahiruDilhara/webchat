@@ -9,5 +9,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class RoomUserLeftResponse extends BaseResponseMessage{
     private String username;
+    private Integer roomId;
     private final String type = "RoomUserLeft";
 }
