@@ -1,9 +1,8 @@
 package me.lahirudilhara.webchat.websocket.lib.broker;
 
 import lombok.extern.slf4j.Slf4j;
-import me.lahirudilhara.webchat.websocket.lib.events.NewSessionEvent;
+import me.lahirudilhara.webchat.websocket.lib.events.SessionConnectedEvent;
 import me.lahirudilhara.webchat.websocket.lib.events.SessionDisconnectedEvent;
-import me.lahirudilhara.webchat.websocket.lib.interfaces.RoomBroker;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.SessionHandler;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -42,7 +41,7 @@ public class InMemorySessionManager implements SessionHandler {
             sessions.get(username).add(session);
         }
         log.info("Session {} connected", session.getId());
-        applicationEventPublisher.publishEvent(new NewSessionEvent(username,session.getId()));
+        applicationEventPublisher.publishEvent(new SessionConnectedEvent(username,session.getId()));
     }
 
     @Override

@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.lahirudilhara.webchat.service.api.user.UserService;
 import me.lahirudilhara.webchat.websocket.dto.response.DeviceDisconnectedResponse;
 import me.lahirudilhara.webchat.websocket.dto.response.NewDeviceConnectedWithRoomResponse;
-import me.lahirudilhara.webchat.websocket.lib.events.NewSessionEvent;
+import me.lahirudilhara.webchat.websocket.lib.events.SessionConnectedEvent;
 import me.lahirudilhara.webchat.websocket.lib.events.SessionDisconnectedEvent;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.MessageBroker;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.SessionHandler;
@@ -30,8 +30,8 @@ public class UserLastSceneListener {
     }
 
     @Async
-    @EventListener(NewSessionEvent.class)
-    public void onSessionJoined(NewSessionEvent event) {
+    @EventListener(SessionConnectedEvent.class)
+    public void onSessionJoined(SessionConnectedEvent event) {
         try{
             userService.updateUserLastScene(event.username());
             List<String> otherUserSessionIds = sessionHandler.getSessionsByUser(event.username()).stream().map(WebSocketSession::getId).filter(id->!id.equals(event.sessionId())).toList();
