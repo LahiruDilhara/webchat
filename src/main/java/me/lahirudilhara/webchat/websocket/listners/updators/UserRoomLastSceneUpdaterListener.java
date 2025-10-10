@@ -1,4 +1,4 @@
-package me.lahirudilhara.webchat.websocket.listners;
+package me.lahirudilhara.webchat.websocket.listners.updators;
 
 import lombok.extern.slf4j.Slf4j;
 import me.lahirudilhara.webchat.service.api.user.UserRoomStatusService;
@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class UserRoomLastSceneListener {
+public class UserRoomLastSceneUpdaterListener {
 
     private final UserRoomStatusService userRoomStatusService;
 
-    public UserRoomLastSceneListener(UserRoomStatusService userRoomStatusService) {
+    public UserRoomLastSceneUpdaterListener(UserRoomStatusService userRoomStatusService) {
         this.userRoomStatusService = userRoomStatusService;
     }
 

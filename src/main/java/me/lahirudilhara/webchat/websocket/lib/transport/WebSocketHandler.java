@@ -33,7 +33,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             return;
         }
         try{
-            sessionHandler.onSessionConnect(session);
+            sessionHandler.onSessionConnect(session,session.getPrincipal().getName());
         }
         catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -78,7 +78,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             return;
         }
         try{
-            sessionHandler.onSessionDisconnect(session);
+            sessionHandler.onSessionDisconnect(session,session.getPrincipal().getName());
             super.afterConnectionClosed(session,status);
         }
         catch (Exception e) {

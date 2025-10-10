@@ -1,4 +1,6 @@
 package me.lahirudilhara.webchat.websocket.lib.events;
 
-public record SessionConnectedEvent(String username, String sessionId) {
+import java.util.List;
+
+public record SessionConnectedEvent(String username, String sessionId, List<String> otherSessions) {
 }
