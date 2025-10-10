@@ -41,6 +41,7 @@ public class InMemorySessionManager implements SessionHandler {
         if (!sessions.get(username).contains(session)) {
             sessions.get(username).add(session);
         }
+        log.info("Session {} connected", session.getId());
         applicationEventPublisher.publishEvent(new NewSessionEvent(username,session.getId()));
     }
 
@@ -57,6 +58,7 @@ public class InMemorySessionManager implements SessionHandler {
             sessions.remove(username);
         }
         sessionsById.remove(session.getId());
+        log.info("Session {} disconnected", session.getId());
         applicationEventPublisher.publishEvent(new SessionDisconnectedEvent(username,session.getId()));
     }
 

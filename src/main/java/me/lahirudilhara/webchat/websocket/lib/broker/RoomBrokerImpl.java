@@ -25,6 +25,7 @@ public class RoomBrokerImpl implements RoomBroker {
 
     @Override
     public void addSessionToRoom(Integer roomId, String sessionId, String username) {
+        log.info("Adding session to room {} with sessionId {}", roomId, sessionId);
         if (brokerSessionsInARoom.containsKey(roomId)) {
             boolean alreadyExists = brokerSessionsInARoom.get(roomId)
                     .stream()
@@ -54,6 +55,7 @@ public class RoomBrokerImpl implements RoomBroker {
 
     @Override
     public void removeSessionFromRoom(Integer roomId, String sessionId) {
+        log.info("Removing session from room {} with sessionId {}", roomId, sessionId);
         if (!brokerSessionsInARoom.containsKey(roomId)) return;
         BrokerSession brokerSession = brokerSessionsInARoom.get(roomId).stream().filter(bs -> bs.sessionId().equals(sessionId)).findFirst().orElse(null);
         if (brokerSession == null) return;
