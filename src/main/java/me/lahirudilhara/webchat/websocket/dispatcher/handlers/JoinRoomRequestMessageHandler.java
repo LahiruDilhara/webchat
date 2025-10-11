@@ -16,13 +16,11 @@ import java.util.List;
 public class JoinRoomRequestMessageHandler implements MessageHandler<JoinRoomMessageDTO> {
     private final JoinRoomValidator joinRoomValidator;
     private final RoomBroker roomBroker;
-    private final MessageBroker messageBroker;
     private final ClientErrorHandler clientErrorHandler;
 
-    public JoinRoomRequestMessageHandler(JoinRoomValidator joinRoomValidator, RoomBroker roomBroker, MessageBroker messageBroker, ClientErrorHandler clientErrorHandler) {
+    public JoinRoomRequestMessageHandler(JoinRoomValidator joinRoomValidator, RoomBroker roomBroker, ClientErrorHandler clientErrorHandler) {
         this.joinRoomValidator = joinRoomValidator;
         this.roomBroker = roomBroker;
-        this.messageBroker = messageBroker;
         this.clientErrorHandler = clientErrorHandler;
     }
 
@@ -38,28 +36,6 @@ public class JoinRoomRequestMessageHandler implements MessageHandler<JoinRoomMes
             clientErrorHandler.sendMessageErrorToSession(sessionId,"Invalid join room",message.getUuid());
             return;
         }
-        if(roomBroker.isSessionInRoom(message.getRoomId(), sessionId)){
-            handleAlreadyJoinedRoom(message.getUuid(),sessionId);
-            return;
-        }
-        if(roomBroker.isUserInRoom(message.getRoomId(), senderUsername)){
-            handleNewDeviceJoin(message,senderUsername,sessionId);
-            return;
-        }
-        handleNewUserRoomJoin(message,senderUsername,sessionId);
-    }
-
-    private void handleAlreadyJoinedRoom(String uuid, String sessionId){
-//        clientErrorHandler.sendMessageErrorToSession(sessionId,"You are already joined",uuid);
-
-    }
-
-    private void handleNewDeviceJoin(JoinRoomMessageDTO message, String senderUsername, String sessionId){
-        roomBroker.addSessionToRoom(message.getRoomId(), sessionId, senderUsername);
-    }
-
-    private void handleNewUserRoomJoin(JoinRoomMessageDTO message, String senderUsername, String sessionId){
-        messageBroker.sendMessageToRoom(message.getRoomId(), NewRoomUserResponse.builder().uuid(message.getUuid()).roomId(message.getRoomId()).username(senderUsername).build());
         roomBroker.addSessionToRoom(message.getRoomId(), sessionId, senderUsername);
     }
 }

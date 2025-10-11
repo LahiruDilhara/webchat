@@ -1,10 +1,7 @@
 package me.lahirudilhara.webchat.websocket.lib.broker;
 
 import lombok.extern.slf4j.Slf4j;
-import me.lahirudilhara.webchat.websocket.lib.events.SessionDisconnectedEvent;
-import me.lahirudilhara.webchat.websocket.lib.events.SessionLeaveRoomEvent;
-import me.lahirudilhara.webchat.websocket.lib.events.UserJoinedRoomEvent;
-import me.lahirudilhara.webchat.websocket.lib.events.UserLeaveRoomEvent;
+import me.lahirudilhara.webchat.websocket.lib.events.*;
 import me.lahirudilhara.webchat.websocket.lib.interfaces.RoomBroker;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -44,7 +41,9 @@ public class RoomBrokerImpl implements RoomBroker {
         if (!roomIdToBrokerSessions.containsKey(roomId)) {
             roomIdToBrokerSessions.put(roomId, new ArrayList<>());
         }
-        roomIdToBrokerSessions.get(roomId).add(new BrokerSession(username, sessionId));
+        if(roomIdToBrokerSessions.get(roomId).stream().noneMatch(s -> s.sessionId().equals(sessionId))){
+            roomIdToBrokerSessions.get(roomId).add(new BrokerSession(username, sessionId));
+        }
 
         // Add connected room to the session
         if (!sessionIdToRoomIds.containsKey(sessionId)) {
@@ -58,11 +57,11 @@ public class RoomBrokerImpl implements RoomBroker {
         }
         if(!userConnectedRoomsAndSessions.get(username).containsKey(roomId)) {
             userConnectedRoomsAndSessions.get(username).put(roomId, new HashSet<>());
+            applicationEventPublisher.publishEvent(new UserJoinedRoomEvent(roomId,username));
         }
         userConnectedRoomsAndSessions.get(username).get(roomId).add(sessionId);
-
+        applicationEventPublisher.publishEvent(new SessionConnectedRoomEvent(roomId,username,sessionId));
         log.debug("Added the session to room {} with sessionId {}", roomId, sessionId);
-        applicationEventPublisher.publishEvent(new UserJoinedRoomEvent(roomId, username));
     }
 
     private String removeSessionFromUserConnectedRoomsAndSessions(Integer roomId, String sessionId){
@@ -85,7 +84,10 @@ public class RoomBrokerImpl implements RoomBroker {
 
     private void removeSessionFromSessionIdToRoomIds(Integer roomId, String sessionId){
         if(!sessionIdToRoomIds.containsKey(sessionId)) return;
-        sessionIdToRoomIds.remove(sessionId);
+        sessionIdToRoomIds.get(sessionId).remove(roomId);
+        if(sessionIdToRoomIds.get(sessionId).isEmpty()){
+            sessionIdToRoomIds.remove(sessionId);
+        }
     }
 
     private void removeSessionFromRoomIdToBrokerSessions(Integer roomId, String sessionId){
@@ -108,7 +110,7 @@ public class RoomBrokerImpl implements RoomBroker {
             log.debug("When removing session {} From room {}. The username become null",sessionId,roomId);
             return;
         }
-        applicationEventPublisher.publishEvent(new SessionLeaveRoomEvent(roomId, username));
+        applicationEventPublisher.publishEvent(new SessionLeaveRoomEvent(roomId, username,sessionId));
     }
 
     @Override
@@ -165,7 +167,7 @@ public class RoomBrokerImpl implements RoomBroker {
         Set<Integer> sessionConnectedRoomIds = sessionIdToRoomIds.get(event.sessionId());
         if(sessionConnectedRoomIds == null) return;
         sessionConnectedRoomIds.forEach(roomId -> {
-            removeSessionFromRoomIdToBrokerSessions(roomId, event.sessionId());
+            removeSessionFromRoom(roomId, event.sessionId());
         });
     }
 }
