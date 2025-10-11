@@ -7,6 +7,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserLeftRoomNotifierListener {
 
@@ -19,6 +21,6 @@ public class UserLeftRoomNotifierListener {
     @Async
     @EventListener
     public void onUserLeftRoomEvent(UserLeaveRoomEvent userLeaveRoomEvent) {
-        messageBroker.sendMessageToRoom(userLeaveRoomEvent.roomId(), RoomUserLeftResponse.builder().uuid(null).roomId(userLeaveRoomEvent.roomId()).username(userLeaveRoomEvent.username()).build());
+        messageBroker.sendMessageToRoomExceptUsers(userLeaveRoomEvent.roomId(), List.of(userLeaveRoomEvent.username()), RoomUserLeftResponse.builder().uuid(null).roomId(userLeaveRoomEvent.roomId()).username(userLeaveRoomEvent.username()).build());
     }
 }
