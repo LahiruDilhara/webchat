@@ -15,6 +15,6 @@ import lombok.NoArgsConstructor;
 public class TextMessageDTO extends MessageDTO {
     @NotNull(message = "The message cannot be null")
     @NotEmpty(message = "The message cannot be empty")
-    @Size(min = 1, max = 2000,message = "The message size should be between 1 and 2000")
+    @Size(min = 1, max = 4000,message = "The message size should be between 1 and 4000")
     private String message;
 }

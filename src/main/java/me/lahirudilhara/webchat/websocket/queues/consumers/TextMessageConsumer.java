@@ -77,7 +77,7 @@ public class TextMessageConsumer {
         } catch (Exception e) {
             log.error("There was an error while processing the message in TextMessageQueue",e);
         }
-        clientErrorHandler.sendMessageErrorToSession(textMessageEvent.sessionId(),"Error occoured while saving the message",uuid);
+        clientErrorHandler.sendMessageErrorToSession(textMessageEvent.sessionId(),"Error occurred while saving the message",uuid);
     }
 
     private TextMessageEntity textMessageEntityFromTextMessageDTO(TextMessageDTO textMessageDTO,String username) {

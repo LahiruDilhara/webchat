@@ -1,5 +1,6 @@
 package me.lahirudilhara.webchat.websocket.dispatcher.handlers;
 
+import lombok.extern.slf4j.Slf4j;
 import me.lahirudilhara.webchat.websocket.dispatcher.MessageHandler;
 import me.lahirudilhara.webchat.websocket.dto.requests.TextMessageDTO;
 import me.lahirudilhara.webchat.websocket.interfaces.ClientErrorHandler;
@@ -8,6 +9,7 @@ import me.lahirudilhara.webchat.websocket.queues.events.TextMessageEvent;
 import me.lahirudilhara.webchat.websocket.services.SessionRoomValidator;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class TextMessageHandler implements MessageHandler<TextMessageDTO> {
     private final SessionRoomValidator sessionRoomValidator;
