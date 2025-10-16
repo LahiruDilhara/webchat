@@ -14,7 +14,7 @@ public class SwaggerConfiguration {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
-                .info(new Info().title("WebChat API").version("1.0.0").description("Fully authenticated WebChat API with Websocket connectivity for realtime communication"))
+                .info(new Info().title("WebChat API").version("1.0.0").description("Robust and fully secured WebChat API, providing real-time communication through WebSockets for responsive and reliable messaging."))
                 .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))
                 .components(new io.swagger.v3.oas.models.Components().addSecuritySchemes(SECURITY_SCHEME_NAME, new SecurityScheme().name(SECURITY_SCHEME_NAME).type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));
     }

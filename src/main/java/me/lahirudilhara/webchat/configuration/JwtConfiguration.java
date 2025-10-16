@@ -33,7 +33,7 @@ public class JwtConfiguration {
         http.csrf(customizer -> customizer.disable());
         http.cors(Customizer.withDefaults());
         // make the some routes and websocket should not automatically authorized because wc handle authorization in it.
-        http.authorizeHttpRequests(authorizeRequests -> authorizeRequests.requestMatchers("/api/v1/auth/**").permitAll().requestMatchers("/swagger-ui/index.html","api","/swagger-ui.html","/v3/api-docs/**","v3/**","/swagger-ui/**","/api/swagger-ui.html","/api/swagger-ui/index.html").permitAll().requestMatchers("/ws/**").permitAll().anyRequest().authenticated());
+        http.authorizeHttpRequests(authorizeRequests -> authorizeRequests.requestMatchers("/api/v1/auth/**").permitAll().requestMatchers("/api","/index.html","style.css","/","/v3/api-docs/**","/swagger-ui/**", "/redoc.html").permitAll().requestMatchers("/ws/**").permitAll().anyRequest().authenticated());
         http.formLogin(Customizer.withDefaults());
         http.httpBasic(Customizer.withDefaults());
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
